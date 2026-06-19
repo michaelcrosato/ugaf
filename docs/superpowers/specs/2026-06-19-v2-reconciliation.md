@@ -113,4 +113,26 @@
 No redesign. The architecture survived the second pass; the changes are (a) a documentation fold so the base
 specs stop contradicting the v2 blueprint, (b) licensing re-tags, and (c) five honesty/controls additions that
 **widen the §A "what's un-oracle-able" envelope to include parse-correctness and tell-sufficiency** — which is
-exactly the kind of honesty the "irrefutably sound" bar demands.
+exactly the kind of honesty the bar demands.
+
+---
+
+## c.md external-council fold + repo-verification (2026-06-19) — SUPERSEDED BY THE ADDENDUM
+A second external review (`c.md`: a 5-model council + Codex + Gemini, weighted by consensus) plus a repo-grounded
+fact-check (run `w4btmq1fi`) produced **focused hardening, no redesign.** The authoritative result is
+**[EXECUTABLE-INVARIANTS-ADDENDUM.md](../../../EXECUTABLE-INVARIANTS-ADDENDUM.md)** (wins on conflict). Headlines:
+- **New invariants K6–K11:** n-law composition (canonical fold order), transactional scheduler + canonical event
+  order, **no irreversible/lethal outcome from uncertain intent** (monotonic severity + clarify circuit-breaker),
+  complete run-identity manifest, bounded declarative arming-guard language, split licensed-source vs clean-room.
+- **First milestone = a hostile kernel vertical slice** before any Cordon's Edge content (stop polishing the plan).
+- **Verified fact-corrections:** "local" overclaims (capable open-weight needs rented multi-GPU → Loop A uses a
+  **frontier capability-class** coder, Loop B is cheap/hosted with truly-local as a *piloted degraded fallback*);
+  **MCP is an adapter** over the internal typed protocol (MCP mid-rewrite); **prefer CrewAI/LangGraph, not
+  `microsoft/autogen`** (maintenance mode); Claude Code blocks destructive git; smoke-player goes **async** off the
+  merge critical path (+ throughput math).
+- **Terminology:** "irrefutably sound" **retired** as an acceptance criterion → named falsifiable invariants;
+  "oracle" reserved for exact replay/regression.
+- **Licensing:** **GUMSHOE attribution corrected** to Robin D. Laws (designer/writer/editor) with additional
+  material by Kenneth Hite & Kevin Kulp; add a **source-at-write-time provenance gate** (the PDVA-fabrication post-mortem).
+- **Not load-bearing / don't cite:** the "PDVA preprint," "Antigravity CLI 2.1.4," a Codex "token-credit system,"
+  "GA Goal mode," general "Computer Use on Windows," and any single headline benchmark %.

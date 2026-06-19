@@ -34,10 +34,13 @@ adversarially red-teamed by AI panels, and hardened. The next action is to start
 - **The demo** ("The Cordon's Edge," a slice of The Hush) is the proof: arrive → learn a lethal hidden law from
   its tells → exploit it → consequences ripple.
 
-**You do NOT need to read all 12 docs. Read these two:**
+**You do NOT need to read all 13 docs. Read these three:**
 1. **This file** — the whole system end to end (§A honesty bound, §0–§10).
-2. **[v2-reconciliation](docs/superpowers/specs/2026-06-19-v2-reconciliation.md)** — the one cheat-sheet of
+2. **[v2-reconciliation](docs/superpowers/specs/2026-06-19-v2-reconciliation.md)** — the cheat-sheet of
    *what's decided and what supersedes what* (read it before any base spec).
+3. **[EXECUTABLE-INVARIANTS-ADDENDUM](EXECUTABLE-INVARIANTS-ADDENDUM.md)** — the post-`c.md`-council hardening
+   canon: invariants **K6–K11**, the **first milestone** (a hostile kernel vertical slice), and the
+   repo-verified market reality (frontier-for-build, the "local" correction, MCP-as-adapter). **Wins on conflict.**
 
 **Everything else, by purpose (status-tagged):**
 
@@ -99,6 +102,12 @@ the LLM to where it's strong — on *both* sides (design + play). The LLM never 
 arithmetic, adjudicates outcomes, or is trusted on self-report alone. The kernel owns truth; the LLM owns
 language, breadth, classification, and parallel volume. **The point is to make AI output *checkable* rather
 than *trusted*** — on Tier 1 by the oracle, on Tier 2 by a human-anchored feedback loop.
+
+> **Ownership framing (post-`c.md` council):** *human-owned architecture · AI-owned execution · machine-owned
+> gates.* "AI codes 100%" describes who *types* the code, not who *owns the design* — architecture and taste
+> are human-owned (the §4.4 anchor). **"Irrefutably sound" is retired as an acceptance criterion** (unfalsifiable);
+> replaced by named, falsifiable invariants — see [EXECUTABLE-INVARIANTS-ADDENDUM](EXECUTABLE-INVARIANTS-ADDENDUM.md)
+> (K6–K11), the current hardening canon. Reserve "oracle" for exact replay/regression only.
 
 Two loops run concurrently, coupled on **two explicit planes** (v1 wrongly claimed "never shared live state"):
 - **Content plane — immutable, content-hashed artifacts** (sound, lock-free): sealed builds, feedback `.md`.
@@ -264,11 +273,19 @@ See [v2-reconciliation](docs/superpowers/specs/2026-06-19-v2-reconciliation.md) 
 - **Wall-clock** (in the realness oracle) is an **advisory anti-fakery signal, explicitly outside** the
   deterministic checkable core.
 
-## 6. Local-first infrastructure (no API keys)
-Local open-weight play models (Ollama / llama.cpp / vLLM, loopback); local durable coding agent; loopback-only
-infra (reusing the AI-Launchpad playbook). **Caveat (residual):** weak local models give weaker *stated*
-feedback and may stall for non-human reasons — handled by the capability-differential filter (§4.3) and the
-human anchor (§4.4), with a provider-config **upgrade path** to API/frontier models when desired.
+## 6. Model/infra tiers (loopback-default, but "local" was overclaimed — repo-verified correction)
+**The single load-bearing factual correction from the `c.md` verification (run `w4btmq1fi`):** "local" overclaims
+what fits on one workstation. The corrected three-tier split (detail in [EXECUTABLE-INVARIANTS-ADDENDUM §7](EXECUTABLE-INVARIANTS-ADDENDUM.md)):
+- **Loop A (build/architect/parser) → a current FRONTIER capability-class coder** (1M-context + top agentic-coding
+  tier: GPT-5.5 / Opus 4.8 / Gemini 3.5-class), **swappable across vendors, never pinned to a model or benchmark %.**
+  The complex compositional kernel is exactly where the local-model gap is widest (the verified "C+ ceiling").
+- **Loop B (player swarm) → "cheap/open-weight, self- OR cloud-hosted," NOT literally local.** A useful-quality
+  open-weight swarm (**DeepSeek-V4-class**, MIT) needs **rented multi-GPU**; **truly-local small models are a
+  *degraded fallback* whose tool-use on the `observe/list/act` interface must be PILOTED against the §4.4 human
+  anchor + §4.5 affordance-poverty before their feedback is trusted.** (Do not name Llama 4 as the swarm engine.)
+- **Loop C (humans) → quality oracle**, unchanged.
+- **"No API keys / loopback-only" stays the DEFAULT, not an absolute:** the deny-by-default egress sandbox applies
+  to *players*; *build-agents* may need provider egress. Loopback + AI-Launchpad infra playbook still apply.
 
 ## 7. The gate's epistemic boundaries (no overclaiming)
 - The oracle proves **determinism + non-regression + spec-conformance + self-asserted properties** — *not*

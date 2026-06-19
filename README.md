@@ -9,11 +9,14 @@ Hush**, an anomaly zone where survival means learning the world's hidden, *lawfu
 > **Status: design corpus — nothing is coded yet.** Every doc here is a spec/plan that has been written,
 > adversarially red-teamed by AI panels, and hardened. The next step is implementation.
 
-## Start here (you only need these two)
+## Start here (you only need these three)
 1. **[MASTER-BLUEPRINT.md](MASTER-BLUEPRINT.md)** — the whole system end to end. Open this first; its
    **▶ START HERE** section orients you in 30 seconds.
 2. **[v2-reconciliation](docs/superpowers/specs/2026-06-19-v2-reconciliation.md)** — the cheat-sheet of
    *what's decided and what supersedes what* (read before any base spec).
+3. **[EXECUTABLE-INVARIANTS-ADDENDUM.md](EXECUTABLE-INVARIANTS-ADDENDUM.md)** — the latest hardening canon
+   (post external-LLM-council review + repo-verified market intel): invariants **K6–K11**, the **first
+   milestone**, and the frontier-for-build / "local"-correction / MCP-as-adapter calls. **Wins on conflict.**
 
 ## The design in 5 bullets
 - **Deterministic game:** the *engine*, not an AI, decides every outcome — replayable, watchable, trustworthy.
