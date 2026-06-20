@@ -164,13 +164,14 @@ export function createSocial(pack: WorldPack): Module {
   // via the line's setsFacts), once. Honest refusal if there's nothing to pay with.
   function trade(npc: NpcDef, lawLine: DialogueLine, c: string, intent: import('../../sdk/intents.js').ParsedIntent, facts: import('../../sdk/facts.js').FactView, native: JsonObject): ModuleResult {
     const lawId = Object.keys(lawLine.setsFacts ?? {}).find((k) => k.startsWith('known.purchased.'))?.slice('known.purchased.'.length);
-    // already BOUGHT it from this merchant — don't double-sell, don't double-charge
-    if (lawId && facts.getBool(`known.purchased.${lawId}`)) {
-      return beat(native, `${npc.name}: “You've had that map from me already — I don't sell the same law twice. Go put it to use.”`, ['social.already']);
-    }
-    // you already SURVEYED it yourself — refuse the coin honestly (not "you bought this")
+    // You already HAVE this law's knowledge — from ANY merchant, or your own eyes. Eun and Mox
+    // sell the SAME Greywater law, so the knowledge is shared: never double-charge, and never claim
+    // YOU sold it when another merchant (or first-hand observation) is where it actually came from.
     if (lawId && stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) >= stageRank('surveyed')) {
       return beat(native, `${npc.name}: “You already know that one cold — I can see it on you. Keep your coin; I'll not sell you what you've read with your own eyes.”`, ['social.already_known']);
+    }
+    if (lawId && facts.getBool(`known.purchased.${lawId}`)) {
+      return beat(native, `${npc.name}: “You already carry that map — buy it twice and you'll just have the same thing twice. Keep your coin; go put what you have to use.”`, ['social.already']);
     }
     // payment: GIVE the relic spends the relic; otherwise (give a coin / pay / bribe) it costs
     // ONE coin off the purse — coins are a COUNTED resource now (meta.coins), not an all-or-nothing

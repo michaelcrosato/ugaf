@@ -95,4 +95,16 @@ describe('the NPC information-economy', () => {
     expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // NOT handed over for free
     expect(r.text.toLowerCase()).toContain('pay'); // it points you at buying instead
   });
+
+  it('a law bought from one merchant is not falsely claimed as bought from the OTHER (trade-state bleed)', () => {
+    const s = sess('trade-bleed');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    s.act('give coin to eun'); // buy the Greywater table from EUN
+    expect(s.state.facts['known.purchased.greywater']).toBe(true);
+    for (const c of ['out', 'salvage']) s.act(c); // Lyle's Rest -> the Striders' camp (Mox)
+    const r = s.act('pay mox');
+    expect(r.text).not.toContain('from me already'); // Mox must NOT claim she sold it to you
+    expect(r.text.toLowerCase()).toContain('already carry'); // honest: you already have that law
+    expect(s.state.facts['meta.coins']).toBe(2); // and you are NOT charged again
+  });
 });
