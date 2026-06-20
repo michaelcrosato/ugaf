@@ -27,7 +27,7 @@ const PERSONAS: Persona[] = [
     id: 'curious-methodical',
     blurb: 'examines everything, learns the laws before using them, takes the daylight path',
     seed: 'pt-curious',
-    commands: ['look', 'examine the notices', 'out', 'talk to holt', 'ask holt about the greywater', 'ask holt about the mile road', 'road', 'talk to lyle', 'ask lyle about the core', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road', 'fork', 'water', 'examine the rust', 'listen', 'deduce the greywater', 'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'back'],
+    commands: ['look', 'examine the notices', 'out', 'talk to holt', 'ask holt about the greywater', 'ask holt about the mile road', 'road', 'talk to lyle', 'ask lyle about the core', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road', 'fork', 'water', 'examine the rust', 'listen', 'deduce the greywater', 'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'hide', 'back'],
   },
   {
     id: 'reckless',
@@ -55,9 +55,9 @@ const PERSONAS: Persona[] = [
   },
   {
     id: 'dawdler',
-    blurb: 'lingers in the deep after dark — meant to surface the Hollow Dark on seeds where it is live',
-    seed: 'cordon-7',
-    commands: ['out', 'road', 'road', 'on', 'fork', 'rest', 'rest', 'wait', 'listen', 'examine the sitter', 'deduce the hollow dark', 'codex'],
+    blurb: 'lingers in the deep after dark on a seed where the Hollow Dark IS live (the variance showcase)',
+    seed: 'seed-0',
+    commands: ['out', 'road', 'road', 'on', 'fork', 'listen', 'examine the sitter', 'rest', 'rest', 'deduce the hollow dark', 'codex'],
   },
 ];
 

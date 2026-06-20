@@ -25,7 +25,7 @@ const COMMANDS = [
   'survey', 'talk to eun', 'out',
   'road', 'examine the milepost', 'look back', 'on', 'examine the walker', 'deduce the mile road',
   'fork', 'water', 'examine the rust', 'listen', 'deduce the greywater',
-  'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'back',
+  'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'hide', 'back',
 ];
 
 function record(): { golden: GoldenTape; status: string } {

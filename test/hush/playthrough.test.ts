@@ -16,17 +16,52 @@ function freshSession(seed = 'test-seed') {
 }
 
 describe('The Hush — Cordon’s Edge', () => {
-  it('a brisk day-march wins: reach the cache before night, carry the core out', () => {
+  it('a march to the cache wins — but the core is watched-for, so you must slip the gate to carry it out', () => {
     const s = freshSession('win-1');
     const path = [
       'out', 'road', 'road', 'on', 'fork', 'water', 'in', 'cache',
-      'take core',
-      'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'back',
+      'take core', // the Cordon now watches the gate for it
+      'out', 'back', 'back', 'mile', 'back', 'back', 'gate',
+      'hide', 'back', // slip the watched gate unseen (the interception)
     ];
     let last = { status: 'active' as string };
     for (const cmd of path) last = s.act(cmd);
     expect(s.state.facts['possession.pc.salvage_core']).toBe(true);
+    expect(s.state.facts['flag.intercepted']).toBe(true); // taking the core marked you
     expect(last.status).toBe('won');
+  });
+
+  it('return-trip interception: carrying the core, the gate reads the metal/debt facts you wrote', () => {
+    // a primed scene at the watched checkpoint, carrying the core
+    const base = () => {
+      const g = createGame(HUSH_PACK, 'intercept-1');
+      const sess = new Session(g);
+      sess.state = { ...sess.state, facts: { ...sess.state.facts, 'loc.pc': 'cordon_checkpoint', 'possession.pc.salvage_core': true, 'flag.intercepted': true } };
+      return sess;
+    };
+    const exitOpen = (sess: Session) => sess.obs().scene.exits.some((e) => e.to === 'waystation');
+
+    // blocked by default (no resolution)
+    expect(exitOpen(base())).toBe(false);
+
+    // (a) WORKING iron: USE it to pry the wire-gap wide
+    const iron = base();
+    iron.state = { ...iron.state, facts: { ...iron.state.facts, 'possession.pc.crowbar': true, 'possession.pc.crowbar.class': 'metal' } };
+    iron.act('use the crowbar');
+    expect(iron.state.facts['flag.intercept_clear']).toBe(true);
+    expect(exitOpen(iron)).toBe(true);
+
+    // (b) SLUMPED iron (Greywater ate its temper): the pry FAILS
+    const slumped = base();
+    slumped.state = { ...slumped.state, facts: { ...slumped.state.facts, 'possession.pc.crowbar': true, 'possession.pc.crowbar.class': 'metal', 'possession.pc.crowbar.condition': 'ore' } };
+    const fail = slumped.act('use the crowbar');
+    expect(slumped.state.facts['flag.intercept_clear']).toBeUndefined();
+    expect(fail.text.toLowerCase()).toContain('warm wax');
+
+    // (c) a STRIDER debt (you bought your way in) walks you out
+    const debt = base();
+    debt.state = { ...debt.state, facts: { ...debt.state.facts, 'reputation.pc.striders': 1 } };
+    expect(exitOpen(debt)).toBe(true);
   });
 
   it('the learning loop: examine a tell, trigger the fail-safe, deduce to surveyed', () => {

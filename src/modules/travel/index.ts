@@ -130,6 +130,15 @@ export function createTravel(pack: WorldPack): Module {
             summary: bespokeTake(id, it?.names[0] ?? id),
           },
         ];
+        // taking the core marks you: the Cordon will watch the gate for it on your way out
+        if (id === 'salvage_core') {
+          ev.push({
+            tag: 'core_intercept',
+            mutations: [{ op: 'set', key: 'flag.intercepted', value: true }],
+            summary: 'Word of the core moves faster than you can. By the time you turn for home, the Cordon will be watching the gate for exactly what rides in your pack — and the Striders will be watching the Cordon.',
+            data: { intercept: true },
+          });
+        }
         return { nativeNext: { ...n, taken: [...n.taken, id] }, events: ev, control: { kind: 'continue' }, render: { labels: ['travel.take'], entities: [`item.${id}`] } };
       }
       if (c === 'drop') {

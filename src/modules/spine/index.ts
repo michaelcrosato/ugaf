@@ -45,8 +45,8 @@ export function createSpine(): Module {
     domain: 'narrative',
     priority: 0, // the floor — lowest priority, can never be armed away
     intents: ['wait', 'rest', 'look', 'recall', 'use', 'open', 'close', 'speak_aloud', 'call_out', 'unclassified'],
-    writesFacts: ['flag', 'world'],
-    readsFacts: ['flag', 'world', 'phase', 'survival'],
+    writesFacts: ['flag', 'world', 'survival'],
+    readsFacts: ['flag', 'world', 'phase', 'survival', 'possession', 'loc'],
   });
 
   const CLAIMED = ['wait', 'rest', 'look', 'recall', 'use', 'open', 'close', 'speak_aloud', 'call_out', 'unclassified'];
@@ -59,11 +59,36 @@ export function createSpine(): Module {
       const native = args.native as { beats: number };
       const intent = args.action.intent;
       const c = intent.class;
+      const facts = args.facts;
+
+      // USE iron to lever the watched wire-gap on the way out (reads the .condition
+      // the Greywater wrote — a slumped-to-ore tool fails). One of three escapes.
+      if (c === 'use' && facts.getString('loc.pc') === 'cordon_checkpoint' && facts.getBool('flag.intercepted') && !facts.getBool('flag.intercept_clear')) {
+        const metalKeys = facts.keysUnder('possession.pc').filter((k) => k.endsWith('.class') && facts.getString(k) === 'metal');
+        const working = metalKeys.find((k) => facts.getString(`${k.slice(0, -'.class'.length)}.condition`) !== 'ore');
+        if (working) {
+          return {
+            nativeNext: native,
+            events: [{ tag: 'pry_gate', mutations: [{ op: 'set', key: 'flag.intercept_clear', value: true }], summary: 'You set good iron to the wire-gap and lever it wide, and post the core through into the dark beyond the fence. The troopers will find a gap in the morning and blame it on rust. You are clear, and gone.', severity: 'reversible' }],
+            control: { kind: 'continue' },
+            render: { labels: ['intercept.pry'], valence: 'boon' },
+          };
+        }
+        return {
+          nativeNext: native,
+          events: [{ tag: 'pry_fail', mutations: [], summary: metalKeys.length ? 'You set your iron to the wire and lean — and it folds like warm wax in your hands. The Greywater ate its temper down in the dark, and left you nothing to pry with. You will have to get out another way: unseen, or owed a favour.' : 'You have nothing on you strong enough to lever the wire. Another way, then — slip past unseen, or call in a debt.' }],
+          control: { kind: 'continue' },
+          render: { labels: ['intercept.pry_fail'], valence: 'cost' },
+        };
+      }
+
       const roll = args.tape.die('spine', 6, 'fu-d6');
       const band = LADDER[roll]!;
       const summary = floorLine(c, intent.utterance);
       const events: WorldEvent[] = [{ tag: 'spine_beat', mutations: [{ op: 'set', key: 'flag.last_band', value: band }], visibility: 'private' }];
-      if (summary) events.push({ tag: `spine_${c}`, mutations: [], summary, visibility: 'public' });
+      // resting recovers your nerve (unless the deep dark is taking it faster — that fires on a later beat)
+      const restRecovery = c === 'rest' ? [{ op: 'adjust' as const, key: 'survival.pc.unsettled', by: -1, min: 0, max: 5 }] : [];
+      if (summary) events.push({ tag: `spine_${c}`, mutations: restRecovery, summary, visibility: 'public' });
       return {
         nativeNext: { lastBand: band, beats: native.beats + 1 },
         events,

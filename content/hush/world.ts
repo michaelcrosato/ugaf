@@ -64,7 +64,15 @@ export const NODES: NodeDef[] = [
     },
     npcs: ['warden_holt'],
     exits: [
-      { dir: 'back', to: 'waystation', label: 'back to the waystation', via: 'e_way_check' },
+      {
+        dir: 'back',
+        to: 'waystation',
+        label: 'back to the waystation',
+        via: 'e_way_check',
+        when: { any: [{ not: { fact: 'flag.intercepted', eq: true } }, { fact: 'flag.intercept_clear', eq: true }, { fact: 'flag.hidden', eq: true }, { fact: 'reputation.pc.striders', gte: 1 }] },
+        blockedText:
+          'The boom gate is down and the troopers are at the wire, watching for exactly what rides in your pack. You will not simply walk the core out under their noses. You could slip past unseen (HIDE), or lever the wire-gap wide with good iron (USE your bar or knife — if the Greywater has not eaten its temper), or lean on a debt, if the Striders owe you one.',
+      },
       { dir: 'road', to: 'lyles_rest', label: "the maintained road, down to Lyle's Rest", via: 'e_check_lyle' },
       { dir: 'gap', to: 'the_fork', label: 'the gap in the wire, toward the fork', via: 'e_check_fork', when: { all: [{ fact: 'awareness.cordon_patrol', neq: 'alert' }, { fact: 'flag.hidden', eq: true }] }, blockedText: 'The troopers would see you cross the open ground. You would need to not be seen first.' },
     ],
@@ -166,7 +174,7 @@ export const NODES: NodeDef[] = [
     },
     tells: ['hollow_silence'],
     examinables: [
-      { id: 'sitter', names: ['sitter', 'salvager', 'man', 'body', 'figure'], tell: 'hollow_sitter', look: { base: 'A salvager sits cross-legged in the dark a little way off the path, perfectly still, the way a person sits to catch their breath. He has been catching it for some time. Nothing marks him — no wound, no struggle. He simply stopped, in the deep, after dark, and the dark came up to him and stopped too.', variants: [{ when: { fact: 'phase.now', eq: 'day' }, text: 'By day he is just a dead man, and the path runs past him without comment.' }] } },
+      { id: 'sitter', names: ['sitter', 'salvager', 'man', 'body', 'figure'], tell: 'hollow_sitter', look: { base: 'A salvager sits cross-legged in the dark a little way off the path, perfectly still, the way a person sits to catch their breath. He has been catching it for some time. Nothing marks him — no wound, no struggle. He simply stopped, in the deep, after dark, and the dark came up to him and stopped too.', variants: [{ when: { not: { fact: 'law.hollow_dark.live', eq: true } }, text: 'A salvager lies dead a little way off the path — old, weathered, ordinary as the Zone gets. Whatever took him, it was nothing that is still here.', replace: true }, { when: { fact: 'phase.now', eq: 'day' }, text: 'By day he is just a dead man, and the path runs past him without comment.' }] } },
     ],
     exits: [
       { dir: 'mile', to: 'mile_road_high', label: 'back up to the Mile Road', via: 'e_mile_fork' },
@@ -187,6 +195,7 @@ export const NODES: NodeDef[] = [
         { when: { fact: 'phase.now', eq: 'night' }, text: 'It is full dark now, and the water has woken. The hum comes up through the causeway stones and into every rivet and blade you carry. The rust-bloom is faster than rust has any right to be.' },
         { when: { fact: 'phase.now', eq: 'day' }, text: 'In daylight the bottoms are only flooded and sad. Whatever lives in the dark here is sleeping; the metal in the silt is just metal.' },
         { when: { fact: 'known.law.greywater', eq: 'surveyed' }, text: 'You know this water now — what it wants, and when it wakes to want it. You weigh the iron on you against the failing light, and you do the sum the dead in the silt never learned to do.' },
+        { when: { all: [{ fact: 'possession.pc.salvage_core', eq: true }, { phase: ['dusk', 'night'] }] }, text: 'No time to linger now — the core is a weight at your spine and the water is wide awake. Every rivet on you is going soft. Move.', replace: true },
       ],
       ambient: ['Something drips, and the drip is answered, a beat late, from inside a drowned house.', 'A fish that is the wrong shape turns over once and is gone.'],
     },

@@ -56,7 +56,7 @@ const VERBS: [string, IntentClass][] = [
   ['give', 'give'], ['hand', 'give'],
   ['wait', 'wait'], ['z', 'wait'], ['pause', 'wait'],
   ['rest', 'rest'], ['sleep', 'rest'], ['camp', 'rest'],
-  ['open', 'open'], ['close', 'close'], ['use', 'use'],
+  ['open', 'open'], ['close', 'close'], ['use', 'use'], ['pry', 'use'], ['lever', 'use'], ['force', 'use'],
 ];
 
 export interface Parser {

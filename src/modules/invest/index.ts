@@ -12,7 +12,7 @@
  */
 import { stageRank, type KnowledgeStage, type LawDefinition } from '../../sdk/law.js';
 import { makeManifest } from '../../sdk/define.js';
-import type { FactView } from '../../sdk/facts.js';
+import type { FactView, FactMutation } from '../../sdk/facts.js';
 import type { JsonObject } from '../../sdk/json.js';
 import type { Module, ModuleResult, WorldEvent } from '../../sdk/types.js';
 import type { WorldPack, TellProse } from '../../sdk/worldpack.js';
@@ -98,6 +98,10 @@ export function createGumshoe(pack: WorldPack): Module {
         let lawId = matchLaw(args.action.intent.topic ?? args.action.intent.target?.raw);
         // broaden: if no exact law named, fall back to a law whose scope covers where you stand
         if (!lawId) lawId = lawInScope(node);
+        // a non-live rotating law cannot be surveyed — there is no rule here to name
+        if (lawId && !isLive(lawId, facts)) {
+          return beat(native, { labels: ['invest.deduce_dead'], hints: { law: lawId } }, 'You reach for a rule — and there is nothing there to take hold of. Whatever you half-sensed, the Zone is not enforcing it here. Not this time.');
+        }
         if (!lawId) {
           const candidate = bestLawHint(facts);
           const hint = candidate ? ` Do you mean ${laws.get(candidate)!.title}? Try: deduce the ${laws.get(candidate)!.title.replace(/^the /i, '').toLowerCase()}.` : '';
@@ -140,7 +144,8 @@ export function createGumshoe(pack: WorldPack): Module {
       const channel = c === 'listen' ? 'sound' : c === 'read' ? 'sight' : undefined;
       const targetTell = c === 'examine' ? resolveExamineTell(args.action.intent.target?.id, args.action.intent.target?.raw, node) : undefined;
       const candidates = targetTell ? [targetTell] : observableHere(node, channel);
-      const fresh = candidates.filter((t) => !facts.getBool(`known.tell.${t}`));
+      // only LIVE laws have tells to read this seed (rotating laws absent on some seeds)
+      const fresh = candidates.filter((t) => !facts.getBool(`known.tell.${t}`) && isLive(tellLaw.get(t), facts));
 
       if (fresh.length === 0) {
         return beat(native, { labels: ['invest.nothing_new'], hints: { intent: c } }, 'You look closely, but nothing here tells you anything you didn’t already know.');
@@ -170,7 +175,15 @@ export function createGumshoe(pack: WorldPack): Module {
         const next = stageFromTells(lid, withObserved(facts, acquired));
         const cur = (facts.getString(`known.law.${lid}`) as KnowledgeStage) ?? 'unknown';
         if (stageRank(next) > stageRank(cur)) {
-          events.push({ tag: 'codex_advance', mutations: [{ op: 'set', key: `known.law.${lid}`, value: next }], summary: ``, data: { law: lid, stage: next }, visibility: 'private' });
+          const muts: FactMutation[] = [{ op: 'set', key: `known.law.${lid}`, value: next }];
+          // the first time a law reaches "approximate", tell the player how to confirm it
+          let hint = '';
+          if (next === 'approximate' && !facts.getBool(`known.${lid}.hinted`)) {
+            muts.push({ op: 'set', key: `known.${lid}.hinted`, value: true });
+            const title = laws.get(lid)!.title;
+            hint = `You have seen enough to almost name the rule of ${title}. One clear thought might settle it — try: deduce the ${title.replace(/^the /i, '').toLowerCase()}.`;
+          }
+          events.push({ tag: 'codex_advance', mutations: muts, summary: hint, data: { law: lid, stage: next }, visibility: hint ? 'public' : 'private' });
         }
       }
       return {
@@ -212,6 +225,12 @@ export function createGumshoe(pack: WorldPack): Module {
     if (!node) return undefined;
     for (const [id, law] of laws) if ((law.scope.nodes ?? []).includes(node) || (law.scope.region && nodeRegion.get(node) === law.scope.region)) return id;
     return undefined;
+  }
+
+  /** a law is learnable only if it is LIVE this seed (a non-live rotating law has no tells to read). */
+  function isLive(lawId: string | undefined, facts: FactView): boolean {
+    if (!lawId) return false;
+    return facts.getBool(`law.${lawId}.live`) !== false;
   }
 
   /** the law the player has observed the most tells for — used to nudge a vague deduce. */

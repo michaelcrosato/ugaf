@@ -87,7 +87,7 @@ export class Session {
     if (intent.class === 'unclassified') {
       const w = intent.raw.trim();
       return {
-        text: dim(`You're not sure how to ${w ? `“${w}”` : 'do that'} here. Try LOOK, GO <way>, EXAMINE <thing>, LISTEN, SEARCH, or TALK TO <someone>. (CODEX, INVENTORY, MAP, HELP.)`),
+        text: dim(`You're not sure how to ${w ? `“${w}”` : 'do that'} here. Try LOOK, GO <way>, EXAMINE <thing>, LISTEN, SEARCH, TALK TO <someone>, or — once you have seen enough — DEDUCE <the law>. (CODEX, INVENTORY, MAP, HELP.)`),
         status: this.ended ? this.endStatus : 'active',
         rejected: true,
       };
@@ -166,8 +166,9 @@ export class Session {
       const drift = f[`law.${law.id}.drift_warned`] ? '  (your certainty is decaying)' : '';
       const surveyed = stageRank(stage) >= stageRank('surveyed');
       const purchased = f[`known.purchased.${law.id}`] && !surveyed ? '  (from a bought map — unverified; trust it at your own risk)' : '';
+      const nearly = stage === 'approximate' ? dim(`  — you have almost named it; try: deduce the ${law.title.replace(/^the /i, '').toLowerCase()}`) : '';
       const conclusion = surveyed ? law.tells.map((t) => this.game.pack.tellLibrary.find((p) => p.id === t.id)?.conclusion).find(Boolean) : undefined;
-      lines.push(`  • ${bold(law.title)} — ${stage}${drift}${purchased}`);
+      lines.push(`  • ${bold(law.title)} — ${stage}${drift}${purchased}${nearly}`);
       if (conclusion) lines.push(dim(`      ${conclusion}`));
     }
     if (!any) lines.push(dim('  You have learned nothing certain yet. Look. Listen. The Hush is lawful — it can be read.'));

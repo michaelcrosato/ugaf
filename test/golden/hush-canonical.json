@@ -30,6 +30,7 @@
     "back",
     "back",
     "gate",
+    "hide",
     "back"
   ],
   "fingerprintId": "db9670e9b3ff",
@@ -1018,7 +1019,7 @@
                 "value": true
               }
             ],
-            "summary": "The next milepost reads the same numeral as the last one — and the one before that. The road is not counting honestly. The distance behind you is not what it was.",
+            "summary": "The road is not counting honestly. The distance behind you is not what it was.",
             "data": {
               "tell": "mile_milepost_reset",
               "law": "mile_road"
@@ -1032,14 +1033,19 @@
                 "op": "set",
                 "key": "known.law.mile_road",
                 "value": "approximate"
+              },
+              {
+                "op": "set",
+                "key": "known.mile_road.hinted",
+                "value": true
               }
             ],
-            "summary": "",
+            "summary": "You have seen enough to almost name the rule of The Mile Road. One clear thought might settle it — try: deduce the mile road.",
             "data": {
               "law": "mile_road",
               "stage": "approximate"
             },
-            "visibility": "private",
+            "visibility": "public",
             "source": "invest.gumshoe"
           },
           {
@@ -1098,7 +1104,7 @@
           }
         ],
         "priorHash": "c9be8535edfef2297bdbdf03a65e706a46a82155519fd9fa4c78dd70176b4bb9",
-        "nextHash": "65f97963cda05732a87bb9eb48cbc10f6dc77c20008fafddf4aa18618cf32c8a"
+        "nextHash": "b78475908759bfa4d298fdbbf8cae4c4cb45cb7b92752f2fdbc08e79d1b7bdbd"
       },
       {
         "eventIndex": 11,
@@ -1235,8 +1241,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "65f97963cda05732a87bb9eb48cbc10f6dc77c20008fafddf4aa18618cf32c8a",
-        "nextHash": "552c30cb8a6b536863b873e5f15658d51b7735ac0bcd4c52afdae086121bda74"
+        "priorHash": "b78475908759bfa4d298fdbbf8cae4c4cb45cb7b92752f2fdbc08e79d1b7bdbd",
+        "nextHash": "10cb9d753cc8e0a034c0ff28de109b98d2321f5738ebee56b8d0e88c927d0829"
       },
       {
         "eventIndex": 12,
@@ -1358,8 +1364,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "552c30cb8a6b536863b873e5f15658d51b7735ac0bcd4c52afdae086121bda74",
-        "nextHash": "bf61ce73eec596bd1b71be320932fe030fa82accf8b8824d2ebae51d0ca9c996"
+        "priorHash": "10cb9d753cc8e0a034c0ff28de109b98d2321f5738ebee56b8d0e88c927d0829",
+        "nextHash": "dd825de9c879249c2ebe1a29614d2fb5d0d97ed355f359d11ad87e00fc9c4063"
       },
       {
         "eventIndex": 13,
@@ -1388,7 +1394,7 @@
                 "value": true
               }
             ],
-            "summary": "A salvager sits against a milepost, long dead, facing back the way she came. The bootprints around her loop and double and loop again, a thousand steps that never got her home. She kept looking back. The road kept giving her more road to look at. She never reached the end of it.",
+            "summary": "She kept looking back. The road kept giving her more road to look at. She never reached the end of it.",
             "data": {
               "tell": "mile_dead_walker",
               "law": "mile_road"
@@ -1450,8 +1456,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "bf61ce73eec596bd1b71be320932fe030fa82accf8b8824d2ebae51d0ca9c996",
-        "nextHash": "73849cf1df8db4fd4b1bad5b455114fb82e1fe4d79135253cd7b9a2aa1d3c5c3"
+        "priorHash": "dd825de9c879249c2ebe1a29614d2fb5d0d97ed355f359d11ad87e00fc9c4063",
+        "nextHash": "4f1a583756fb47a97f5cb328ebaa806bb038013744b16998d56a5c618d5dc690"
       },
       {
         "eventIndex": 14,
@@ -1542,8 +1548,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "73849cf1df8db4fd4b1bad5b455114fb82e1fe4d79135253cd7b9a2aa1d3c5c3",
-        "nextHash": "4adfec934a0929ea1a27f66773d7c53503c0e459dcecf5d1f52d4bd2c91bc4c1"
+        "priorHash": "4f1a583756fb47a97f5cb328ebaa806bb038013744b16998d56a5c618d5dc690",
+        "nextHash": "75122ce892006616ca02891f2c70a622fbd4a79f7b46fab4eb8b946483143533"
       },
       {
         "eventIndex": 15,
@@ -1650,8 +1656,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "4adfec934a0929ea1a27f66773d7c53503c0e459dcecf5d1f52d4bd2c91bc4c1",
-        "nextHash": "4fe775c866efcfec794a16e0173d2c673806a564523db03282c022974191ba86"
+        "priorHash": "75122ce892006616ca02891f2c70a622fbd4a79f7b46fab4eb8b946483143533",
+        "nextHash": "f3d66df92e639ec553a5296e9eca3c042918439ec72d91481a817c084a53a87d"
       },
       {
         "eventIndex": 16,
@@ -1758,8 +1764,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "4fe775c866efcfec794a16e0173d2c673806a564523db03282c022974191ba86",
-        "nextHash": "51d05848f0e5773aeb783025b2ec568f43b05975868b50efe12bbc4c730c330f"
+        "priorHash": "f3d66df92e639ec553a5296e9eca3c042918439ec72d91481a817c084a53a87d",
+        "nextHash": "2f4a4a025da1895a499946d9f12ce13aa614d5cf4c35025f43e8198319d72977"
       },
       {
         "eventIndex": 17,
@@ -1788,7 +1794,7 @@
                 "value": true
               }
             ],
-            "summary": "Rust blooms across every worked rivet and blade like frost across a window — fast enough to watch it spread. Worked iron is rotting here, and quickly. Something in the dark un-makes it.",
+            "summary": "Worked iron is rotting here, and quickly. Something in the dark un-makes it.",
             "data": {
               "tell": "grey_rust_bloom",
               "law": "greywater"
@@ -1802,14 +1808,19 @@
                 "op": "set",
                 "key": "known.law.greywater",
                 "value": "approximate"
+              },
+              {
+                "op": "set",
+                "key": "known.greywater.hinted",
+                "value": true
               }
             ],
-            "summary": "",
+            "summary": "You have seen enough to almost name the rule of The Greywater. One clear thought might settle it — try: deduce the greywater.",
             "data": {
               "law": "greywater",
               "stage": "approximate"
             },
-            "visibility": "private",
+            "visibility": "public",
             "source": "invest.gumshoe"
           },
           {
@@ -1867,8 +1878,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "51d05848f0e5773aeb783025b2ec568f43b05975868b50efe12bbc4c730c330f",
-        "nextHash": "c6c10959e1a5738ee9ca5a259c0289c5ea8d4747871acc37835ad3348093ca96"
+        "priorHash": "2f4a4a025da1895a499946d9f12ce13aa614d5cf4c35025f43e8198319d72977",
+        "nextHash": "68189c0fc2603161f3f695aa10abba559c316cc00aa144be314b8457cb798a1b"
       },
       {
         "eventIndex": 18,
@@ -1952,8 +1963,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "c6c10959e1a5738ee9ca5a259c0289c5ea8d4747871acc37835ad3348093ca96",
-        "nextHash": "724e7fdb0aa5147e7b1bf6eafc5796c681ec4708bb5b2d5398b268e37dbb3418"
+        "priorHash": "68189c0fc2603161f3f695aa10abba559c316cc00aa144be314b8457cb798a1b",
+        "nextHash": "1286a3aa15cb5ed4cb07d7c64d5fabac6a743d3e983acc52c1c109d642f3fef5"
       },
       {
         "eventIndex": 19,
@@ -2044,8 +2055,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "724e7fdb0aa5147e7b1bf6eafc5796c681ec4708bb5b2d5398b268e37dbb3418",
-        "nextHash": "b8d952633dbeb41ff55b3516bcf55ac988ff2d2ebded9850b7a9047df0518ee5"
+        "priorHash": "1286a3aa15cb5ed4cb07d7c64d5fabac6a743d3e983acc52c1c109d642f3fef5",
+        "nextHash": "7ec408e5a516945600fe4dfcde00d05191192d4f418b1a6c0d427c0ba57ae97a"
       },
       {
         "eventIndex": 20,
@@ -2152,8 +2163,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b8d952633dbeb41ff55b3516bcf55ac988ff2d2ebded9850b7a9047df0518ee5",
-        "nextHash": "bd50cd6e6a54fddc3fa278f09b8cdd11e963a5c1f0f1c01e9a9ba94b52ee3860"
+        "priorHash": "7ec408e5a516945600fe4dfcde00d05191192d4f418b1a6c0d427c0ba57ae97a",
+        "nextHash": "54426223c63bf52a7620f3df1c77222817323f9b3b966af5169e4e5733342afe"
       },
       {
         "eventIndex": 21,
@@ -2260,8 +2271,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "bd50cd6e6a54fddc3fa278f09b8cdd11e963a5c1f0f1c01e9a9ba94b52ee3860",
-        "nextHash": "48272c3814d72c138339550334e2520f3972fe390ccdacaf999073777b150fae"
+        "priorHash": "54426223c63bf52a7620f3df1c77222817323f9b3b966af5169e4e5733342afe",
+        "nextHash": "09977e32ab893b5380873ba903210f2c30c3626fc3a339c39d4246df97c04247"
       },
       {
         "eventIndex": 22,
@@ -2296,6 +2307,21 @@
               }
             ],
             "summary": "You close your hand around the core. It is warmer than it should be, and it settles into your pack like it has decided to come with you.",
+            "source": "travel.graph"
+          },
+          {
+            "tag": "core_intercept",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.intercepted",
+                "value": true
+              }
+            ],
+            "summary": "Word of the core moves faster than you can. By the time you turn for home, the Cordon will be watching the gate for exactly what rides in your pack — and the Striders will be watching the Cordon.",
+            "data": {
+              "intercept": true
+            },
             "source": "travel.graph"
           },
           {
@@ -2351,10 +2377,35 @@
             ],
             "visibility": "private",
             "source": "time.cycle"
+          },
+          {
+            "tag": "drift_warn",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_warned",
+                "value": true
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_warn_turn",
+                "value": 22
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_check_turn",
+                "value": 22
+              }
+            ],
+            "summary": "Something about The Mile Road feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)",
+            "data": {
+              "law": "mile_road"
+            },
+            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "48272c3814d72c138339550334e2520f3972fe390ccdacaf999073777b150fae",
-        "nextHash": "a6c9069b87e6be10f81b302222e91dc3c71fef19a3e7fa26bc6450c2269883da"
+        "priorHash": "09977e32ab893b5380873ba903210f2c30c3626fc3a339c39d4246df97c04247",
+        "nextHash": "2b5eceffebc5f2fa213461e99fadeb90b2c033b2c90e4f7a32ff708c646c33bf"
       },
       {
         "eventIndex": 23,
@@ -2461,8 +2512,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "a6c9069b87e6be10f81b302222e91dc3c71fef19a3e7fa26bc6450c2269883da",
-        "nextHash": "15e8623190f60b16032301a6d35d428a7d19350fe9619711802355c095e3f389"
+        "priorHash": "2b5eceffebc5f2fa213461e99fadeb90b2c033b2c90e4f7a32ff708c646c33bf",
+        "nextHash": "b446a94eab4d11fd125856e8f81c93dadc61f6157ca5254bcbee6770416a66b9"
       },
       {
         "eventIndex": 24,
@@ -2565,8 +2616,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "15e8623190f60b16032301a6d35d428a7d19350fe9619711802355c095e3f389",
-        "nextHash": "655292d1f552518e22c427245f01c531d4c0fe1ad35525d37cf829af17dc8330"
+        "priorHash": "b446a94eab4d11fd125856e8f81c93dadc61f6157ca5254bcbee6770416a66b9",
+        "nextHash": "e7349bee8e24336edeb8598913bfd9dd92b06734b303c251b0cabe5e64187899"
       },
       {
         "eventIndex": 25,
@@ -2669,8 +2720,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "655292d1f552518e22c427245f01c531d4c0fe1ad35525d37cf829af17dc8330",
-        "nextHash": "de780e12df976d0ac240cbf309881eac7454c0996961e3b8a6f7693b1cbeddb3"
+        "priorHash": "e7349bee8e24336edeb8598913bfd9dd92b06734b303c251b0cabe5e64187899",
+        "nextHash": "76078ba35e146fe518a1b4c12ab7db0aea59aef5dcd8af769abd34967ec2c762"
       },
       {
         "eventIndex": 26,
@@ -2792,33 +2843,42 @@
             "source": "time.cycle"
           },
           {
-            "tag": "drift_warn",
+            "tag": "drift_demote",
             "mutations": [
               {
                 "op": "set",
-                "key": "law.mile_road.drift_warned",
-                "value": true
+                "key": "known.law.mile_road",
+                "value": "approximate"
               },
               {
                 "op": "set",
-                "key": "law.mile_road.drift_warn_turn",
-                "value": 26
+                "key": "law.mile_road.drift_warned",
+                "value": false
               },
               {
                 "op": "set",
                 "key": "law.mile_road.drift_check_turn",
                 "value": 26
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.drifted_turn",
+                "value": 26
+              },
+              {
+                "op": "delete",
+                "key": "known.mile_road.surveyed_turn"
               }
             ],
-            "summary": "Something about The Mile Road feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)",
+            "summary": "The Mile Road has re-Settled. What you knew is no longer quite true — you will have to read it again.",
             "data": {
               "law": "mile_road"
             },
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "de780e12df976d0ac240cbf309881eac7454c0996961e3b8a6f7693b1cbeddb3",
-        "nextHash": "92f1891c1cda4f3e925f233f95356fc5598cf53fb226b735a544fc4cfc4732c9"
+        "priorHash": "76078ba35e146fe518a1b4c12ab7db0aea59aef5dcd8af769abd34967ec2c762",
+        "nextHash": "b7b7842d6fcbe920eaacd1fc0e4ef80687f39103a7027d1cbcc7ac553a2f2807"
       },
       {
         "eventIndex": 27,
@@ -2921,8 +2981,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "92f1891c1cda4f3e925f233f95356fc5598cf53fb226b735a544fc4cfc4732c9",
-        "nextHash": "680a63f5408f535feb9f975c87e0fd956a32c84293bd4f4400916ed88a5e21b5"
+        "priorHash": "b7b7842d6fcbe920eaacd1fc0e4ef80687f39103a7027d1cbcc7ac553a2f2807",
+        "nextHash": "0afa35325b7ddfb596241dbd74fd491518acf17616dc0cbc3559533e7fd8b41f"
       },
       {
         "eventIndex": 28,
@@ -3023,10 +3083,35 @@
             ],
             "visibility": "private",
             "source": "time.cycle"
+          },
+          {
+            "tag": "drift_warn",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.greywater.drift_warned",
+                "value": true
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.drift_warn_turn",
+                "value": 28
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.drift_check_turn",
+                "value": 28
+              }
+            ],
+            "summary": "Something about The Greywater feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)",
+            "data": {
+              "law": "greywater"
+            },
+            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "680a63f5408f535feb9f975c87e0fd956a32c84293bd4f4400916ed88a5e21b5",
-        "nextHash": "0539cf933cafec2b5817034f1c77b6dda92c3de64f9d6cf5d5a9edf794d5e8be"
+        "priorHash": "0afa35325b7ddfb596241dbd74fd491518acf17616dc0cbc3559533e7fd8b41f",
+        "nextHash": "c42399008ab68b42b57d1190d6757155c1e4cd04ec9bba68197ba0776b603cb0"
       },
       {
         "eventIndex": 29,
@@ -3133,11 +3218,101 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "0539cf933cafec2b5817034f1c77b6dda92c3de64f9d6cf5d5a9edf794d5e8be",
-        "nextHash": "f34d6f8af0778ac65b06747848b876509b0ad2609cca92324f9842c986b2cb78"
+        "priorHash": "c42399008ab68b42b57d1190d6757155c1e4cd04ec9bba68197ba0776b603cb0",
+        "nextHash": "fd7940526d6c16f52f1bf686b2be3a9bca3d34ab8c0800ba2c036b8037bed407"
       },
       {
         "eventIndex": 30,
+        "intent": {
+          "class": "hide",
+          "tags": [],
+          "confidence": 0.9,
+          "raw": "hide"
+        },
+        "owner": "stealth.detection",
+        "tape": [],
+        "events": [
+          {
+            "tag": "stealth_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "awareness.cordon_patrol",
+                "value": "unaware"
+              },
+              {
+                "op": "set",
+                "key": "flag.hidden",
+                "value": true
+              }
+            ],
+            "summary": "You melt into the dark. The cordon patrol loses the thread of you entirely.",
+            "data": {
+              "patrol": "cordon_patrol",
+              "awareness": "unaware"
+            },
+            "source": "stealth.detection"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "hide"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 30
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1338
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "22:18"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 30
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "fd7940526d6c16f52f1bf686b2be3a9bca3d34ab8c0800ba2c036b8037bed407",
+        "nextHash": "b404b899caee36933524d50b521fd4f9d417187d5b445fb40b57adda2ece0d36"
+      },
+      {
+        "eventIndex": 31,
         "intent": {
           "class": "go",
           "tags": [
@@ -3172,7 +3347,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 30
+                "value": 31
               }
             ],
             "summary": "You set off.",
@@ -3193,7 +3368,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 30
+                "value": 31
               },
               {
                 "op": "set",
@@ -3220,25 +3395,25 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1341
+                "value": 1346
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "22:21"
+                "value": "22:26"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 30
+                "value": 31
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "f34d6f8af0778ac65b06747848b876509b0ad2609cca92324f9842c986b2cb78",
-        "nextHash": "1d38df5f9a58641f44f120226f020d476070206d4c71b88eb66ed26e1d59d701"
+        "priorHash": "b404b899caee36933524d50b521fd4f9d417187d5b445fb40b57adda2ece0d36",
+        "nextHash": "f421c04f180b262a3f5798225279939b7c80d34966094ddc241f4b9580f676f1"
       }
     ]
   }
