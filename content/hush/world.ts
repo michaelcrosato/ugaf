@@ -155,8 +155,12 @@ export const NODES: NodeDef[] = [
     kind: 'junction',
     look: {
       base: 'Where three ways meet under a leaning signpost stripped of its signs. One path drops to the Greywater bottoms; one climbs back to the Mile Road; one runs flat toward the antenna field. A cut in the wire to the north is the troopers\' blind path back to the checkpoint.',
-      ambient: ['The signpost\'s bare bolt-holes stare like empty eyes.', 'Water-sound rises from the bottoms, then stops, as if listening back.'],
+      ambient: ['The signpost\'s bare bolt-holes stare like empty eyes.', 'Water-sound rises from the bottoms, then stops, as if listening back.', 'The quiet here has a grain to it, like something holding its breath.'],
     },
+    tells: ['hollow_silence'],
+    examinables: [
+      { id: 'sitter', names: ['sitter', 'salvager', 'man', 'body', 'figure'], tell: 'hollow_sitter', look: { base: 'A salvager sits cross-legged in the dark a little way off the path, perfectly still, the way a person sits to catch their breath. He has been catching it for some time. Nothing marks him — no wound, no struggle. He simply stopped, in the deep, after dark, and the dark came up to him and stopped too.', variants: [{ when: { fact: 'phase.now', eq: 'day' }, text: 'By day he is just a dead man, and the path runs past him without comment.' }] } },
+    ],
     exits: [
       { dir: 'mile', to: 'mile_road_high', label: 'back up to the Mile Road', via: 'e_mile_fork' },
       { dir: 'water', to: 'greywater_ford', label: 'down to the Greywater ford', via: 'e_fork_grey' },

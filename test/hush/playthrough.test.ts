@@ -95,20 +95,34 @@ describe('The Hush — Cordon’s Edge', () => {
 
   it('Law Drift: a surveyed law is warned, then demoted — the codex is fallible (dwell engine)', () => {
     const s = freshSession('drift-1');
-    // survey the Mile Road early
+    // survey the Mile Road early, then dwell at a safe spot (mile_road_high, no night-lethal law)
     for (const c of ['out', 'road', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road']) s.act(c);
     expect(s.state.facts['known.law.mile_road']).toBe('surveyed');
-    // wait out the drift cadence (everyTurns 40): turn 40 warns, turn 80 demotes
-    let warnedSeen = false;
-    while (s.state.turn < 41) {
-      const r = s.act('wait');
-      if (s.state.facts['law.mile_road.drift_warned']) warnedSeen = true;
-      if (r.status !== 'active') break;
+    const surveyTurn = s.state.facts['known.mile_road.surveyed_turn'] as number;
+    expect(typeof surveyTurn).toBe('number');
+    // dwell (driftAfter 12): a pre-demotion warning fires, THEN the codex demotes
+    let warnedAt = -1;
+    let demotedAt = -1;
+    for (let i = 0; i < 40 && s.state.status === 'active'; i++) {
+      s.act('wait');
+      if (warnedAt < 0 && s.state.facts['law.mile_road.drift_warned']) warnedAt = s.state.turn;
+      if (demotedAt < 0 && s.state.facts['known.law.mile_road'] === 'approximate') demotedAt = s.state.turn;
     }
-    expect(warnedSeen).toBe(true); // pre-demotion drift tell fired before any demotion
-    expect(s.state.facts['known.law.mile_road']).toBe('surveyed'); // still surveyed at the warning
-    while (s.state.turn < 81) s.act('wait');
+    expect(warnedAt).toBeGreaterThan(surveyTurn); // warning fires after mastery, relative to it
+    expect(demotedAt).toBeGreaterThan(warnedAt); // demotion strictly AFTER the warning (never silent)
     expect(s.state.facts['known.law.mile_road']).toBe('approximate'); // re-Settled: must re-learn
+  });
+
+  it('per-seed variance: the Hollow Dark (rotating slot) is live on some seeds, absent on others', () => {
+    const live = (seed: string) => createGame(HUSH_PACK, seed).initialState().facts['law.hollow_dark.live'] === true;
+    const results = ['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'].map(live);
+    expect(results.some((x) => x)).toBe(true); // some seeds surface it
+    expect(results.some((x) => !x)).toBe(true); // some seeds don't — a fresh second run
+    // the three teaching laws are ALWAYS live
+    const f = createGame(HUSH_PACK, 's1').initialState().facts;
+    expect(f['law.mile_road.live']).toBe(true);
+    expect(f['law.greywater.live']).toBe(true);
+    expect(f['law.antenna_field.live']).toBe(true);
   });
 
   it('per-seed variance: different seeds can deal different starting kits', () => {

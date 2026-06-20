@@ -127,11 +127,26 @@ export function createAnomaly(pack: WorldPack): Module {
         });
         break;
       }
+      case 'impose_condition': {
+        // an agency law that costs you nerve and lets the dark close the distance
+        const cond = effect.condition ?? 'unsettled';
+        events.push({
+          tag: 'law_condition',
+          mutations: [
+            { op: 'adjust', key: `survival.pc.${cond}`, by: 1, min: 0, max: 5 },
+            { op: 'adjust', key: 'survival.pc.exposure', by: 1, min: 0, max: 10 },
+            { op: 'adjust', key: `law.${law.id}.closer`, by: 1, min: 0, max: 5 },
+          ],
+          summary: firstContact ? law.failSafe.firstContact.tell : 'You hold still a beat too long, and the dark takes another step toward you. (Unsettled.)',
+          data: { law: law.id, condition: cond },
+          severity: effect.severity ?? 'reversible',
+        });
+        break;
+      }
       case 'block_route':
       case 'repeat_window':
       case 'amplify_sound':
-      case 'reveal_tell':
-      case 'impose_condition': {
+      case 'reveal_tell': {
         events.push({
           tag: 'law_effect',
           mutations: [{ op: 'set', key: `law.${law.id}.active_turn`, value: turn }],
@@ -194,17 +209,35 @@ export function createAnomaly(pack: WorldPack): Module {
 function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: number, native: JsonObject): BeatResult {
   const events: WorldEvent[] = [];
   for (const law of laws.values()) {
-    if (!law.drift || law.drift.everyTurns <= 0) continue;
-    if (turn === 0 || turn % law.drift.everyTurns !== 0) continue;
+    if (!law.drift) continue;
+    if (turn === 0) continue;
     if (facts.getNumber(`law.${law.id}.drift_check_turn`) === turn) continue; // once per law per turn
     const surveyed = facts.getString(`known.law.${law.id}`) === 'surveyed';
     const warned = facts.getBool(`law.${law.id}.drift_warned`);
+
+    // dwell-based drift (preferred): fire relative to WHEN the law was surveyed,
+    // so mastery refreshes on its own clock. Falls back to absolute everyTurns.
+    const after = law.drift.driftAfter;
+    if (after && after > 0) {
+      const surveyedTurn = facts.getNumber(`known.${law.id}.surveyed_turn`);
+      if (!surveyed || surveyedTurn === undefined) continue;
+      const dwell = turn - surveyedTurn;
+      if (!warned && dwell < after) continue;
+      if (warned) {
+        const warnTurn = facts.getNumber(`law.${law.id}.drift_warn_turn`) ?? surveyedTurn + after;
+        if (turn - warnTurn < Math.max(2, Math.floor(after / 2))) continue; // not yet time to demote
+      }
+    } else {
+      if (law.drift.everyTurns <= 0 || turn % law.drift.everyTurns !== 0) continue;
+    }
+
     if (surveyed && !warned) {
       // pre-demotion tell: warn first, demote next drift window
       events.push({
         tag: 'drift_warn',
         mutations: [
           { op: 'set', key: `law.${law.id}.drift_warned`, value: true },
+          { op: 'set', key: `law.${law.id}.drift_warn_turn`, value: turn },
           { op: 'set', key: `law.${law.id}.drift_check_turn`, value: turn },
         ],
         summary: `Something about ${law.title} feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)`,
@@ -218,6 +251,7 @@ function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: num
           { op: 'set', key: `law.${law.id}.drift_warned`, value: false },
           { op: 'set', key: `law.${law.id}.drift_check_turn`, value: turn },
           { op: 'set', key: `law.${law.id}.drifted_turn`, value: turn },
+          { op: 'delete', key: `known.${law.id}.surveyed_turn` }, // re-survey restarts the dwell clock
         ],
         summary: `${law.title} has re-Settled. What you knew is no longer quite true — you will have to read it again.`,
         data: { law: law.id },

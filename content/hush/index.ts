@@ -35,12 +35,41 @@ export const HUSH_PACK: WorldPack = {
   },
   goals: [
     {
+      id: 'recover_core_mastery',
+      when: {
+        all: [
+          { fact: 'possession.pc.salvage_core', eq: true },
+          { fact: 'loc.pc', eq: 'waystation' },
+          { fact: 'known.law.mile_road', eq: 'surveyed' },
+          { fact: 'known.law.greywater', eq: 'surveyed' },
+        ],
+      },
+      outcome: 'won',
+      title: 'The Core, Carried Out — and the Hush, Read True',
+      epilogue:
+        "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. You did not buy your way past the Hush, and you did not luck your way past it. You read it — the dishonest road, the iron-hungry water, each law in turn — until it had nothing left to surprise you with, and then you walked through it like a man who knew the house. That is the only victory the Hush offers, and you took the whole of it: not to beat the Zone, but to understand it well enough that it stands aside. It will re-Settle. The laws will shift. But you know how to learn them now, and that is a thing the Zone cannot take back.",
+    },
+    {
+      id: 'recover_core_bought',
+      when: {
+        all: [
+          { fact: 'possession.pc.salvage_core', eq: true },
+          { fact: 'loc.pc', eq: 'waystation' },
+          { fact: 'reputation.pc.striders', gte: 1 },
+        ],
+      },
+      outcome: 'won',
+      title: 'The Core, Carried Out — on a Bought Map',
+      epilogue:
+        "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real — and it is not, strictly, yours. You paid the Striders for the way in, and Mox does not forget a debt or a face. Somewhere out past the wire she is already telling someone that the new arrival has the pump-house core, and that arrivals who buy their luck instead of learning it tend to need to buy it again. You got out. You did not, quite, get free. The Hush kept one law in reserve, the oldest one: what you do not understand, you remain at the mercy of.",
+    },
+    {
       id: 'recover_core',
       when: { all: [{ fact: 'possession.pc.salvage_core', eq: true }, { fact: 'loc.pc', eq: 'waystation' }] },
       outcome: 'won',
       title: 'The Core, Carried Out',
       epilogue:
-        "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. Outside the wire, the Hush goes on keeping its lawful, patient strangeness — the Mile Road measuring dishonestly, the Greywater calling iron home, the antennas listening for a name. But you learned them, each in turn, and they let you pass. That is the only victory the Hush offers: not to beat it, but to understand it well enough that it lets you leave. For now.",
+        "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. Outside the wire, the Hush goes on keeping its lawful, patient strangeness — the Mile Road measuring dishonestly, the Greywater calling iron home, the antennas listening for a name. You came through it more by nerve than by knowing, and you can feel how thin that margin was. That is the Hush's lesson, offered free to anyone who survives it: it is lawful, and the laws can be learned — and next time, you might learn them before they teach you.",
     },
     {
       id: 'lost_to_hush',
@@ -51,7 +80,9 @@ export const HUSH_PACK: WorldPack = {
     },
   ],
   seedVariance: {
-    liveLaws: { min: 3, max: 3, always: ['mile_road', 'greywater', 'antenna_field'] },
+    // the three teaching laws always run; the deeper "Hollow Dark" is the rotating
+    // slot, so ~half of seeds surface a never-before-seen law (replay variance).
+    liveLaws: { min: 3, max: 4, always: ['mile_road', 'greywater', 'antenna_field'] },
     rerollRumorTruth: false,
     startKits: [
       { id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} },

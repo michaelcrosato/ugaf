@@ -153,8 +153,14 @@ export interface FailSafe {
 //  Drift — periodic re-Settling: refreshes mystery, preserves dread past mastery
 // ---------------------------------------------------------------------------
 export interface DriftPolicy {
-  /** every N turns the law may drift (seeded). 0 = never. */
+  /** absolute-turn cadence fallback (legacy). 0 = never. */
   readonly everyTurns: number;
+  /**
+   * dwell-based drift: warn this many turns AFTER the law was surveyed (so drift
+   * fires relative to when mastery was achieved, not absolute clock). The codex
+   * then demotes ~half that many turns after the warning. Preferred over everyTurns.
+   */
+  readonly driftAfter?: number;
   /** what drift mutates: the trigger window, the tell set, or the effect magnitude. */
   readonly mutates: 'window' | 'tells' | 'magnitude';
   /** the pre-demotion drift tell (acquirable >=1 beat before the codex demotes). */

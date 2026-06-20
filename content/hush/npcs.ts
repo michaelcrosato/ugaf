@@ -58,7 +58,7 @@ export const NPCS: NpcDef[] = [
     dialogue: [
       { id: 'eun_greet', text: "The Survey trades in knowing. You bring me an observation or a coin, I give you a law you can stake your life on. That is the whole of the arrangement." },
       { id: 'eun_grey_ask', topic: 'greywater', text: "The Greywater? Our table on it is complete and confirmed. It is not free. Make it worth my ink." },
-      { id: 'eun_lawmap', topic: 'law-map', text: "Here. The Greywater table, copied fair: the rust-bloom, the hum, the hour it wakes. Read it and you'll know the law cold, without ever having to learn it the wet way.", grantsLeadTell: 'grey_rust_bloom', setsFacts: { 'known.tell.grey_rust_bloom': true, 'known.tell.grey_low_hum': true } },
+      { id: 'eun_lawmap', topic: 'law-map', text: "Here. The Greywater table, copied fair: the rust-bloom, the hum, the hour it wakes. Read it and you'll know the law cold — though a table is not the same as having seen it for yourself. Verify it in the field before you stake your iron on it.", grantsLeadTell: 'grey_rust_bloom', setsFacts: { 'known.tell.grey_rust_bloom': true, 'known.tell.grey_low_hum': true, 'known.purchased.greywater': true } },
     ],
   },
   {
@@ -72,7 +72,7 @@ export const NPCS: NpcDef[] = [
     dialogue: [
       { id: 'mox_greet', text: "After the pump-house core, eh. I've been. Came out with all my fingers, which puts me ahead of most. The way in's for sale, if your coin's good." },
       { id: 'mox_cache', topic: 'core', text: "The bottoms only bite after dark, and only worked iron. Go in by daylight and they're just cold water. Or go in stripped of metal and let them hum at nothing. That's the whole secret, and I'll sell you the safe hour besides." },
-      { id: 'mox_window', topic: 'safe-window', text: "Here's the safe hour and the dry line through the bottoms. Don't carry iron and you won't even need the hour. Don't say I never did you a kindness.", grantsLeadTell: 'grey_low_hum', setsFacts: { 'known.tell.grey_low_hum': true, 'known.tell.grey_rust_bloom': true, 'objective.cache_route': 'known' } },
+      { id: 'mox_window', topic: 'safe-window', text: "Here's the safe hour and the dry line through the bottoms. Don't carry iron and you won't even need the hour. Don't say I never did you a kindness — and don't forget who sold it to you.", grantsLeadTell: 'grey_low_hum', setsFacts: { 'known.tell.grey_low_hum': true, 'known.tell.grey_rust_bloom': true, 'known.purchased.greywater': true, 'objective.cache_route': 'known' } },
     ],
   },
 ];

@@ -108,7 +108,15 @@ export function createGumshoe(pack: WorldPack): Module {
           return {
             nativeNext: { insight: native.insight - 1 },
             events: [
-              { tag: 'law_surveyed', mutations: [{ op: 'set', key: `known.law.${lawId}`, value: 'surveyed' }], summary: `You are certain now. ${law.title}: ${conclusion ?? 'you understand how it works.'}`, data: { law: lawId } },
+              {
+                tag: 'law_surveyed',
+                mutations: [
+                  { op: 'set', key: `known.law.${lawId}`, value: 'surveyed' },
+                  { op: 'set', key: `known.${lawId}.surveyed_turn`, value: args.ctx.turn },
+                ],
+                summary: `You are certain now. ${law.title}: ${conclusion ?? 'you understand how it works.'}`,
+                data: { law: lawId },
+              },
             ],
             control: { kind: 'continue' },
             render: { labels: [`survey.${lawId}`], valence: 'boon', hints: { law: lawId, stage: 'surveyed' } },

@@ -29,7 +29,7 @@ export const LAWS: LawDefinition[] = [
       },
     },
     interactions: ['antenna_field'],
-    drift: { everyTurns: 40, mutates: 'window', predemotionTell: 'mile_milepost_reset' },
+    drift: { everyTurns: 40, driftAfter: 12, mutates: 'window', predemotionTell: 'mile_milepost_reset' },
     lore: 'The Settling pulled the road long. It keeps its true length at your back, where you cannot watch it.',
   },
   {
@@ -56,7 +56,7 @@ export const LAWS: LawDefinition[] = [
       },
     },
     interactions: ['mile_road'],
-    drift: { everyTurns: 50, mutates: 'window', predemotionTell: 'grey_low_hum' },
+    drift: { everyTurns: 50, driftAfter: 14, mutates: 'window', predemotionTell: 'grey_low_hum' },
     lore: 'After dark the Greywater remembers what worked iron used to be, and calls it back to ore.',
   },
   {
@@ -81,7 +81,30 @@ export const LAWS: LawDefinition[] = [
     },
     interactions: ['mile_road'],
     combatConsequence: true,
-    drift: { everyTurns: 60, mutates: 'tells', predemotionTell: 'antenna_field_hum' },
+    drift: { everyTurns: 60, driftAfter: 16, mutates: 'tells', predemotionTell: 'antenna_field_hum' },
     lore: 'The field still listens on dead channels. Give it a name and it will broadcast you to everything that hungers.',
+  },
+  {
+    id: 'hollow_dark',
+    title: 'The Hollow Dark',
+    scope: { nodes: ['the_fork', 'antenna_field', 'mile_road_high'] },
+    ambientGate: { phase: ['night'] },
+    effectCategory: 'agency',
+    trigger: { intent: ['wait', 'rest'] },
+    effect: { kind: 'impose_condition', condition: 'unsettled', severity: 'reversible' },
+    tells: [
+      { id: 'hollow_silence', channel: 'sound', weight: 3, advancesTo: 'referenced', at: { nodes: ['the_fork', 'antenna_field', 'mile_road_high'] } },
+      { id: 'hollow_heartbeat', channel: 'touch', weight: 2, advancesTo: 'approximate', at: { nodes: ['the_fork', 'antenna_field'] } },
+      { id: 'hollow_sitter', channel: 'sight', weight: 3, advancesTo: 'approximate', at: { nodes: ['the_fork'] }, deadAdventurer: true },
+    ],
+    discovery: { surveyVia: ['listen to the silence', 'examine the sitter'], minTellsToSurvey: 2 },
+    failSafe: {
+      firstContact: {
+        tell: 'You stop to rest — and the dark leans in. The silence presses on your ears; your own pulse goes loud and slow; and you understand, in your spine, that stillness here is a mistake. (You are Unsettled, and the dark is one step closer.)',
+      },
+    },
+    interactions: ['antenna_field'],
+    drift: { everyTurns: 45, driftAfter: 12, mutates: 'window', predemotionTell: 'hollow_silence' },
+    lore: 'Out in the deep, the Hush hunts by stillness. It is patient. It is always patient.',
   },
 ];

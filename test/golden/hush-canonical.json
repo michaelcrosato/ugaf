@@ -32,12 +32,12 @@
     "gate",
     "back"
   ],
-  "fingerprintId": "1b924cbfee40",
+  "fingerprintId": "db9670e9b3ff",
   "finalStatus": "won",
   "golden": {
     "campaignId": "play",
     "seed": "golden-hush",
-    "fingerprintId": "1b924cbfee40",
+    "fingerprintId": "db9670e9b3ff",
     "fingerprint": {
       "version": "0.1.0",
       "rngAlgo": "splitmix64",
@@ -63,7 +63,7 @@
         {
           "module": "invest.gumshoe",
           "version": "0.1.0",
-          "contentHash": "a476fa842b0597262b3bd62ea5e6657095f167e224c02d1f82cf23634537c94e"
+          "contentHash": "8674fe83a1f63d6aca58424721fe8b3de7491ec6dba300d0610df4be653971db"
         },
         {
           "module": "social.fate",
@@ -83,11 +83,11 @@
         {
           "module": "anomaly.hush",
           "version": "0.1.0",
-          "contentHash": "7f01df9e7f421d0e27ac815479ed30ab5d9b414cf195e683bca3d11fa6fee647"
+          "contentHash": "4bd8995bda4672880d15234574a0813c8379d955e4dab9927c65289f31fa5647"
         }
       ]
     },
-    "initialHash": "9626c707dafd79682a6324d496cad5a85963c2df7f75f53c55d32cbaec0d8f7d",
+    "initialHash": "2627aac4a57c6d956f377279a657f4872d0b09344396ea76f43ab0922ae2b911",
     "records": [
       {
         "eventIndex": 1,
@@ -194,8 +194,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "9626c707dafd79682a6324d496cad5a85963c2df7f75f53c55d32cbaec0d8f7d",
-        "nextHash": "bd9f3b878e7341fe4a07d484bc1ad4fbd2c67aec48466f8200af735769d4a71c"
+        "priorHash": "2627aac4a57c6d956f377279a657f4872d0b09344396ea76f43ab0922ae2b911",
+        "nextHash": "2292dc7fb042d0a309aa8ae507c81146384ad5e36b5a952cefb9b081b1478843"
       },
       {
         "eventIndex": 2,
@@ -302,8 +302,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "bd9f3b878e7341fe4a07d484bc1ad4fbd2c67aec48466f8200af735769d4a71c",
-        "nextHash": "8077cefa2502770d3d8608df79bd0541eca2cf32d5279f7373213e9643f43bdf"
+        "priorHash": "2292dc7fb042d0a309aa8ae507c81146384ad5e36b5a952cefb9b081b1478843",
+        "nextHash": "1557dd20aebbe7c5254b6d4f10116cf7ef392d2072dd809a87bfe0f020685303"
       },
       {
         "eventIndex": 3,
@@ -388,8 +388,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "8077cefa2502770d3d8608df79bd0541eca2cf32d5279f7373213e9643f43bdf",
-        "nextHash": "8cd38b32b8038f7956f8d97c0378b85876da7fed6ede73f2afea62eec4fef98f"
+        "priorHash": "1557dd20aebbe7c5254b6d4f10116cf7ef392d2072dd809a87bfe0f020685303",
+        "nextHash": "9b396465bfaf25583622e16661e220a53e71be18baa16dd44b6ed6459d35a7a7"
       },
       {
         "eventIndex": 4,
@@ -483,8 +483,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "8cd38b32b8038f7956f8d97c0378b85876da7fed6ede73f2afea62eec4fef98f",
-        "nextHash": "fe374290e1164a8ed2d6296baccc7eb98e1d15a307adb9f9600b0e10d08adcb6"
+        "priorHash": "9b396465bfaf25583622e16661e220a53e71be18baa16dd44b6ed6459d35a7a7",
+        "nextHash": "2a1eea3c1907644b69d45793c582529f5d3a1b7fd57cb5eb9eb718884ba12f75"
       },
       {
         "eventIndex": 5,
@@ -578,8 +578,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "fe374290e1164a8ed2d6296baccc7eb98e1d15a307adb9f9600b0e10d08adcb6",
-        "nextHash": "597ac60c03710245141d80b6743deb58a8c2dd3c7a759cf8728ba7c70a99bc7d"
+        "priorHash": "2a1eea3c1907644b69d45793c582529f5d3a1b7fd57cb5eb9eb718884ba12f75",
+        "nextHash": "4951b0c28e0f7a3737783c830d9862c925a2bd5de8151c18d64abedff7c35353"
       },
       {
         "eventIndex": 6,
@@ -686,8 +686,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "597ac60c03710245141d80b6743deb58a8c2dd3c7a759cf8728ba7c70a99bc7d",
-        "nextHash": "cd62a7560b8c8e37ca10e4f824c24b6b956266d8448ffb62c33d5f20d80326c6"
+        "priorHash": "4951b0c28e0f7a3737783c830d9862c925a2bd5de8151c18d64abedff7c35353",
+        "nextHash": "adbba4ebb799f864a0a6f1bfdb4c4298dccefc81fc616f479e9de7517eb09289"
       },
       {
         "eventIndex": 7,
@@ -772,8 +772,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "cd62a7560b8c8e37ca10e4f824c24b6b956266d8448ffb62c33d5f20d80326c6",
-        "nextHash": "b7fa9d3dbc01068e64d46e4575857d52b1309c69093848c978c765658eadde62"
+        "priorHash": "adbba4ebb799f864a0a6f1bfdb4c4298dccefc81fc616f479e9de7517eb09289",
+        "nextHash": "a41a9cd40aa6e9eabc5c81fc7e4f91aef457e2ef32ec760c8229d21071d6a6ea"
       },
       {
         "eventIndex": 8,
@@ -880,8 +880,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b7fa9d3dbc01068e64d46e4575857d52b1309c69093848c978c765658eadde62",
-        "nextHash": "19ced510035d3f8536f3fb6e4d1b9168037234cbf58d81c802be200b898c60aa"
+        "priorHash": "a41a9cd40aa6e9eabc5c81fc7e4f91aef457e2ef32ec760c8229d21071d6a6ea",
+        "nextHash": "794f299e94c06c63fc168ab01a72ae5c14c43b3adc814ee802b24e00a7e93485"
       },
       {
         "eventIndex": 9,
@@ -988,8 +988,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "19ced510035d3f8536f3fb6e4d1b9168037234cbf58d81c802be200b898c60aa",
-        "nextHash": "96a38e45af15030335f935529ba76be5f10e5e8660ae875d46796f6e08c11e50"
+        "priorHash": "794f299e94c06c63fc168ab01a72ae5c14c43b3adc814ee802b24e00a7e93485",
+        "nextHash": "c9be8535edfef2297bdbdf03a65e706a46a82155519fd9fa4c78dd70176b4bb9"
       },
       {
         "eventIndex": 10,
@@ -1097,8 +1097,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "96a38e45af15030335f935529ba76be5f10e5e8660ae875d46796f6e08c11e50",
-        "nextHash": "07c4e933dff1adc8ba26587ae1ea3f19f66c333ac90614d3878d4d9b0af47072"
+        "priorHash": "c9be8535edfef2297bdbdf03a65e706a46a82155519fd9fa4c78dd70176b4bb9",
+        "nextHash": "65f97963cda05732a87bb9eb48cbc10f6dc77c20008fafddf4aa18618cf32c8a"
       },
       {
         "eventIndex": 11,
@@ -1235,8 +1235,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "07c4e933dff1adc8ba26587ae1ea3f19f66c333ac90614d3878d4d9b0af47072",
-        "nextHash": "c04877700206663bf53a6336f7cb9c3c41801707710611f41d60db265684814d"
+        "priorHash": "65f97963cda05732a87bb9eb48cbc10f6dc77c20008fafddf4aa18618cf32c8a",
+        "nextHash": "552c30cb8a6b536863b873e5f15658d51b7735ac0bcd4c52afdae086121bda74"
       },
       {
         "eventIndex": 12,
@@ -1358,8 +1358,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "c04877700206663bf53a6336f7cb9c3c41801707710611f41d60db265684814d",
-        "nextHash": "d497baf8e16ab2ad39fb274ad7cf7eeab483d151e7fae26bd9ce3414e4e93e99"
+        "priorHash": "552c30cb8a6b536863b873e5f15658d51b7735ac0bcd4c52afdae086121bda74",
+        "nextHash": "bf61ce73eec596bd1b71be320932fe030fa82accf8b8824d2ebae51d0ca9c996"
       },
       {
         "eventIndex": 13,
@@ -1450,8 +1450,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "d497baf8e16ab2ad39fb274ad7cf7eeab483d151e7fae26bd9ce3414e4e93e99",
-        "nextHash": "58f2b3b6dabd907bc8ffffc21bf88ecbe3b50d727a82ce1660522903fed5c9b8"
+        "priorHash": "bf61ce73eec596bd1b71be320932fe030fa82accf8b8824d2ebae51d0ca9c996",
+        "nextHash": "73849cf1df8db4fd4b1bad5b455114fb82e1fe4d79135253cd7b9a2aa1d3c5c3"
       },
       {
         "eventIndex": 14,
@@ -1474,6 +1474,11 @@
                 "op": "set",
                 "key": "known.law.mile_road",
                 "value": "surveyed"
+              },
+              {
+                "op": "set",
+                "key": "known.mile_road.surveyed_turn",
+                "value": 14
               }
             ],
             "summary": "You are certain now. The Mile Road: On the Mile Road, to look back is to double the distance behind you.",
@@ -1537,8 +1542,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "58f2b3b6dabd907bc8ffffc21bf88ecbe3b50d727a82ce1660522903fed5c9b8",
-        "nextHash": "c1bc443ad8a9b8997f108b928f11a7639109cf39bace1d4272a549b01fae659b"
+        "priorHash": "73849cf1df8db4fd4b1bad5b455114fb82e1fe4d79135253cd7b9a2aa1d3c5c3",
+        "nextHash": "4adfec934a0929ea1a27f66773d7c53503c0e459dcecf5d1f52d4bd2c91bc4c1"
       },
       {
         "eventIndex": 15,
@@ -1645,8 +1650,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "c1bc443ad8a9b8997f108b928f11a7639109cf39bace1d4272a549b01fae659b",
-        "nextHash": "bf3d001dc8ff35bf42f67dd75dccb898c89cc41a032357da4a6a690d82c093cf"
+        "priorHash": "4adfec934a0929ea1a27f66773d7c53503c0e459dcecf5d1f52d4bd2c91bc4c1",
+        "nextHash": "4fe775c866efcfec794a16e0173d2c673806a564523db03282c022974191ba86"
       },
       {
         "eventIndex": 16,
@@ -1753,8 +1758,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "bf3d001dc8ff35bf42f67dd75dccb898c89cc41a032357da4a6a690d82c093cf",
-        "nextHash": "5d446040d4ea2b73b541d6fccc73e9dca0991910fc82a147e074d6cacf8c565d"
+        "priorHash": "4fe775c866efcfec794a16e0173d2c673806a564523db03282c022974191ba86",
+        "nextHash": "51d05848f0e5773aeb783025b2ec568f43b05975868b50efe12bbc4c730c330f"
       },
       {
         "eventIndex": 17,
@@ -1862,8 +1867,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "5d446040d4ea2b73b541d6fccc73e9dca0991910fc82a147e074d6cacf8c565d",
-        "nextHash": "617a995e2ae3b3dc2473e09011a68c74538f2b2ef4da02be537703fe2c4dcbff"
+        "priorHash": "51d05848f0e5773aeb783025b2ec568f43b05975868b50efe12bbc4c730c330f",
+        "nextHash": "c6c10959e1a5738ee9ca5a259c0289c5ea8d4747871acc37835ad3348093ca96"
       },
       {
         "eventIndex": 18,
@@ -1947,8 +1952,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "617a995e2ae3b3dc2473e09011a68c74538f2b2ef4da02be537703fe2c4dcbff",
-        "nextHash": "b2e982ecdff449023320c99e434616e6c63f6a8710e97bf5e4eb4cda59f8dda5"
+        "priorHash": "c6c10959e1a5738ee9ca5a259c0289c5ea8d4747871acc37835ad3348093ca96",
+        "nextHash": "724e7fdb0aa5147e7b1bf6eafc5796c681ec4708bb5b2d5398b268e37dbb3418"
       },
       {
         "eventIndex": 19,
@@ -1971,6 +1976,11 @@
                 "op": "set",
                 "key": "known.law.greywater",
                 "value": "surveyed"
+              },
+              {
+                "op": "set",
+                "key": "known.greywater.surveyed_turn",
+                "value": 19
               }
             ],
             "summary": "You are certain now. The Greywater: In the Greywater after dark, worked metal slumps back toward ore. Iron tools and blades fail.",
@@ -2034,8 +2044,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b2e982ecdff449023320c99e434616e6c63f6a8710e97bf5e4eb4cda59f8dda5",
-        "nextHash": "aea2e8254f3a9e92c29d6f90ba0e93ab22bcb088394e94e190cb77a608247246"
+        "priorHash": "724e7fdb0aa5147e7b1bf6eafc5796c681ec4708bb5b2d5398b268e37dbb3418",
+        "nextHash": "b8d952633dbeb41ff55b3516bcf55ac988ff2d2ebded9850b7a9047df0518ee5"
       },
       {
         "eventIndex": 20,
@@ -2142,8 +2152,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "aea2e8254f3a9e92c29d6f90ba0e93ab22bcb088394e94e190cb77a608247246",
-        "nextHash": "f4e8ba049105819d69ad286d016ec9297dc396c689576fadf959ee140ade1279"
+        "priorHash": "b8d952633dbeb41ff55b3516bcf55ac988ff2d2ebded9850b7a9047df0518ee5",
+        "nextHash": "bd50cd6e6a54fddc3fa278f09b8cdd11e963a5c1f0f1c01e9a9ba94b52ee3860"
       },
       {
         "eventIndex": 21,
@@ -2250,8 +2260,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "f4e8ba049105819d69ad286d016ec9297dc396c689576fadf959ee140ade1279",
-        "nextHash": "415fa880f29810d24b3d732daed965f18b181c37ddba7b503de454c6f83a0b2a"
+        "priorHash": "bd50cd6e6a54fddc3fa278f09b8cdd11e963a5c1f0f1c01e9a9ba94b52ee3860",
+        "nextHash": "48272c3814d72c138339550334e2520f3972fe390ccdacaf999073777b150fae"
       },
       {
         "eventIndex": 22,
@@ -2343,8 +2353,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "415fa880f29810d24b3d732daed965f18b181c37ddba7b503de454c6f83a0b2a",
-        "nextHash": "3f35dbb170ee78fb7eabe252789ac44794d1cd8bff18a3c1476c0342580d94c3"
+        "priorHash": "48272c3814d72c138339550334e2520f3972fe390ccdacaf999073777b150fae",
+        "nextHash": "a6c9069b87e6be10f81b302222e91dc3c71fef19a3e7fa26bc6450c2269883da"
       },
       {
         "eventIndex": 23,
@@ -2451,8 +2461,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "3f35dbb170ee78fb7eabe252789ac44794d1cd8bff18a3c1476c0342580d94c3",
-        "nextHash": "bf3c9af48b31ba899076588a7dce896c95268dc8587de70efd2d7d90aab7ef85"
+        "priorHash": "a6c9069b87e6be10f81b302222e91dc3c71fef19a3e7fa26bc6450c2269883da",
+        "nextHash": "15e8623190f60b16032301a6d35d428a7d19350fe9619711802355c095e3f389"
       },
       {
         "eventIndex": 24,
@@ -2555,8 +2565,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "bf3c9af48b31ba899076588a7dce896c95268dc8587de70efd2d7d90aab7ef85",
-        "nextHash": "db3b6baeb1ef5ebcdb1400d9a40143c6d2a7da481779da366defe67cfe8b101a"
+        "priorHash": "15e8623190f60b16032301a6d35d428a7d19350fe9619711802355c095e3f389",
+        "nextHash": "655292d1f552518e22c427245f01c531d4c0fe1ad35525d37cf829af17dc8330"
       },
       {
         "eventIndex": 25,
@@ -2659,8 +2669,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "db3b6baeb1ef5ebcdb1400d9a40143c6d2a7da481779da366defe67cfe8b101a",
-        "nextHash": "c57b0991d22f2525cab926da3910f68a2e01b6c200ec1f56681b65e84b5f5dbc"
+        "priorHash": "655292d1f552518e22c427245f01c531d4c0fe1ad35525d37cf829af17dc8330",
+        "nextHash": "de780e12df976d0ac240cbf309881eac7454c0996961e3b8a6f7693b1cbeddb3"
       },
       {
         "eventIndex": 26,
@@ -2780,10 +2790,35 @@
               "phase": "night"
             },
             "source": "time.cycle"
+          },
+          {
+            "tag": "drift_warn",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_warned",
+                "value": true
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_warn_turn",
+                "value": 26
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_check_turn",
+                "value": 26
+              }
+            ],
+            "summary": "Something about The Mile Road feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)",
+            "data": {
+              "law": "mile_road"
+            },
+            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "c57b0991d22f2525cab926da3910f68a2e01b6c200ec1f56681b65e84b5f5dbc",
-        "nextHash": "6b55fa067fd1c83f2aa15be563d6139636d085b528ea22ed8900ed1f1d476187"
+        "priorHash": "de780e12df976d0ac240cbf309881eac7454c0996961e3b8a6f7693b1cbeddb3",
+        "nextHash": "92f1891c1cda4f3e925f233f95356fc5598cf53fb226b735a544fc4cfc4732c9"
       },
       {
         "eventIndex": 27,
@@ -2886,8 +2921,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "6b55fa067fd1c83f2aa15be563d6139636d085b528ea22ed8900ed1f1d476187",
-        "nextHash": "eaafc0706fb2e2d0ad17044991a69ea6c731d8a0fded49ae3ebdf97741906736"
+        "priorHash": "92f1891c1cda4f3e925f233f95356fc5598cf53fb226b735a544fc4cfc4732c9",
+        "nextHash": "680a63f5408f535feb9f975c87e0fd956a32c84293bd4f4400916ed88a5e21b5"
       },
       {
         "eventIndex": 28,
@@ -2990,8 +3025,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "eaafc0706fb2e2d0ad17044991a69ea6c731d8a0fded49ae3ebdf97741906736",
-        "nextHash": "21a6f2a877182bf21ff067dae6ae4983ef469ab07a02b391a1d102141bef571b"
+        "priorHash": "680a63f5408f535feb9f975c87e0fd956a32c84293bd4f4400916ed88a5e21b5",
+        "nextHash": "0539cf933cafec2b5817034f1c77b6dda92c3de64f9d6cf5d5a9edf794d5e8be"
       },
       {
         "eventIndex": 29,
@@ -3098,8 +3133,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "21a6f2a877182bf21ff067dae6ae4983ef469ab07a02b391a1d102141bef571b",
-        "nextHash": "00c0a1b24bcd624fad37e296d5449749e72ef41f9deba48a85217bb5e00f6d69"
+        "priorHash": "0539cf933cafec2b5817034f1c77b6dda92c3de64f9d6cf5d5a9edf794d5e8be",
+        "nextHash": "f34d6f8af0778ac65b06747848b876509b0ad2609cca92324f9842c986b2cb78"
       },
       {
         "eventIndex": 30,
@@ -3202,8 +3237,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "00c0a1b24bcd624fad37e296d5449749e72ef41f9deba48a85217bb5e00f6d69",
-        "nextHash": "15fd575c59aa7082eb78adb2149691f98214da251f5cdb483eec4349e8966a55"
+        "priorHash": "f34d6f8af0778ac65b06747848b876509b0ad2609cca92324f9842c986b2cb78",
+        "nextHash": "1d38df5f9a58641f44f120226f020d476070206d4c71b88eb66ed26e1d59d701"
       }
     ]
   }

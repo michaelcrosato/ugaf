@@ -165,8 +165,9 @@ export class Session {
       any = true;
       const drift = f[`law.${law.id}.drift_warned`] ? '  (your certainty is decaying)' : '';
       const surveyed = stageRank(stage) >= stageRank('surveyed');
+      const purchased = f[`known.purchased.${law.id}`] && !surveyed ? '  (from a bought map — unverified; trust it at your own risk)' : '';
       const conclusion = surveyed ? law.tells.map((t) => this.game.pack.tellLibrary.find((p) => p.id === t.id)?.conclusion).find(Boolean) : undefined;
-      lines.push(`  • ${bold(law.title)} — ${stage}${drift}`);
+      lines.push(`  • ${bold(law.title)} — ${stage}${drift}${purchased}`);
       if (conclusion) lines.push(dim(`      ${conclusion}`));
     }
     if (!any) lines.push(dim('  You have learned nothing certain yet. Look. Listen. The Hush is lawful — it can be read.'));
