@@ -35,7 +35,12 @@ function run(stage: Stage): boolean {
     return true;
   }
   console.log(`\n▶ ${stage.name}: ${stage.cmd.join(' ')}`);
-  const r = spawnSync(stage.cmd[0]!, stage.cmd.slice(1), { cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32' });
+  // win32 needs a shell to resolve the npx/npm shims, but passing an args array
+  // together with shell:true is deprecated (DEP0190) — so join into one command
+  // string there. Stage args are fixed literals with no spaces, so this is exact.
+  const r = process.platform === 'win32'
+    ? spawnSync(stage.cmd.join(' '), { cwd: ROOT, stdio: 'inherit', shell: true })
+    : spawnSync(stage.cmd[0]!, stage.cmd.slice(1), { cwd: ROOT, stdio: 'inherit' });
   return r.status === 0;
 }
 
