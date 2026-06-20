@@ -152,7 +152,7 @@ export function createGumshoe(pack: WorldPack): Module {
         const unread = tells.filter((t) => !facts.getBool(`known.tell.${t}`));
         const hereSet = nodeTells.get(node ?? '') ?? new Set<string>();
         const hereUnread = unread.filter((t) => hereSet.has(t));
-        const count = `You have read ${seen} of the ${need} sign${need === 1 ? '' : 's'} you need to be sure of ${law.title}.`;
+        const count = `You have read ${Math.min(seen, need)} of the ${need} sign${need === 1 ? '' : 's'} you need to be sure of ${law.title}.`;
         let where: string;
         if (hereUnread.length > 0) {
           const channels = new Set(hereUnread.map((t) => tellProse.get(t)?.channel).filter(Boolean) as string[]);
