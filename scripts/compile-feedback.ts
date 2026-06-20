@@ -56,7 +56,7 @@ for (const pl of index.players as { id: string; persona: string; model: string; 
     continue;
   }
   if (!interview.trim()) continue;
-  gathered.push({ id: pl.id, persona: pl.persona, model: pl.model, outcome: pl.finalStatus, turns: pl.turns, real: pl.real, interview: interview.slice(0, 3500) });
+  gathered.push({ id: pl.id, persona: pl.persona, model: pl.model, outcome: pl.finalStatus, turns: pl.turns, real: pl.real, interview });
 }
 
 if (!gathered.length) {
@@ -65,27 +65,41 @@ if (!gathered.length) {
 }
 
 const N = gathered.length;
+// adaptive per-interview cap: keep the whole corpus ~280k chars (~70k tokens) so late
+// sections (prose/replayability) aren't truncated for small/medium N, bounded for large N.
+const PER_CAP = Math.max(2500, Math.min(7000, Math.floor(280000 / N)));
 const corpus = gathered
-  .map((g) => `--- PLAYER ${g.id} · persona=${g.persona} · model=${g.model} · outcome=${g.outcome} · turns=${g.turns} · realness=${g.real ? 'VERIFIED' : 'FAILED'} ---\n${g.interview}`)
+  .map((g) => `--- PLAYER ${g.id} · persona=${g.persona} · model=${g.model} · outcome=${g.outcome} · turns=${g.turns} · realness=${g.real ? 'VERIFIED' : 'FAILED'} ---\n${g.interview.slice(0, PER_CAP)}`)
   .join('\n\n');
 
-const prompt = `You are compiling BLIND play-test feedback for a deterministic, prose-first text adventure called THE HUSH (demo area: "The Cordon's Edge"). ${N} cynical, high-expectations players each played the game BLIND — they could see ONLY what the game showed them, never its code or content — and wrote an exit interview. Synthesize their feedback into a ranked, actionable report. Be rigorous about FREQUENCY (how many independent players/personas raised each point) and SOURCE.
+const prompt = `You are compiling BLIND play-test feedback for THE HUSH (demo: "The Cordon's Edge"). ${N} cynical, high-expectations players played BLIND (saw only what the game showed them, never code/content) and wrote exit interviews. Synthesize a ranked, actionable report, applying the MASTER-BLUEPRINT §4.3/§4.5 synthesis discipline below. The persona AND model tier are shown for each player so you can apply the capability filter.
 
-CRITICAL — separate GAME issues from TEST-HARNESS ARTIFACTS. The harness routes play through two tools (observe/act) and imposes a runaway turn cap. Any complaint about "a hidden turn limit", "running out of turns", "the tools", or being forced to stop is a HARNESS/METHODOLOGY artifact, NOT a game flaw — put those under "Harness / methodology notes", and do NOT rank them as game fixes.
+QUARANTINE FIRST (before any ranking):
+- TEST-HARNESS ARTIFACTS: complaints about a hidden turn limit / running out of turns / the observe-act tools / being forced to stop are RIG artifacts, NOT game flaws — list under "Harness / methodology notes", never rank as game fixes.
+- PARSE-CONFOUND: friction that is really "I couldn't phrase the command" / the parser misunderstanding — quarantine under "Parser-confound (verify, don't rank as content)". A flaky parser otherwise masquerades as content signal (§4.5).
 
-Output GitHub-flavored markdown, exactly these sections:
+RANK BY CROSS-PERSONA BREADTH, NOT RAW COUNT: the swarm is personas × clones and persona↔model is largely fixed, so six clones of one persona inflate a raw N. Count ONE vote per PERSONA for consensus; raw N is intensity only. Require >=2 INDEPENDENT PERSONAS for "high confidence".
+
+CAPABILITY-DIFFERENTIAL FILTER (§4.3): a friction is real CONTENT signal only if it appears ACROSS THE MODEL-SIZE AXIS (both small/haiku AND large/opus players hit it). If a complaint correlates with model size/family (only the weak models stall), tag it "capability noise" and EXCLUDE from game fixes — EXCEPT learnability stalls: a genuinely hard-to-deduce law legitimately stalls weak players, so do NOT discard those as capability noise. Treat blanket cross-model agreement skeptically (shared pretraining bias inflates apparent consensus); down-weight a theme where all models agree but it smells like model bias rather than the game.
+
+ENGAGEMENT IS NEVER A MAXIMAND (Goodhart): raw dwell/stalls/revisits are NEGATIVE friction unless paired with explicit satisfaction. Never recommend chasing an engagement metric.
+
+Output GitHub-flavored markdown, EXACTLY these sections:
 
 ## Executive summary
-3-5 sentences: is the demo actually good, what is the through-line of the critique, what is the single most important real game improvement.
+3-5 sentences: is the demo actually good, the through-line of the critique, the single most important real game improvement.
 
-## Top game fixes (ranked by leverage)
-Ranked list. For each: **title** — raised by X/${N} players (name the personas) · severity (P0/P1/P2) · the issue in the players' own words (a short direct quote) · a concrete, surgical fix. Only rank GAME issues. Require >=2 INDEPENDENT personas to mark something "high confidence"; mark single-voice items "low confidence (one player)". Do not invent consensus.
+## Top game fixes (ranked by cross-persona breadth)
+For each: **title** — raised by N PERSONAS (name them) across which model tiers · severity (P0/P1/P2) · confidence (>=2 personas across tiers = high; single-persona = low) · the issue in the players' own words (a short direct quote) · a concrete, surgical fix tied to an acceptance criterion or a specific bug. Only GAME issues that survive the filters above.
 
 ## What's working (do not regress)
-What multiple players genuinely praised (quote them). Be honest — only list things actually praised by name.
+Only things genuinely praised by name (quote them).
+
+## Parser-confound (verify, do not rank as content)
+Friction that may be phrasing/parser rather than content — to verify, not to act on blindly.
 
 ## Harness / methodology notes
-Artifacts that contaminated the signal (the turn cap, tool friction, anything that made players critique the rig instead of the game), and how to de-noise the next swarm.
+Rig artifacts + how to de-noise the next swarm (e.g. vary persona↔model pairing so a model artifact can't masquerade as a persona signal).
 
 Here are the ${N} interviews:
 
