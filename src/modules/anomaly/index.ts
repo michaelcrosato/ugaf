@@ -13,7 +13,7 @@
  */
 import { evalPredicate, foldOrder, type LawDefinition, type LawEffect } from '../../sdk/law.js';
 import { makeManifest } from '../../sdk/define.js';
-import type { FactView } from '../../sdk/facts.js';
+import type { FactView, FactMutation } from '../../sdk/facts.js';
 import type { JsonObject } from '../../sdk/json.js';
 import type { BeatResult, Module, ModuleResult, ScheduledEvent, WorldEvent } from '../../sdk/types.js';
 import type { WorldPack } from '../../sdk/worldpack.js';
@@ -49,13 +49,38 @@ export function createAnomaly(pack: WorldPack): Module {
     return facts.keysUnder('possession.pc').some((k) => k.endsWith('.class') && facts.getString(k) === cls);
   }
 
+  /**
+   * The Law-Drift "hungry hours lengthen" window-widen (feedback/0012 #5): a
+   * `mutates: 'window'` law that has DRIFTED bites in the phase(s) it has crept into
+   * (its `widensTo`, e.g. predawn). We model this as "the law experiences the new phase
+   * as night" — so only its PHASE gate relaxes (the Greywater's after-dark gate), while
+   * an intent gate (the Hollow Dark still needs wait/rest) is untouched.
+   */
+  function widenedPhaseView(law: LawDefinition, facts: FactView): FactView | undefined {
+    const d = law.drift;
+    if (!d || d.mutates !== 'window' || !d.widensTo?.length) return undefined;
+    if (!facts.getBool(`law.${law.id}.window_drifted`)) return undefined;
+    const phaseNow = facts.getString('phase.now');
+    if (phaseNow === undefined || !d.widensTo.includes(phaseNow)) return undefined;
+    // override ONLY the phase.now lookup (via both getString and get, so a law that gates on
+    // phase either way widens); everything else (intent, carry, all other facts) stays real.
+    return {
+      ...facts,
+      getString: (k: string) => (k === 'phase.now' ? 'night' : facts.getString(k)),
+      get: (k: string) => (k === 'phase.now' ? 'night' : facts.get(k)),
+    } as FactView;
+  }
+
   /** does the law's trigger fire this turn? combines the declared predicate + the effect's physical key. */
   function triggers(law: LawDefinition, facts: FactView, turn: number): boolean {
     if (facts.getNumber(`law.${law.id}.fired_turn`) === turn) return false; // idempotent
     if (facts.getBool(`law.${law.id}.live`) === false) return false;
-    if (law.ambientGate && !evalPredicate(law.ambientGate, facts)) return false;
+    // if the law has drifted its window wider, evaluate its gates as if the crept-into
+    // phase were night (the safe margin you learned no longer holds).
+    const ev = widenedPhaseView(law, facts) ?? facts;
+    if (law.ambientGate && !evalPredicate(law.ambientGate, ev)) return false;
     if (facts.getNumber('flag.last_turn') !== turn) return false; // only on the acting beat
-    if (!evalPredicate(law.trigger, facts)) return false;
+    if (!evalPredicate(law.trigger, ev)) return false;
     // material laws that act on a carried class require the player to be carrying it
     if (law.effect.kind === 'degrade_item_class' && !carryingClass(facts, law.effect.itemClass)) return false;
     if (law.effect.kind === 'summon' && law.effect.via === 'metal' && !carryingClass(facts, 'metal')) return false;
@@ -276,17 +301,23 @@ function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: num
         data: { law: law.id },
       });
     } else if (surveyed && warned) {
+      // does this law's window WIDEN on drift (the decay that bites — feedback/0012 #5)?
+      const widens = law.drift.mutates === 'window' && (law.drift.widensTo?.length ?? 0) > 0;
+      const muts: FactMutation[] = [
+        { op: 'set', key: `known.law.${law.id}`, value: 'approximate' },
+        { op: 'set', key: `law.${law.id}.drift_warned`, value: false },
+        { op: 'set', key: `law.${law.id}.drift_check_turn`, value: turn },
+        { op: 'set', key: `law.${law.id}.drifted_turn`, value: turn },
+        { op: 'delete', key: `known.${law.id}.surveyed_turn` }, // re-survey restarts the dwell clock
+      ];
+      if (widens) muts.push({ op: 'set', key: `law.${law.id}.window_drifted`, value: true }); // the world actually shifts
       events.push({
         tag: 'drift_demote',
-        mutations: [
-          { op: 'set', key: `known.law.${law.id}`, value: 'approximate' },
-          { op: 'set', key: `law.${law.id}.drift_warned`, value: false },
-          { op: 'set', key: `law.${law.id}.drift_check_turn`, value: turn },
-          { op: 'set', key: `law.${law.id}.drifted_turn`, value: turn },
-          { op: 'delete', key: `known.${law.id}.surveyed_turn` }, // re-survey restarts the dwell clock
-        ],
-        summary: `${law.title} has re-Settled. What you knew is no longer quite true — you will have to read it again.`,
-        data: { law: law.id },
+        mutations: muts,
+        summary: widens
+          ? `${law.title} has re-Settled — and it has crept wider than you learned it, its hungry hours reaching now into the grey hour before dawn. The safe margin you read no longer covers the whole of it. Read it again before you trust the old hours.`
+          : `${law.title} has re-Settled. The certainty has gone out of your reading of it — you are guessing again until you confirm it with your own eyes.`,
+        data: { law: law.id, widened: widens },
       });
     }
   }

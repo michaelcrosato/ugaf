@@ -163,6 +163,14 @@ export interface DriftPolicy {
   readonly driftAfter?: number;
   /** what drift mutates: the trigger window, the tell set, or the effect magnitude. */
   readonly mutates: 'window' | 'tells' | 'magnitude';
+  /**
+   * for `mutates: 'window'` laws: the phase(s) the hungry window CREEPS into once the
+   * law has drifted (e.g. a dusk/night law that, re-Settled, also bites in `predawn`).
+   * This is what gives decay teeth — a stale codex, relied on in the old safe margin,
+   * now costs you. The law must already be active in `night` (the widen treats the new
+   * phase as if it were night for this law's gate). Telegraphed by the demote message.
+   */
+  readonly widensTo?: readonly string[];
   /** the pre-demotion drift tell (acquirable >=1 beat before the codex demotes). */
   readonly predemotionTell: string;
 }
