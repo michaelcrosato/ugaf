@@ -31,7 +31,7 @@ export const HUSH_PACK: WorldPack = {
       'objective.lead': 'The core lies in the drowned pump-house, deep in the Greywater bottoms. Get to it, get it, get out — and learn the laws before they teach you.',
     },
     opening:
-      "You came in on the last cordon truck with three coins, a borrowed knife, and a rumour: that something the Survey calls only 'the core' lies out in the drowned bottoms, and that everyone who matters on this Edge wants it. The waystation door bangs shut behind you. The Hush is waiting, and it is very, very quiet.",
+      "You came in on the last cordon truck with three coins, what iron you could borrow, and a rumour: that something the Survey calls only 'the core' lies out in the drowned bottoms, and that everyone who matters on this Edge wants it. The waystation door bangs shut behind you. The Hush is waiting, and it is very, very quiet.",
   },
   goals: [
     {
@@ -89,7 +89,7 @@ export const HUSH_PACK: WorldPack = {
     startKits: [
       { id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} },
       { id: 'pry', items: ['crowbar', 'lantern', 'coin_roll'], facts: {} },
-      { id: 'light', items: ['lantern', 'coin_roll'], facts: {} },
+      { id: 'light', items: ['iron_knife', 'coin_roll'], facts: {} },
     ],
   },
 };
