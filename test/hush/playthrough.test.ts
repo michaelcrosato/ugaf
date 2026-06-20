@@ -22,7 +22,7 @@ describe('The Hush — Cordon’s Edge', () => {
       'out', 'road', 'road', 'on', 'fork', 'water', 'in', 'cache',
       'take core', // the Cordon now watches the gate for it
       'out', 'back', 'back', 'mile', 'back', 'back', 'gate',
-      'hide', 'back', // slip the watched gate unseen (the interception)
+      'ask holt about the gap', 'hide', 'back', // slip the watched gate: learn its blind spot, then go low (iron's gone to the Greywater)
     ];
     let last = { status: 'active' as string };
     for (const cmd of path) last = s.act(cmd);
@@ -37,7 +37,7 @@ describe('The Hush — Cordon’s Edge', () => {
       'out', 'road', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road',
       'antennas', 'examine the names', 'listen', 'deduce the antenna field', // the listening field is now load-bearing for mastery
       'fork', 'water', 'examine the rust', 'listen', 'deduce the greywater',
-      'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'hide', 'back',
+      'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'ask holt about the gap', 'hide', 'back',
     ];
     // all three laws were read true at some point (even if drift later re-Settled them)
     let last = { text: '', status: 'active' as string };

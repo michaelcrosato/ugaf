@@ -30,6 +30,7 @@
     "back",
     "back",
     "gate",
+    "ask holt about the gap",
     "hide",
     "back"
   ],
@@ -422,7 +423,7 @@
                 "value": true
               }
             ],
-            "summary": "Old Lyle: “The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. Folk have died walking home down a road that kept making more of itself.”",
+            "summary": "Old Lyle: “The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. I've seen the bootprints loop a dead woman a thousand times round one milepost. That one I'd stake my life on.”",
             "data": {
               "npc": "holdout_lyle",
               "line": "lyle_mile"
@@ -517,7 +518,7 @@
                 "value": true
               }
             ],
-            "summary": "Old Lyle: “The bottoms eat gold, they say — keep your coin deep and you'll be fine.”",
+            "summary": "Old Lyle: “The bottoms? They eat gold — that's the old wisdom, anyhow. Keep your coin deep and you'll come through fine. Though mind, I'll be straight with you: I'm a Holdout, I've not carried worked iron down into that dark in thirty years. I'm telling you what I was told, not what I've tested with my own hands. Cross-check me if your life's on it.”",
             "data": {
               "npc": "holdout_lyle",
               "line": "lyle_grey"
@@ -3277,9 +3278,10 @@
                 "key": "known.mile_road.surveyed_turn"
               }
             ],
-            "summary": "The Mile Road has re-Settled. What you knew is no longer quite true — you will have to read it again.",
+            "summary": "The Mile Road has re-Settled. The certainty has gone out of your reading of it — you are guessing again until you confirm it with your own eyes.",
             "data": {
-              "law": "mile_road"
+              "law": "mile_road",
+              "widened": false
             },
             "source": "anomaly.hush"
           }
@@ -3631,6 +3633,101 @@
       {
         "eventIndex": 30,
         "intent": {
+          "class": "ask_about",
+          "topic": "the gap",
+          "target": {
+            "id": "warden_holt",
+            "raw": "holt",
+            "tags": [
+              "npc"
+            ]
+          },
+          "tags": [
+            "social"
+          ],
+          "confidence": 0.8,
+          "raw": "ask holt about the gap"
+        },
+        "owner": "social.fate",
+        "tape": [],
+        "events": [
+          {
+            "tag": "dialogue",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "objective.knows_gap",
+                "value": true
+              }
+            ],
+            "summary": "Warden Holt: “The gap in the wire? Officially there's no such thing. Unofficially, I find I study my own boots a great deal this hour of the night. A careful soul could slip toward the fork that way — or back out of it, carrying something I'd rather not have to see. The floodlight throws long, but it throws crooked; there's a wedge of dark by the north post where a low, quiet figure simply isn't, as far as I'm concerned — but only after dark. In daylight the open ground is open ground, and I can't help you there. Mind you stay low, stay quiet, and don't make me look.”",
+            "data": {
+              "npc": "warden_holt",
+              "line": "holt_gap"
+            },
+            "source": "social.fate"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "ask_about"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 30
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "warden_holt"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1343
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "22:23"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 30
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "1ec71485e200b061fc61a0f9a8a875f8f2c5ba6cce0bd9ddbe3770812da4729f",
+        "nextHash": "1b7e102a24e9440011cb39a05be747f507b121d93acca26d6c3081c0bdd70933"
+      },
+      {
+        "eventIndex": 31,
+        "intent": {
           "class": "hide",
           "tags": [],
           "confidence": 0.9,
@@ -3671,7 +3768,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 30
+                "value": 31
               },
               {
                 "op": "set",
@@ -3698,28 +3795,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1338
+                "value": 1348
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "22:18"
+                "value": "22:28"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 30
+                "value": 31
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "1ec71485e200b061fc61a0f9a8a875f8f2c5ba6cce0bd9ddbe3770812da4729f",
-        "nextHash": "1f505790e1b79fc90844a59d8d4961d797a3976939f17711a3aa73d5bf6fb0e4"
+        "priorHash": "1b7e102a24e9440011cb39a05be747f507b121d93acca26d6c3081c0bdd70933",
+        "nextHash": "c05b0fa9dda1059bed369b20fe6a73bcf159c0090cc80608d169d68b72deca87"
       },
       {
-        "eventIndex": 31,
+        "eventIndex": 32,
         "intent": {
           "class": "go",
           "tags": [
@@ -3754,7 +3851,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 31
+                "value": 32
               }
             ],
             "summary": "You set off.",
@@ -3775,7 +3872,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 31
+                "value": 32
               },
               {
                 "op": "set",
@@ -3802,25 +3899,65 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1346
+                "value": 1356
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "22:26"
+                "value": "22:36"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 31
+                "value": 32
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
+          },
+          {
+            "tag": "drift_demote",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.law.greywater",
+                "value": "approximate"
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.drift_warned",
+                "value": false
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.drift_check_turn",
+                "value": 32
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.drifted_turn",
+                "value": 32
+              },
+              {
+                "op": "delete",
+                "key": "known.greywater.surveyed_turn"
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.window_drifted",
+                "value": true
+              }
+            ],
+            "summary": "The Greywater has re-Settled — and it has crept wider than you learned it, its hungry hours reaching now into the grey hour before dawn. The safe margin you read no longer covers the whole of it. Read it again before you trust the old hours.",
+            "data": {
+              "law": "greywater",
+              "widened": true
+            },
+            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "1f505790e1b79fc90844a59d8d4961d797a3976939f17711a3aa73d5bf6fb0e4",
-        "nextHash": "980b8e67f8b8b48d7b6d2986f97c277eda9c91c498641462b1ca591ddccee318"
+        "priorHash": "c05b0fa9dda1059bed369b20fe6a73bcf159c0090cc80608d169d68b72deca87",
+        "nextHash": "f719f71819c834609003c4098c14452c4ec56b18c59bfafc90e18968c875511e"
       }
     ]
   }
