@@ -14,9 +14,16 @@ Thumbs.db
 # Logs
 *.log
 
-# Future implementation artifacts (none committed yet — design corpus only)
+# Build artifacts
 node_modules/
 dist/
 build/
 __pycache__/
 .venv/
+
+# Runtime artifacts (not committed)
+/saves/
+/.proctor/
+/.tmp/
+*.local.json
+.vitest/
