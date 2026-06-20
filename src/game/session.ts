@@ -168,8 +168,10 @@ export class Session {
       const purchased = f[`known.purchased.${law.id}`] && !surveyed ? '  (from a bought map — unverified; trust it at your own risk)' : '';
       const nearly = stage === 'approximate' ? dim(`  — you have almost named it; try: deduce the ${law.title.replace(/^the /i, '').toLowerCase()}`) : '';
       const conclusion = surveyed ? law.tells.map((t) => this.game.pack.tellLibrary.find((p) => p.id === t.id)?.conclusion).find(Boolean) : undefined;
+      // a law whose window has drifted wider carries the spread in its codex entry too
+      const spread = surveyed && f[`law.${law.id}.window_drifted`] ? ' (its hungry hours have crept into the grey hour before dawn)' : '';
       lines.push(`  • ${bold(law.title)} — ${stage}${drift}${purchased}${nearly}`);
-      if (conclusion) lines.push(dim(`      ${conclusion}`));
+      if (conclusion) lines.push(dim(`      ${conclusion}${spread}`));
     }
     if (!any) lines.push(dim('  You have learned nothing certain yet. Look. Listen. The Hush is lawful — it can be read.'));
     // rumors heard — and any CONFLICTS between them (a wrong law gets you killed).

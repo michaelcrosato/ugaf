@@ -199,6 +199,7 @@ export const NODES: NodeDef[] = [
         { when: { fact: 'phase.now', eq: 'dusk' }, text: 'The light is going, and the water is starting to wake. A low hum is finding the iron in your kit — you can feel it answer. Whatever un-makes worked metal here, it is opening its eyes. You have minutes, not hours.' },
         { when: { fact: 'phase.now', eq: 'night' }, text: 'It is full dark now, and the water has woken. The hum comes up through the causeway stones and into every rivet and blade you carry. The rust-bloom is faster than rust has any right to be.' },
         { when: { fact: 'phase.now', eq: 'day' }, text: 'In daylight the bottoms are only flooded and sad. Whatever lives in the dark here is sleeping; the metal in the silt is just metal.' },
+        { when: { all: [{ fact: 'phase.now', eq: 'predawn' }, { fact: 'law.greywater.window_drifted', eq: true }] }, text: 'The grey before dawn used to be the safe hour — you learned it was. But the hum has not gone back to sleep with the coming light the way it once did; the water keeps its hungry hours longer now than the law you read. The iron on you is already beginning to answer it.' },
         { when: { fact: 'known.law.greywater', eq: 'surveyed' }, text: 'You know this water now — what it wants, and when it wakes to want it. You weigh the iron on you against the failing light, and you do the sum the dead in the silt never learned to do.' },
         { when: { all: [{ fact: 'possession.pc.salvage_core', eq: true }, { phase: ['dusk', 'night'] }] }, text: 'No time to linger now — the core is a weight at your spine and the water is wide awake. Every rivet on you is going soft. Move.', replace: true },
       ],
@@ -224,6 +225,7 @@ export const NODES: NodeDef[] = [
       variants: [
         { when: { fact: 'phase.now', eq: 'dusk' }, text: 'The hum is rising as the light dies. The iron in your kit is beginning to go soft and rotten-red at the edges.' },
         { when: { fact: 'phase.now', eq: 'night' }, text: 'The hum is everywhere now, in the water and the iron and your teeth. Any worked metal you carry is dying in your hands.' },
+        { when: { all: [{ fact: 'phase.now', eq: 'predawn' }, { fact: 'law.greywater.window_drifted', eq: true }] }, text: 'It should be safe by now — the grey of predawn was always the safe hour. But the hum has not let go with the light; it has learned to hold on longer than you learned it would, and the iron on you is going soft in the not-quite-dawn.' },
       ],
       ambient: ['A door bangs underwater, slow and deliberate.', 'The hum rises a half-tone, considering you.'],
     },

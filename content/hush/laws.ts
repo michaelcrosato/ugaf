@@ -56,7 +56,9 @@ export const LAWS: LawDefinition[] = [
       },
     },
     interactions: ['mile_road'],
-    drift: { everyTurns: 50, driftAfter: 9, mutates: 'window', predemotionTell: 'grey_low_hum' },
+    // decay has teeth: once your reading ages, the iron-hunger creeps into the grey hour
+    // before dawn — the safe margin you learned no longer covers the whole of it.
+    drift: { everyTurns: 50, driftAfter: 9, mutates: 'window', widensTo: ['predawn'], predemotionTell: 'grey_low_hum' },
     lore: 'After dark the Greywater remembers what worked iron used to be, and calls it back to ore.',
   },
   {
@@ -104,7 +106,9 @@ export const LAWS: LawDefinition[] = [
       },
     },
     interactions: ['antenna_field'],
-    drift: { everyTurns: 45, driftAfter: 8, mutates: 'window', predemotionTell: 'hollow_silence' },
+    // decay has teeth: a stale reading of the deep dark leaves you still in the grey hour,
+    // certain it is safe — and the dark has learned to keep its hungry hours longer than that.
+    drift: { everyTurns: 45, driftAfter: 8, mutates: 'window', widensTo: ['predawn'], predemotionTell: 'hollow_silence' },
     lore: 'Out in the deep, the Hush hunts by stillness. It is patient. It is always patient.',
   },
 ];

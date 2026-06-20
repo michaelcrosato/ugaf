@@ -120,6 +120,11 @@ export function createGumshoe(pack: WorldPack): Module {
         const cur = (facts.getString(`known.law.${lawId}`) as KnowledgeStage) ?? 'unknown';
         if (seen >= law.discovery.minTellsToSurvey && native.insight > 0) {
           const conclusion = law.tells.map((t) => tellProse.get(t.id)?.conclusion).find(Boolean);
+          // a re-read of a DRIFTED law is not byte-identical: it reports the widened window,
+          // so re-Settling visibly refreshes stale knowledge (feedback/0012 #5).
+          const driftNote = facts.getBool(`law.${lawId}.window_drifted`)
+            ? ' And it has spread since you first read it: the hungry hours have crept into the grey hour before dawn, where once the coming light meant safety.'
+            : '';
           return {
             nativeNext: { insight: native.insight - 1 },
             events: [
@@ -130,7 +135,7 @@ export function createGumshoe(pack: WorldPack): Module {
                   { op: 'set', key: `known.${lawId}.surveyed_turn`, value: args.ctx.turn },
                   { op: 'set', key: `known.${lawId}.ever_surveyed`, value: true }, // high-water mark; drift never clears it
                 ],
-                summary: `You are certain now. ${law.title}: ${conclusion ?? 'you understand how it works.'}`,
+                summary: `You are certain now. ${law.title}: ${conclusion ?? 'you understand how it works.'}${driftNote}`,
                 data: { law: lawId },
               },
             ],
