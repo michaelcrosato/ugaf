@@ -58,6 +58,7 @@ export const NODES: NodeDef[] = [
       variants: [
         { when: { fact: 'awareness.cordon_patrol', eq: 'alert' }, text: 'The troopers are up and scanning now, torches swinging. The gap in the wire is not an option while they are looking.' },
         { when: { fact: 'flag.hidden', eq: true }, text: 'You are low in the dark at the edge of the floodlight\'s throw. The troopers\' attention slides over you and away.' },
+        { when: { fact: 'possession.pc.salvage_core', eq: true }, text: 'Warden Holt\'s eyes go to your pack and stay there. He knows the shape of what you carry — they all do, eventually. He does not stop you; stopping people is not really what the Cordon is for, out here. But he marks your face the way a man marks a debt he means to collect.' },
       ],
       ambient: ['A radio crackles in the post and someone answers it in a bored monotone.', 'One of the troopers lights a cigarette and does not offer you one.'],
     },
@@ -75,6 +76,9 @@ export const NODES: NodeDef[] = [
     kind: 'settlement',
     look: {
       base: 'A dozen shacks of salvaged tin around a hand-pump and a fire that is never quite let go out. The people here stayed when the Settling came, and stayed, and stayed, until staying became the only thing they knew how to do. They watch you the way you watch weather.',
+      variants: [
+        { when: { fact: 'possession.pc.salvage_core', eq: true }, text: 'The watching is different now. Word travels in a place this small, and everyone here knows the shape of what rides in your pack. The Striders\' eyes follow you across the firelight, patient as creditors. You have what the whole Edge wants, and you still have to walk out past all of them.' },
+      ],
       ambient: ['A child solemnly shows another child a stone, and the second child solemnly agrees that it is a stone.', 'Someone is mending a net that will never see water. It is the mending that matters.', 'The fire pops. Nobody flinches; flinching is for newcomers.'],
     },
     npcs: ['holdout_lyle'],
