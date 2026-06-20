@@ -143,6 +143,21 @@ describe('The Hush — Cordon’s Edge', () => {
     expect(res.ok, JSON.stringify(res)).toBe(true);
   });
 
+  it('the brave path: take the antenna relic and trade it to the Survey for the Greywater law-map', () => {
+    const s = freshSession('relic-1');
+    for (const c of ['out', 'road', 'road', 'on', 'antennas']) s.act(c);
+    expect(s.state.facts['loc.pc']).toBe('antenna_field');
+    s.act('take the relic');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBe(true);
+    s.act('mile'); // leave the field silently — alive (you never spoke)
+    expect(s.state.facts['survival.pc']).toBe('alive');
+    for (const c of ['back', 'back', 'survey']) s.act(c); // -> the Survey's lean-to
+    s.act('give the relic to eun');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBeUndefined(); // traded away
+    expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // got the Greywater table
+    expect(s.state.facts['known.tell.grey_low_hum']).toBe(true);
+  });
+
   it('Law Drift: a surveyed law is warned, then demoted — the codex is fallible (dwell engine)', () => {
     const s = freshSession('drift-1');
     // survey the Mile Road early, then dwell at a safe spot (mile_road_high, no night-lethal law)

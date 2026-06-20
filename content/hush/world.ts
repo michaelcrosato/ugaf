@@ -21,6 +21,7 @@ export const ITEMS: ItemDef[] = [
   { id: 'lantern', names: ['lantern', 'lamp', 'light'], itemClass: 'light', portable: true, look: { base: 'A shuttered oil lantern. Its flame is the only honest light out here.' } },
   { id: 'coin_roll', names: ['coins', 'money', 'roll', 'cash'], itemClass: 'coin', portable: true, look: { base: 'A thin roll of cordon scrip and a few hard coins. Not much. Enough to start a conversation.' } },
   { id: 'salvage_core', names: ['core', 'anomalous core', 'salvage', 'the core'], itemClass: 'salvage', portable: true, look: { base: 'A fist-sized knot of something that is not quite metal and not quite stone, warm to the touch, and faintly, wrongly heavy — as if it weighed more than the space it takes up. This is what the Survey would kill for, and what the Striders would too.' } },
+  { id: 'antenna_relic', names: ['relic', 'shard', 'antenna shard', 'crystal'], itemClass: 'salvage', portable: true, look: { base: 'A shard of antenna-glass the Settling fused into something that still faintly sings, on a channel just below hearing. The Survey would trade real knowledge for a piece like this — if you can carry it out of the field without giving the field your voice.' } },
 ];
 
 const dim = (s: string) => s; // placeholder; the renderer applies ANSI, content stays plain
@@ -258,6 +259,7 @@ export const NODES: NodeDef[] = [
       firstReveal: 'Beneath the freshest name scratched into the concrete lies a body not three days cold, mouth still open on a last syllable it never got to finish. Whatever he said here, the field answered him — and what answered is still nearby. The lesson is not subtle: do not give your voice to this place.',
     },
     tells: ['antenna_field_hum', 'antenna_name_stones'],
+    items: ['antenna_relic'],
     examinables: [
       { id: 'name_stones', names: ['names', 'stones', 'bases', 'concrete', 'name stones'], tell: 'antenna_name_stones', look: { base: 'Names scratched into concrete, dozens of them, in dozens of hands. Beneath the freshest — a man\'s name, the scratches still pale — lies a body not three days cold, mouth open on a last syllable it never finished. He said a name here. The field answered.' } },
       { id: 'antennas', names: ['antenna', 'antennas', 'towers', 'masts'], tell: 'antenna_field_hum', look: { base: 'Dead masts that should carry nothing, and carry something. When you speak, they hum your voice back changed — and you understand, in your spine, that the change is the point.' } },

@@ -26,7 +26,7 @@ export function createSocial(pack: WorldPack): Module {
     domain: 'social',
     priority: 25,
     intents: ['talk', 'parley', 'bribe', 'intimidate', 'say', 'give', 'ask_about'],
-    writesFacts: ['reputation', 'aspect', 'known', 'flag', 'objective'],
+    writesFacts: ['reputation', 'aspect', 'known', 'flag', 'objective', 'possession'],
     readsFacts: ['reputation', 'aspect', 'known', 'flag', 'possession', 'loc'],
   });
 
@@ -81,6 +81,32 @@ export function createSocial(pack: WorldPack): Module {
         if (!line) return beat(args.native, `${npc.name} has nothing to say to that.`, ['social.silence']);
         const events: WorldEvent[] = [{ tag: 'dialogue', mutations: mutFromLine(line), summary: `${npc.name}: “${line.text}”`, data: { npc: npc.id, line: line.id } }];
         return { nativeNext: args.native, events, control: { kind: 'continue' }, render: { labels: [`social.talk`, `npc.${npc.id}`], hints: { npc: npc.id, grants: line.grantsRumor ?? line.grantsLeadTell ?? null } } };
+      }
+
+      // give the antenna-relic to the Survey -> trade knowledge for it (the brave path)
+      if (c === 'give') {
+        if (npc.id === 'survey_factor' && facts.getBool('possession.pc.antenna_relic')) {
+          return {
+            nativeNext: args.native,
+            events: [
+              {
+                tag: 'relic_trade',
+                mutations: [
+                  { op: 'delete', key: 'possession.pc.antenna_relic' },
+                  { op: 'delete', key: 'possession.pc.antenna_relic.class' },
+                  { op: 'set', key: 'known.tell.grey_rust_bloom', value: true },
+                  { op: 'set', key: 'known.tell.grey_low_hum', value: true },
+                  { op: 'adjust', key: 'reputation.pc.survey', by: 1, min: -3, max: 3 },
+                ],
+                summary: `${npc.name} turns the antenna-shard in the lamplight, and something behind her exact eyes lights up. “Now this — this is worth my ink.” She trades you the Greywater table for it, fair and glad, the rust-bloom and the hum and the hour it wakes.`,
+                data: { npc: npc.id, trade: 'relic' },
+              },
+            ],
+            control: { kind: 'continue' },
+            render: { labels: ['social.relic_trade'], valence: 'boon' },
+          };
+        }
+        return beat(args.native, `${npc.name} has no use for that.`, ['social.give_none']);
       }
 
       // parley / bribe / intimidate -> a create-advantage contest (deterministic off the tape)
