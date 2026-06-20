@@ -45,9 +45,11 @@ export function createGumshoe(pack: WorldPack): Module {
     }
 
   const nodeTells = new Map<string, Set<string>>();
+  const tellNodes = new Map<string, Set<string>>(); // inverse: where each tell is observable (for "look ELSEWHERE")
+  const regionName = new Map<string, string>(pack.regions.map((r) => [r.id, r.name]));
   const addNodeTell = (node: string, tell: string) => {
-    if (!nodeTells.has(node)) nodeTells.set(node, new Set());
-    nodeTells.get(node)!.add(tell);
+    (nodeTells.get(node) ?? nodeTells.set(node, new Set()).get(node)!).add(tell);
+    (tellNodes.get(tell) ?? tellNodes.set(tell, new Set()).get(tell)!).add(node);
   };
   for (const n of pack.nodes) for (const t of n.tells ?? []) addNodeTell(n.id, t);
   for (const law of pack.laws)
@@ -143,13 +145,32 @@ export function createGumshoe(pack: WorldPack): Module {
             render: { labels: [`survey.${lawId}`], valence: 'boon', hints: { law: lawId, stage: 'surveyed' } },
           };
         }
-        // not enough yet — friction, not a dead end
+        // not enough yet — friction, not a dead end. NAME what is missing (the count) and WHERE to
+        // find it: a sign still readable HERE (and through which sense), or ELSEWHERE (which region).
+        // "Watch for more" must never be a blind dead end (feedback/0012 #3).
+        const need = law.discovery.minTellsToSurvey;
+        const unread = tells.filter((t) => !facts.getBool(`known.tell.${t}`));
+        const hereSet = nodeTells.get(node ?? '') ?? new Set<string>();
+        const hereUnread = unread.filter((t) => hereSet.has(t));
+        const count = `You have read ${Math.min(seen, need)} of the ${need} sign${need === 1 ? '' : 's'} you need to be sure of ${law.title}.`;
+        let where: string;
+        if (hereUnread.length > 0) {
+          const channels = new Set(hereUnread.map((t) => tellProse.get(t)?.channel).filter(Boolean) as string[]);
+          where = `There is still a sign to read right here — ${channelHint(channels)}.`;
+        } else {
+          const curRegion = node ? nodeRegion.get(node) : undefined;
+          const regionIds = new Set<string>();
+          for (const t of unread) for (const n of tellNodes.get(t) ?? []) { const r = nodeRegion.get(n); if (r) regionIds.add(r); }
+          const elsewhere = [...regionIds].filter((r) => r !== curRegion).map((r) => regionName.get(r)).filter(Boolean) as string[];
+          where = elsewhere.length
+            ? `What is left to learn is not here — look for it ${elsewhere.map(towardRegion).join(', or ')}.`
+            : `What is left is not at this exact spot — go on deeper, and keep watching and listening.`;
+        }
+        const lead = stageRank(cur) >= stageRank('approximate') ? `You can almost name the shape of ${law.title}. ` : '';
         return beat(
           native,
-          { labels: ['invest.deduce_short'], hints: { law: lawId, seen, need: law.discovery.minTellsToSurvey } },
-          stageRank(cur) >= stageRank('approximate')
-            ? `You can feel the shape of ${law.title}, but one more clear sign would settle it.`
-            : `You don't have enough yet to trust a guess about ${law.title}. Watch for more.`,
+          { labels: ['invest.deduce_short'], hints: { law: lawId, seen, need, here: hereUnread.length > 0 } },
+          `${lead}${count} ${where}`,
         );
       }
 
@@ -278,4 +299,20 @@ export function createGumshoe(pack: WorldPack): Module {
   function beat(native: GumNative, render: { labels: string[]; hints?: JsonObject }, summary: string): ModuleResult {
     return { nativeNext: native, events: [{ tag: 'invest_beat', mutations: [], summary, visibility: 'public' }], control: { kind: 'continue' }, render };
   }
+}
+
+/** how to read a sign that is HERE, by the sense(s) it speaks through (deduce-legibility, #3). */
+function channelHint(channels: ReadonlySet<string>): string {
+  const parts: string[] = [];
+  if (channels.has('sight')) parts.push('look closer (examine what is here, or search)');
+  if (channels.has('sound')) parts.push('listen');
+  if (channels.has('touch')) parts.push('hold still and feel for it');
+  if (channels.has('smell')) parts.push('breathe the air here');
+  if (channels.has('taste')) parts.push('taste it on the air');
+  return parts.length ? parts.join(', or ') : 'look closer';
+}
+
+/** an in-world direction to a region whose name a missing tell lives in ("toward the Greywater"). */
+function towardRegion(name: string): string {
+  return 'toward ' + name.replace(/^The /, 'the ');
 }
