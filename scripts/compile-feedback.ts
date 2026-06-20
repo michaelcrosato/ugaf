@@ -10,7 +10,7 @@
  * Writes <run>/compiled-feedback.md and prints it.
  */
 import { spawnSync } from 'node:child_process';
-import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -25,10 +25,10 @@ function latestRun(): string {
   const base = resolve(ROOT, 'playtest-runs/swarm');
   const runs = readdirSync(base)
     .filter((d) => existsSync(resolve(base, d, 'index.json')))
-    .map((d) => resolve(base, d))
-    .sort();
+    .map((d) => ({ dir: resolve(base, d), mtime: statSync(resolve(base, d, 'index.json')).mtimeMs }))
+    .sort((a, b) => a.mtime - b.mtime); // newest by wall-clock, not by name (a timestamp dir sorts after "night1")
   if (!runs.length) throw new Error('no swarm runs found under playtest-runs/swarm');
-  return runs[runs.length - 1]!;
+  return runs[runs.length - 1]!.dir;
 }
 
 const RUN = arg('run') ? resolve(arg('run')!) : latestRun();
