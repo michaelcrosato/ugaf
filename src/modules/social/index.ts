@@ -89,12 +89,13 @@ export function createSocial(pack: WorldPack): Module {
         return dialogue(npc, line, args.native);
       }
 
-      // a MERCHANT is an NPC who sells a law-map (a grantsLeadTell line). give/pay/bribe one
-      // -> execute the trade: pay, receive the map (codex-visible), once. The natural verbs
-      // all work, the payment is actually spent, and each merchant's prose is its own.
-      const lawLine = (npc.dialogue ?? []).find((l) => l.grantsLeadTell && (!l.when || evalPredicate(l.when, facts)));
-      if (lawLine && (c === 'give' || c === 'bribe')) {
-        return trade(npc, lawLine, c, intent, facts, args.native);
+      // a MERCHANT is an NPC who sells one or more law-maps (grantsLeadTell lines). give/pay/bribe
+      // one -> execute the trade. A NAMED purchase ("pay eun for the antennas law") is bound to the
+      // named law and refused honestly if this merchant doesn't sell it (feedback/0012 #6 — no more
+      // silently selling the Greywater when the antennas were asked for).
+      const lawLines = (npc.dialogue ?? []).filter((l) => l.grantsLeadTell && (!l.when || evalPredicate(l.when, facts)));
+      if (lawLines.length && (c === 'give' || c === 'bribe')) {
+        return trade(npc, lawLines, c, intent, facts, args.native);
       }
 
       // give something to a non-merchant, or a non-payment -> nothing doing
@@ -160,10 +161,60 @@ export function createSocial(pack: WorldPack): Module {
     return facts.getNumber('meta.coins') ?? 0;
   }
 
+  /** the law a grantsLeadTell line actually sells (its `known.purchased.<law>` key). */
+  function purchasedLawOf(line: DialogueLine): string | undefined {
+    return Object.keys(line.setsFacts ?? {}).find((k) => k.startsWith('known.purchased.'))?.slice('known.purchased.'.length);
+  }
+
+  function lawTitle(id: string | undefined): string {
+    return pack.laws.find((l) => l.id === id)?.title ?? id ?? 'that law';
+  }
+
+  function lawFromPhrase(named: string): string | undefined {
+    for (const law of pack.laws) {
+      const bare = law.title.toLowerCase().replace(/^the /, '');
+      if (named.includes(bare) || named.includes(law.id.replace(/_/g, ' '))) return law.id;
+    }
+    if (/antenna|name[\s-]?stone/.test(named)) return 'antenna_field';
+    if (/grey\s*water|bottoms|safe/.test(named)) return 'greywater';
+    if (/\bmile\b/.test(named)) return 'mile_road';
+    if (/hollow|deep dark/.test(named)) return 'hollow_dark';
+    return undefined;
+  }
+
+  /**
+   * Which law (if any) a purchase NAMES — so a named purchase binds to that law and a merchant
+   * who doesn't sell it refuses honestly (feedback/0012 #6). The law is read ONLY from an explicit
+   * "...for the <law>" clause (or an ask topic), never from the payment item's name — so "give the
+   * antenna shard to eun" trades the shard, it does not ask to buy the antenna law. A bare "pay
+   * mox" / "give a coin" names no law and falls through to the merchant's default map.
+   */
+  function requestedLaw(intent: import('../../sdk/intents.js').ParsedIntent): string | undefined {
+    if (intent.topic) return lawFromPhrase(intent.topic.toLowerCase());
+    const m = (intent.raw ?? '').toLowerCase().match(/\bfor\s+(?:the\s+)?(.+)$/);
+    return m ? lawFromPhrase(m[1]!) : undefined;
+  }
+
   // give/pay/bribe a merchant -> buy the law-map: spend the payment, grant the map (codex-visible
-  // via the line's setsFacts), once. Honest refusal if there's nothing to pay with.
-  function trade(npc: NpcDef, lawLine: DialogueLine, c: string, intent: import('../../sdk/intents.js').ParsedIntent, facts: import('../../sdk/facts.js').FactView, native: JsonObject): ModuleResult {
-    const lawId = Object.keys(lawLine.setsFacts ?? {}).find((k) => k.startsWith('known.purchased.'))?.slice('known.purchased.'.length);
+  // via the line's setsFacts), once. A named purchase binds to the named law; honest refusal if
+  // this merchant doesn't sell it, or if there's nothing to pay with.
+  function trade(npc: NpcDef, lawLines: DialogueLine[], c: string, intent: import('../../sdk/intents.js').ParsedIntent, facts: import('../../sdk/facts.js').FactView, native: JsonObject): ModuleResult {
+    const asked = requestedLaw(intent);
+    const sellable = new Map<string, DialogueLine>();
+    for (const l of lawLines) {
+      const id = purchasedLawOf(l);
+      if (id && !sellable.has(id)) sellable.set(id, l);
+    }
+    // a law was NAMED that this merchant does not sell -> say so honestly, never sell a different one
+    if (asked && !sellable.has(asked)) {
+      const have = [...sellable.keys()].map(lawTitle).join(' and ');
+      const line = npc.faction === 'survey'
+        ? `The Survey does not sell what it has not stood next to and confirmed, and ${lawTitle(asked)} is not on my confirmed shelf — only ${have} is. For that one, ask the Warden at the checkpoint; he'll tell you true, and free.`
+        : `That is not my patch to sell. I deal in ${have}, not ${lawTitle(asked)}. If it's ${have} you want, my price stands.`;
+      return beat(native, `${npc.name}: “${line}”`, ['social.not_sold']);
+    }
+    const lawLine = (asked && sellable.get(asked)) || lawLines[0]!;
+    const lawId = purchasedLawOf(lawLine);
     // You already HAVE this law's knowledge — from ANY merchant, or your own eyes. Eun and Mox
     // sell the SAME Greywater law, so the knowledge is shared: never double-charge, and never claim
     // YOU sold it when another merchant (or first-hand observation) is where it actually came from.
