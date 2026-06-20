@@ -45,10 +45,19 @@ export const NPCS: NpcDef[] = [
     dialogue: [
       { id: 'lyle_core_greet', when: { fact: 'possession.pc.salvage_core', eq: true }, text: "You got it, then. I can see it on you — that pull at the shoulder, that look. Few come back wearing it. Sit a moment, if you like. Though folk carrying that rarely sit long, and rarely sit easy." },
       { id: 'lyle_greet', text: "Newcomer. You've the look of someone after the core. Everyone is, lately. Sit. Ask. Knowing's cheaper here than at the Survey, and worth about what you pay." },
-      { id: 'lyle_mile', topic: 'mile road', text: "The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. Folk have died walking home down a road that kept making more of itself.", grantsRumor: 'r_mile_true' },
-      { id: 'lyle_grey', topic: 'greywater', text: "The bottoms eat gold, they say — keep your coin deep and you'll be fine.", grantsRumor: 'r_grey_false' },
-      { id: 'lyle_antenna', topic: 'antenna', text: "The antennas? Old trick the Striders swear by — say your OWN name there, loud, and the field knows you're kin and lets you be. Whether it's true... well. The ones who tried it can't tell me.", grantsRumor: 'r_antenna_false' },
+      // Lyle's TRUE lore is firsthand and stated flat (the Mile Road, the core) — the CONTRAST that
+      // makes his hedging legible. A careful player learns: when Lyle's sure, he says so plainly.
+      { id: 'lyle_mile', topic: 'mile road', text: "The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. I've seen the bootprints loop a dead woman a thousand times round one milepost. That one I'd stake my life on.", grantsRumor: 'r_mile_true' },
+      // FALSE rumour — kept false (the trap stands), but now HEDGED: Lyle marks it as told-not-tested,
+      // so his wrongness reads as a fallible old Holdout, not a game bug (feedback/0012 #8).
+      { id: 'lyle_grey', topic: 'greywater', text: "The bottoms? They eat gold — that's the old wisdom, anyhow. Keep your coin deep and you'll come through fine. Though mind, I'll be straight with you: I'm a Holdout, I've not carried worked iron down into that dark in thirty years. I'm telling you what I was told, not what I've tested with my own hands. Cross-check me if your life's on it.", grantsRumor: 'r_grey_false' },
+      // FALSE rumour — kept false; the existing "can't tell me" hedge strengthened so the deadly
+      // implication is catchable by a careful ear while still tempting the reckless.
+      { id: 'lyle_antenna', topic: 'antenna', text: "The antennas? Old trick the Striders swear by — say your OWN name there, loud, and the field knows you're kin and lets you be. Whether it's true, now... I couldn't honestly tell you. The ones who walked out to try it never did walk back to tell me how it went. Make of that what you will.", grantsRumor: 'r_antenna_false' },
       { id: 'lyle_core', topic: 'core', text: "The core's real, out in the drowned pump-house. Getting to it's the easy part. Getting to it without the Greywater taking your iron, that's the trick — go by day, or go without metal, or pay a Strider who knows the safe hour.", grantsRumor: 'r_cache_paths' },
+      // the diegetic reliability tell: Lyle himself names that he is a contestable source. A careful
+      // player who asks learns to verify him; the contradiction in his lore is then fair, not a bug.
+      { id: 'lyle_trust', topic: 'trust', text: "Trust me? Ha — I'll tell you what I tell every newcomer. I've been here so long the things I've seen and the things I've only been told have run together in my head. Some of what I hand you is gold and some is fool's gold, and these days I can't always tell you which is which. So don't stake your life on an old man's say-so. Take what I give you to the Survey, or go and see it with your own eyes. That's not modesty — it's the only honest thing I've got left to sell." },
     ],
   },
   {
