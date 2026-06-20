@@ -26,20 +26,26 @@ export function createSocial(pack: WorldPack): Module {
     domain: 'social',
     priority: 25,
     intents: ['talk', 'parley', 'bribe', 'intimidate', 'say', 'give', 'ask_about'],
-    writesFacts: ['reputation', 'aspect', 'known', 'flag'],
+    writesFacts: ['reputation', 'aspect', 'known', 'flag', 'objective'],
     readsFacts: ['reputation', 'aspect', 'known', 'flag', 'possession', 'loc'],
   });
 
-  function presentNpc(node: string | undefined, targetId?: string, raw?: string): NpcDef | undefined {
-    if (!node) return undefined;
+  function presentNpc(node: string | undefined, targetId?: string, raw?: string): { npc?: NpcDef; namedButAbsent?: string } {
+    if (!node) return {};
     const here = (npcAt.get(node) ?? []).map((id) => npcs.get(id)!).filter(Boolean);
-    if (targetId && npcs.has(targetId) && here.includes(npcs.get(targetId)!)) return npcs.get(targetId);
+    if (targetId && npcs.has(targetId)) {
+      const t = npcs.get(targetId)!;
+      return here.includes(t) ? { npc: t } : { namedButAbsent: t.name };
+    }
     if (raw) {
       const q = raw.toLowerCase();
       const m = here.find((n) => n.names.some((nm) => q.includes(nm.toLowerCase())));
-      if (m) return m;
+      if (m) return { npc: m };
+      // a name was given but matches no one present -> say so, don't silently retarget
+      const knownElsewhere = [...npcs.values()].find((n) => n.names.some((nm) => q.includes(nm.toLowerCase())));
+      if (knownElsewhere) return { namedButAbsent: knownElsewhere.name };
     }
-    return here[0];
+    return { npc: here[0] };
   }
 
   function pickLine(npc: NpcDef, topic: string | undefined, facts: import('../../sdk/facts.js').FactView): DialogueLine | undefined {
@@ -58,7 +64,8 @@ export function createSocial(pack: WorldPack): Module {
     claims: (intent, _facts, armed) => armed.has('social') && ['talk', 'parley', 'bribe', 'intimidate', 'say', 'give', 'ask_about'].includes(intent.class),
     validateLegality: (intent, _native, facts) => {
       const node = facts.getString('loc.pc');
-      const npc = presentNpc(node, intent.target?.id, intent.target?.raw);
+      const { npc, namedButAbsent } = presentNpc(node, intent.target?.id, intent.target?.raw);
+      if (namedButAbsent) return { legal: false, reason: `${namedButAbsent} is not here` };
       if (!npc) return { legal: false, reason: 'there is no one here to talk to' };
       return { legal: true, args: { npc: npc.id } };
     },

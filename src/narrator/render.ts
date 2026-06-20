@@ -74,7 +74,7 @@ export function createRenderer(pack: WorldPack): Renderer {
     const npcs = ents.filter((e) => e.kind === 'npc');
     const items = ents.filter((e) => e.kind === 'item');
     if (npcs.length) lines.push(`You can see ${list(npcs.map((n) => n.label))} here.`);
-    if (items.length) lines.push(`There is ${list(items.map((i) => i.label))} here.`);
+    if (items.length) lines.push(`There is ${list(items.map((i) => withArticle(i.label)))} here.`);
 
     // exits
     const exits = obs.scene.exits;
@@ -126,4 +126,8 @@ function list(xs: string[]): string {
   if (xs.length <= 1) return xs[0] ?? '';
   if (xs.length === 2) return `${xs[0]} and ${xs[1]}`;
   return `${xs.slice(0, -1).join(', ')}, and ${xs.at(-1)}`;
+}
+function withArticle(label: string): string {
+  if (/^(the|a|an|some)\b/i.test(label)) return label;
+  return (/^[aeiou]/i.test(label) ? 'an ' : 'a ') + label;
 }

@@ -25,5 +25,6 @@ __pycache__/
 /saves/
 /.proctor/
 /.tmp/
+/playtest-runs/
 *.local.json
 .vitest/

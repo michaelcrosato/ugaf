@@ -185,6 +185,12 @@ export class Session {
   isEnded(): boolean {
     return this.ended;
   }
+
+  /** the true session outcome — the goal endStatus if a goal fired, else kernel status. */
+  outcome(): 'active' | 'won' | 'lost' | 'ended' {
+    if (this.ended) return this.endStatus === 'active' ? 'ended' : this.endStatus;
+    return this.state.status;
+  }
 }
 
 function italicReason(reason: string): string {

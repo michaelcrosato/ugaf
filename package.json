@@ -20,6 +20,7 @@
     "coverage-report": "tsx scripts/coverage-report.ts",
     "golden": "tsx scripts/golden-tape.ts",
     "coherence": "tsx scripts/coherence-pass.ts",
+    "playtest": "tsx scripts/playtest.ts",
     "gate": "tsx scripts/gate.ts"
   },
   "dependencies": {

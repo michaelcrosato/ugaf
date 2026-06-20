@@ -13,6 +13,8 @@ import { isIntentClass, type EntityRef, type IntentClass, type ParsedIntent } fr
 import type { RoleObservation } from '../sdk/types.js';
 import type { WorldPack } from '../sdk/worldpack.js';
 
+const RETURN_WORDS = new Set(['back', 'leave', 'return', 'exit', 'away', 'retreat', 'go back', 'turn back']);
+
 const DIRECTIONS: Record<string, string> = {
   n: 'north', s: 'south', e: 'east', w: 'west', ne: 'northeast', nw: 'northwest', se: 'southeast', sw: 'southwest',
   u: 'up', d: 'down', up: 'up', down: 'down', in: 'in', out: 'out', north: 'north', south: 'south', east: 'east', west: 'west',
@@ -122,6 +124,14 @@ export function createParser(pack: WorldPack): Parser {
   function parse(input: string, obs: RoleObservation): ParsedIntent {
     const raw = input.trim();
     const lower = raw.toLowerCase().replace(/^\s*(please|then)\s+/, '').replace(/[.!?]+$/, '');
+
+    // bare "return" word -> go back the way you came (generic affordance)
+    if (RETURN_WORDS.has(lower)) return mk('go', { direction: lower, tags: ['movement', 'return'], confidence: 0.9 });
+
+    // a single token that names an exit HERE wins over a same-spelled verb
+    // (so "survey" / "salvage" walk to the Survey / Striders, not deduce-a-law)
+    const exitDir = obs.scene.exits.find((e) => e.dir.toLowerCase() === lower);
+    if (exitDir) return mk('go', { direction: lower, target: { id: exitDir.to ?? exitDir.dir, raw: lower, tags: ['exit'] }, confidence: 0.9 });
 
     // bare direction -> go
     const firstTok = lower.split(/\s+/)[0] ?? '';

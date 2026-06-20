@@ -7,6 +7,8 @@
  */
 import { evalPredicate } from '../../sdk/law.js';
 import { makeManifest } from '../../sdk/define.js';
+
+const RETURN_WORDS = new Set(['back', 'leave', 'return', 'exit', 'away', 'retreat']);
 import type { JsonObject } from '../../sdk/json.js';
 import type { Module, ModuleResult, WorldEvent } from '../../sdk/types.js';
 import type { WorldPack, ExitDef, EdgeDef, ItemDef } from '../../sdk/worldpack.js';
@@ -76,7 +78,12 @@ export function createTravel(pack: WorldPack): Module {
       }
       // go / cross_threshold
       const exit = resolveExit(n.node, intent.target?.id, intent.direction, intent.target?.raw ?? intent.raw);
-      if (!exit) return { legal: false, reason: `there is no way like that from here` };
+      if (!exit) {
+        // generic "back / out / leave / return" -> retrace your steps
+        const word = (intent.direction ?? intent.target?.raw ?? intent.raw ?? '').toLowerCase().trim();
+        if (RETURN_WORDS.has(word) && n.previous) return { legal: true, args: { to: n.previous, edge: null, label: 'back the way you came' } as JsonObject };
+        return { legal: false, reason: `there is no obvious way ${word ? `"${word}"` : 'like that'} from here — try one of: ${(exitsByNode.get(n.node) ?? []).map((e) => e.dir).join(', ')}` };
+      }
       if (exit.when && !evalPredicate(exit.when, facts)) {
         return { legal: false, reason: exit.blockedText ?? 'that way is not passable right now' };
       }
@@ -112,7 +119,7 @@ export function createTravel(pack: WorldPack): Module {
               { op: 'set', key: `possession.pc.${id}`, value: true },
               ...(it?.itemClass ? ([{ op: 'set', key: `possession.pc.${id}.class`, value: it.itemClass }] as const) : []),
             ],
-            summary: `You take ${it?.names[0] ?? id}.`,
+            summary: `You take the ${it?.names[0] ?? id}.`,
           },
         ];
         return { nativeNext: { ...n, taken: [...n.taken, id] }, events: ev, control: { kind: 'continue' }, render: { labels: ['travel.take'], entities: [`item.${id}`] } };
