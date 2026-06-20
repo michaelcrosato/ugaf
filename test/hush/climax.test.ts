@@ -84,6 +84,10 @@ describe('the climax has teeth — the watched gate must be EARNED', () => {
     const day = atGate('climax-look-day', { 'objective.knows_gap': true });
     day.state = { ...day.state, facts: { ...day.state.facts, 'phase.now': 'day', 'clock.minutes': 600 }, native: { ...day.state.native, 'time.cycle': { minutes: 600 } } };
     expect(day.act('look').text.toLowerCase()).toMatch(/broad day|wait for the light/);
+    // patrol ALERT (hidden, knows gap, night): the SLIP "go" prose must NOT show — the route is shut
+    const alerted = atGate('climax-look-alert', { 'objective.knows_gap': true, 'flag.hidden': true, 'awareness.cordon_patrol': 'alert' });
+    expect(canLeave(alerted)).toBe(false); // exit correctly blocked while alert
+    expect(alerted.act('look').text.toLowerCase()).not.toContain('go low and quiet'); // and the prose agrees
   });
 
   it('dissolved iron + no debt + no gap-knowledge = stuck until you earn a route (resistance, not a wall)', () => {
