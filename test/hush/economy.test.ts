@@ -19,7 +19,8 @@ describe('the NPC information-economy', () => {
     const r = s.act('give coins to eun');
     expect(r.rejected).toBeFalsy();
     expect(r.text.toLowerCase()).toContain('hand over'); // a receipt — coins don't vanish silently
-    expect(s.state.facts['possession.pc.coin_roll']).toBeUndefined(); // the coin was actually spent
+    expect(s.state.facts['meta.coins']).toBe(2); // ONE coin spent of three, not the whole purse
+    expect(s.state.facts['possession.pc.coin_roll']).toBe(true); // you still have coins left
     expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // got the table
     expect(s.state.facts['known.law.greywater']).toBe('approximate'); // codex stage advances
     expect(s.codex()).toContain('Greywater'); // the bought map is visible in the codex
@@ -34,7 +35,7 @@ describe('the NPC information-economy', () => {
     for (const c of ['out', 'road', 'salvage']) s.act(c);
     expect(s.state.facts['possession.pc.coin_roll']).toBe(true);
     s.act('pay mox');
-    expect(s.state.facts['possession.pc.coin_roll']).toBeUndefined();
+    expect(s.state.facts['meta.coins']).toBe(2); // one coin spent
     expect(s.state.facts['objective.cache_route']).toBe('known');
     expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1);
   });
@@ -74,7 +75,17 @@ describe('the NPC information-economy', () => {
     const r = s.act('give coin to eun');
     expect(r.rejected).toBeFalsy();
     expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // the trade fired
-    expect(s.state.facts['possession.pc.coin_roll']).toBeUndefined();
+    expect(s.state.facts['meta.coins']).toBe(2); // one coin of three spent
+  });
+
+  it('coins are a counted resource: a purchase costs one, the rest remain, and the count is visible', () => {
+    const s = sess('econ-count');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    expect(s.state.facts['meta.coins']).toBe(3);
+    expect(s.inventory()).toContain('×3'); // the purse count shows in inventory
+    s.act('give coins to eun'); // buy the Greywater table
+    expect(s.state.facts['meta.coins']).toBe(2); // only ONE coin gone
+    expect(s.inventory()).toContain('×2');
   });
 
   it('asking a merchant about its paid law-map is a paywall hint, never a free grant', () => {

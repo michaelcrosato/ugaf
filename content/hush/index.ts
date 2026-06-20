@@ -29,6 +29,7 @@ export const HUSH_PACK: WorldPack = {
       'world.patrol.cordon_checkpoint': 'cordon_patrol',
       'awareness.cordon_patrol': 'unaware',
       'objective.lead': 'The core lies in the drowned pump-house, deep in the Greywater bottoms. Get to it, get it, get out — and learn the laws before they teach you.',
+      'meta.coins': 3,
     },
     opening:
       "You came in on the last cordon truck with three coins, what iron you could borrow, and a rumour: that something the Survey calls only 'the core' lies out in the drowned bottoms, and that everyone who matters on this Edge wants it. The waystation door bangs shut behind you. The Hush is waiting, and it is very, very quiet.",
