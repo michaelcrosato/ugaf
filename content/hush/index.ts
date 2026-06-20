@@ -45,12 +45,13 @@ export const HUSH_PACK: WorldPack = {
           // the mastery was real (the ending recognises the high-water mark, not the live stage).
           { fact: 'known.mile_road.ever_surveyed', eq: true },
           { fact: 'known.greywater.ever_surveyed', eq: true },
+          { fact: 'known.antenna_field.ever_surveyed', eq: true }, // the listening field is load-bearing for mastery now (no more "read each law" on two)
         ],
       },
       outcome: 'won',
       title: 'The Core, Carried Out — and the Hush, Read True',
       epilogue:
-        "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. You did not buy your way past the Hush, and you did not luck your way past it. You read it — the dishonest road, the iron-hungry water, each law in turn — until it had nothing left to surprise you with, and then you walked through it like a man who knew the house. That is the only victory the Hush offers, and you took the whole of it: not to beat the Zone, but to understand it well enough that it stands aside. It will re-Settle. The laws will shift. But you know how to learn them now, and that is a thing the Zone cannot take back.",
+        "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. You did not buy your way past the Hush, and you did not luck your way past it. You read it — the dishonest road, the iron-hungry water, the listening field — each law in turn, until it had nothing left to surprise you with, and then you walked through it like a man who knew the house. That is the only victory the Hush offers, and you took the whole of it: not to beat the Zone, but to understand it well enough that it stands aside. It will re-Settle. The laws will shift. But you know how to learn them now, and that is a thing the Zone cannot take back.",
     },
     {
       id: 'recover_core_bought',

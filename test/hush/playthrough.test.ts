@@ -31,18 +31,20 @@ describe('The Hush — Cordon’s Edge', () => {
     expect(last.status).toBe('won');
   });
 
-  it('the mastery ending is REACHABLE: deduce both laws, carry the core out, get "Read True"', () => {
+  it('the mastery ending is REACHABLE: deduce ALL THREE laws, carry the core out, get "Read True"', () => {
     const s = freshSession('mastery-1');
     const path = [
       'out', 'road', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road',
+      'antennas', 'examine the names', 'listen', 'deduce the antenna field', // the listening field is now load-bearing for mastery
       'fork', 'water', 'examine the rust', 'listen', 'deduce the greywater',
       'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'hide', 'back',
     ];
-    // both laws were read true at some point (even if drift later re-Settled them)
+    // all three laws were read true at some point (even if drift later re-Settled them)
     let last = { text: '', status: 'active' as string };
     for (const cmd of path) last = s.act(cmd);
     expect(s.state.facts['known.mile_road.ever_surveyed']).toBe(true);
     expect(s.state.facts['known.greywater.ever_surveyed']).toBe(true);
+    expect(s.state.facts['known.antenna_field.ever_surveyed']).toBe(true);
     expect(last.status).toBe('won');
     expect(last.text).toContain('Read True'); // the flagship mastery epilogue, not the nerve-not-knowing fallback
   });
