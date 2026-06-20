@@ -33,6 +33,10 @@ export function createGumshoe(pack: WorldPack): Module {
     lawTells.set(law.id, law.tells.map((t) => t.id));
     for (const t of law.tells) tellLaw.set(t.id, law.id);
   }
+  // examinable id -> the tell it surfaces (so "examine the walker" finds its tell)
+  const examTell = new Map<string, string>();
+  for (const n of pack.nodes) for (const ex of n.examinables ?? []) if (ex.tell) examTell.set(ex.id, ex.tell);
+
   const nodeTells = new Map<string, Set<string>>();
   const addNodeTell = (node: string, tell: string) => {
     if (!nodeTells.has(node)) nodeTells.set(node, new Set());
@@ -145,12 +149,16 @@ export function createGumshoe(pack: WorldPack): Module {
       const events: WorldEvent[] = [];
       const acquiredLaws = new Set<string>();
       const acquired: string[] = [];
+      // when examining a specific thing, its own look prose already paints the cue —
+      // so the tell adds only the REALISATION (the note), not a duplicate description.
+      const examinedSpecific = c === 'examine' && !!targetTell;
       for (const t of c === 'search' ? fresh : fresh.slice(0, 1)) {
         const prose = tellProse.get(t);
+        const summary = prose ? (examinedSpecific ? prose.note : `${prose.cue} ${prose.note}`) : `You notice something.`;
         events.push({
           tag: 'tell_observed',
           mutations: [{ op: 'set', key: `known.tell.${t}`, value: true }],
-          summary: prose ? `${prose.cue} ${prose.note}` : `You notice something.`,
+          summary,
           data: { tell: t, law: tellLaw.get(t) ?? null },
         });
         acquired.push(t);
@@ -175,7 +183,8 @@ export function createGumshoe(pack: WorldPack): Module {
       function resolveExamineTell(id: string | undefined, raw: string | undefined, node: string | undefined): string | undefined {
         if (!node) return undefined;
         const here = nodeTells.get(node) ?? new Set();
-        // match by examinable id mapped to a tell, or by raw text against tell cues
+        // an examinable maps to its surfaced tell; or the target may BE a tell id
+        if (id && examTell.has(id) && here.has(examTell.get(id)!)) return examTell.get(id)!;
         if (id && here.has(id)) return id;
         const q = (raw ?? '').toLowerCase();
         for (const t of here) {

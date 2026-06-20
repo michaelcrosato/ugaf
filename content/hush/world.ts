@@ -116,7 +116,10 @@ export const NODES: NodeDef[] = [
     kind: 'junction',
     look: {
       base: 'The road runs dead straight between fields of grey, dead wheat. A milepost stands at the verge. Behind you, the lamps of Lyle\'s Rest. Ahead, more road, and more mileposts, dwindling toward a horizon the colour of a held breath.',
-      variants: [{ when: { fact: 'facing.pc', eq: 'behind' }, text: 'You are looking back the way you came — and the lamps of the Rest seem further off than a few minutes\' walk could account for.' }],
+      variants: [
+        { when: { fact: 'facing.pc', eq: 'behind' }, text: 'You are looking back the way you came — and the lamps of the Rest seem further off than a few minutes\' walk could account for.' },
+        { when: { fact: 'known.law.mile_road', eq: 'surveyed' }, text: 'You walk it the way you have learned to now: eyes front, chin level, never once turning round. The road can only lie about what is behind you — so you give it nothing behind you to lie about.' },
+      ],
       ambient: ['The wheat does not move, though the wind is enough to move it.', 'Your footsteps echo a half-beat late, as if the road were repeating them to itself.'],
     },
     tells: ['mile_milepost_reset', 'mile_shadow_long'],
@@ -179,6 +182,7 @@ export const NODES: NodeDef[] = [
         { when: { fact: 'phase.now', eq: 'dusk' }, text: 'The light is going, and the water is starting to wake. A low hum is finding the iron in your kit — you can feel it answer. Whatever un-makes worked metal here, it is opening its eyes. You have minutes, not hours.' },
         { when: { fact: 'phase.now', eq: 'night' }, text: 'It is full dark now, and the water has woken. The hum comes up through the causeway stones and into every rivet and blade you carry. The rust-bloom is faster than rust has any right to be.' },
         { when: { fact: 'phase.now', eq: 'day' }, text: 'In daylight the bottoms are only flooded and sad. Whatever lives in the dark here is sleeping; the metal in the silt is just metal.' },
+        { when: { fact: 'known.law.greywater', eq: 'surveyed' }, text: 'You know this water now — what it wants, and when it wakes to want it. You weigh the iron on you against the failing light, and you do the sum the dead in the silt never learned to do.' },
       ],
       ambient: ['Something drips, and the drip is answered, a beat late, from inside a drowned house.', 'A fish that is the wrong shape turns over once and is gone.'],
     },
@@ -235,6 +239,7 @@ export const NODES: NodeDef[] = [
       variants: [
         { when: { fact: 'phase.now', eq: 'night' }, text: 'At night the field is worse. The hum is hungry. You can feel how badly it wants you to say something — anything — aloud.' },
         { when: { fact: 'law.antenna_field.active', eq: true }, text: 'The Changed is still out there, somewhere past the light, circling the hum that carried your voice. Get clear of the field — or be silent, and be quick.', replace: false },
+        { when: { fact: 'known.law.antenna_field', eq: 'surveyed' }, text: 'You move through the field with your mouth shut and your name kept your own. You understand the trade it offers now, and you decline it, the way the name-stones taught you to.' },
       ],
       ambient: ['An antenna sways with no wind, slow, like a head turning to listen.', 'The hum briefly takes the shape of a word you did not say, and lets it go.'],
       firstReveal: 'Beneath the freshest name scratched into the concrete lies a body not three days cold, mouth still open on a last syllable it never got to finish. Whatever he said here, the field answered him — and what answered is still nearby. The lesson is not subtle: do not give your voice to this place.',

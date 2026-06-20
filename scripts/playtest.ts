@@ -47,6 +47,18 @@ const PERSONAS: Persona[] = [
     seed: 'pt-wander',
     commands: ['xyzzy', 'go nowhere', 'examine', 'take the moon', 'north', 'out', 'go to the holdout', 'look at the warden', 'inventory', 'drop the lantern', 'take the lantern', 'road', 'use the pump', 'climb the fire', 'codex', 'road', 'sniff', 'on', 'go back', 'look'],
   },
+  {
+    id: 'antenna-careful',
+    blurb: 'tests the Antenna escape window — speaks a name, reads the warning, and gets clear',
+    seed: 'pt-antenna',
+    commands: ['out', 'road', 'road', 'on', 'antennas', 'examine the names', 'listen', 'say maren', 'mile', 'codex'],
+  },
+  {
+    id: 'dawdler',
+    blurb: 'lingers in the deep after dark — meant to surface the Hollow Dark on seeds where it is live',
+    seed: 'cordon-7',
+    commands: ['out', 'road', 'road', 'on', 'fork', 'rest', 'rest', 'wait', 'listen', 'examine the sitter', 'deduce the hollow dark', 'codex'],
+  },
 ];
 
 mkdirSync(OUT, { recursive: true });
