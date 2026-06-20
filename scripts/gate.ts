@@ -26,6 +26,7 @@ const STAGES: Stage[] = [
   { name: 'integrity', cmd: ['npx', 'tsx', 'scripts/verify-integrity.ts'] },
   { name: 'tests', cmd: ['npx', 'vitest', 'run'] },
   { name: 'coherence', cmd: ['npx', 'tsx', 'scripts/coherence-pass.ts'], optional: true, entry: 'scripts/coherence-pass.ts' },
+  { name: 'golden', cmd: ['npx', 'tsx', 'scripts/golden-tape.ts'], optional: true, entry: 'scripts/golden-tape.ts' },
 ];
 
 function run(stage: Stage): boolean {

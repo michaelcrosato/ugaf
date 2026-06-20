@@ -1,0 +1,3058 @@
+{
+  "seed": "golden-hush",
+  "commands": [
+    "out",
+    "road",
+    "talk to lyle",
+    "ask lyle about the mile road",
+    "ask lyle about the greywater",
+    "survey",
+    "talk to eun",
+    "out",
+    "road",
+    "examine the milepost",
+    "look back",
+    "on",
+    "examine the walker",
+    "deduce the mile road",
+    "fork",
+    "water",
+    "examine the rust",
+    "listen",
+    "deduce the greywater",
+    "in",
+    "cache",
+    "take core",
+    "out",
+    "back",
+    "back",
+    "mile",
+    "back",
+    "back",
+    "gate",
+    "back"
+  ],
+  "fingerprintId": "1b924cbfee40",
+  "finalStatus": "won",
+  "golden": {
+    "campaignId": "play",
+    "seed": "golden-hush",
+    "fingerprintId": "1b924cbfee40",
+    "fingerprint": {
+      "version": "0.1.0",
+      "rngAlgo": "splitmix64",
+      "hashAlgo": "sha256",
+      "floatMode": "ieee754-double",
+      "collectionOrder": "sorted-keys",
+      "modules": [
+        {
+          "module": "spine.fu-pbta",
+          "version": "0.1.0",
+          "contentHash": "e165bc9c22ee1977b4531c8cfeaf31cac812ffcd93b7865c993aa6f86218fd1a"
+        },
+        {
+          "module": "time.cycle",
+          "version": "0.1.0",
+          "contentHash": "1e5d8be5162dc8d7b38fe951feb61395a4cdb2e1a00c41b94f1c3c9cb784d8df"
+        },
+        {
+          "module": "travel.graph",
+          "version": "0.1.0",
+          "contentHash": "717579a065f6dce030a8d70b3d5e9dba31fd56b306f7189d1a4c0cca8891687a"
+        },
+        {
+          "module": "invest.gumshoe",
+          "version": "0.1.0",
+          "contentHash": "a476fa842b0597262b3bd62ea5e6657095f167e224c02d1f82cf23634537c94e"
+        },
+        {
+          "module": "social.fate",
+          "version": "0.1.0",
+          "contentHash": "4cd4d9fe3b6ca76db7efd555c5221b7e3c718c1cba7d6b54f2354e32c9a6c4f8"
+        },
+        {
+          "module": "stealth.detection",
+          "version": "0.1.0",
+          "contentHash": "e43d70cc47c46f32baf0f097c9ee0163ca5e3215025d3fbaf96fe0ef478c54de"
+        },
+        {
+          "module": "combat.ito",
+          "version": "0.1.0",
+          "contentHash": "c9c13ae4570664cadbff38f288e991bee018141f3b50b590520b9740ed62785b"
+        },
+        {
+          "module": "anomaly.hush",
+          "version": "0.1.0",
+          "contentHash": "7f01df9e7f421d0e27ac815479ed30ab5d9b414cf195e683bca3d11fa6fee647"
+        }
+      ]
+    },
+    "initialHash": "9626c707dafd79682a6324d496cad5a85963c2df7f75f53c55d32cbaec0d8f7d",
+    "records": [
+      {
+        "eventIndex": 1,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.92,
+          "raw": "out",
+          "direction": "out"
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "cordon_checkpoint"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "waystation"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 8
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 1
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "waystation",
+              "to": "cordon_checkpoint"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 1
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 968
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "16:08"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 1
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "9626c707dafd79682a6324d496cad5a85963c2df7f75f53c55d32cbaec0d8f7d",
+        "nextHash": "a513f01d1c0da0db4441409f7ce5db953e9da22fb4b434b472fe7b9199016481"
+      },
+      {
+        "eventIndex": 2,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "road",
+          "target": {
+            "id": "lyles_rest",
+            "raw": "road",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "lyles_rest"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "cordon_checkpoint"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 18
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 2
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "cordon_checkpoint",
+              "to": "lyles_rest"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 2
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "lyles_rest"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 986
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "16:26"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 2
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "a513f01d1c0da0db4441409f7ce5db953e9da22fb4b434b472fe7b9199016481",
+        "nextHash": "8077cefa2502770d3d8608df79bd0541eca2cf32d5279f7373213e9643f43bdf"
+      },
+      {
+        "eventIndex": 3,
+        "intent": {
+          "class": "talk",
+          "target": {
+            "id": "holdout_lyle",
+            "raw": "lyle",
+            "tags": [
+              "npc"
+            ]
+          },
+          "tags": [],
+          "confidence": 0.88,
+          "raw": "talk to lyle"
+        },
+        "owner": "social.fate",
+        "tape": [],
+        "events": [
+          {
+            "tag": "dialogue",
+            "mutations": [],
+            "summary": "Old Lyle: “Newcomer. You've the look of someone after the core. Everyone is, lately. Sit. Ask. Knowing's cheaper here than at the Survey, and worth about what you pay.”",
+            "data": {
+              "npc": "holdout_lyle",
+              "line": "lyle_greet"
+            },
+            "source": "social.fate"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "talk"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 3
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "holdout_lyle"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 996
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "16:36"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 3
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "8077cefa2502770d3d8608df79bd0541eca2cf32d5279f7373213e9643f43bdf",
+        "nextHash": "8cd38b32b8038f7956f8d97c0378b85876da7fed6ede73f2afea62eec4fef98f"
+      },
+      {
+        "eventIndex": 4,
+        "intent": {
+          "class": "ask_about",
+          "topic": "the mile road",
+          "target": {
+            "id": "holdout_lyle",
+            "raw": "lyle",
+            "tags": [
+              "npc"
+            ]
+          },
+          "tags": [
+            "social"
+          ],
+          "confidence": 0.8,
+          "raw": "ask lyle about the mile road"
+        },
+        "owner": "social.fate",
+        "tape": [],
+        "events": [
+          {
+            "tag": "dialogue",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.rumor.r_mile_true",
+                "value": true
+              }
+            ],
+            "summary": "Old Lyle: “The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. Folk have died walking home down a road that kept making more of itself.”",
+            "data": {
+              "npc": "holdout_lyle",
+              "line": "lyle_mile"
+            },
+            "source": "social.fate"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "ask_about"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 4
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "holdout_lyle"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1006
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "16:46"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 4
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "8cd38b32b8038f7956f8d97c0378b85876da7fed6ede73f2afea62eec4fef98f",
+        "nextHash": "fe374290e1164a8ed2d6296baccc7eb98e1d15a307adb9f9600b0e10d08adcb6"
+      },
+      {
+        "eventIndex": 5,
+        "intent": {
+          "class": "ask_about",
+          "topic": "the greywater",
+          "target": {
+            "id": "holdout_lyle",
+            "raw": "lyle",
+            "tags": [
+              "npc"
+            ]
+          },
+          "tags": [
+            "social"
+          ],
+          "confidence": 0.8,
+          "raw": "ask lyle about the greywater"
+        },
+        "owner": "social.fate",
+        "tape": [],
+        "events": [
+          {
+            "tag": "dialogue",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.rumor.r_grey_false",
+                "value": true
+              }
+            ],
+            "summary": "Old Lyle: “The bottoms eat gold, they say — keep your coin deep and you'll be fine.”",
+            "data": {
+              "npc": "holdout_lyle",
+              "line": "lyle_grey"
+            },
+            "source": "social.fate"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "ask_about"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 5
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "holdout_lyle"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1016
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "16:56"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 5
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "fe374290e1164a8ed2d6296baccc7eb98e1d15a307adb9f9600b0e10d08adcb6",
+        "nextHash": "597ac60c03710245141d80b6743deb58a8c2dd3c7a759cf8728ba7c70a99bc7d"
+      },
+      {
+        "eventIndex": 6,
+        "intent": {
+          "class": "survey",
+          "tags": [
+            "investigation"
+          ],
+          "confidence": 0.6,
+          "raw": "survey"
+        },
+        "owner": "invest.gumshoe",
+        "tape": [],
+        "events": [
+          {
+            "tag": "invest_beat",
+            "mutations": [],
+            "summary": "You turn it over, but you are not even sure what rule you are reaching for.",
+            "visibility": "public",
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "survey"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 6
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1026
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "17:06"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 6
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "597ac60c03710245141d80b6743deb58a8c2dd3c7a759cf8728ba7c70a99bc7d",
+        "nextHash": "bf3ec8692df33bbb113dd98474e2282eb544c65acdab6580e3c5af587f484160"
+      },
+      {
+        "eventIndex": 7,
+        "intent": {
+          "class": "talk",
+          "target": {
+            "id": "survey_factor",
+            "raw": "eun",
+            "tags": [
+              "npc"
+            ]
+          },
+          "tags": [],
+          "confidence": 0.88,
+          "raw": "talk to eun"
+        },
+        "owner": "social.fate",
+        "tape": [],
+        "events": [
+          {
+            "tag": "dialogue",
+            "mutations": [],
+            "summary": "Old Lyle: “Newcomer. You've the look of someone after the core. Everyone is, lately. Sit. Ask. Knowing's cheaper here than at the Survey, and worth about what you pay.”",
+            "data": {
+              "npc": "holdout_lyle",
+              "line": "lyle_greet"
+            },
+            "source": "social.fate"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "talk"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 7
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "survey_factor"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1036
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "17:16"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 7
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "bf3ec8692df33bbb113dd98474e2282eb544c65acdab6580e3c5af587f484160",
+        "nextHash": "04ea88f647b6aa3f4f3d6d56ba98180e498fb04c45d1fa2dc05285e12151ebd3"
+      },
+      {
+        "eventIndex": 8,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "road",
+          "target": {
+            "id": "mile_road_low",
+            "raw": "road",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "mile_road_low"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "lyles_rest"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 22
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 8
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "lyles_rest",
+              "to": "mile_road_low"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 8
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "mile_road_low"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1058
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "17:38"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 8
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "04ea88f647b6aa3f4f3d6d56ba98180e498fb04c45d1fa2dc05285e12151ebd3",
+        "nextHash": "8bdd4e09fd4bf3c55c6b47228508a93387a6507d6227b0ad84a48faa8f011e02"
+      },
+      {
+        "eventIndex": 9,
+        "intent": {
+          "class": "examine",
+          "target": {
+            "id": "milepost",
+            "raw": "milepost",
+            "tags": [
+              "examinable"
+            ]
+          },
+          "tags": [],
+          "confidence": 0.88,
+          "raw": "examine the milepost"
+        },
+        "owner": "invest.gumshoe",
+        "tape": [],
+        "events": [
+          {
+            "tag": "tell_observed",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.tell.mile_milepost_reset",
+                "value": true
+              }
+            ],
+            "summary": "The next milepost reads the same numeral as the last one — and the one before that. The road is not counting honestly. The distance behind you is not what it was.",
+            "data": {
+              "tell": "mile_milepost_reset",
+              "law": "mile_road"
+            },
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "codex_advance",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.law.mile_road",
+                "value": "approximate"
+              }
+            ],
+            "summary": "",
+            "data": {
+              "law": "mile_road",
+              "stage": "approximate"
+            },
+            "visibility": "private",
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "examine"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 9
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "milepost"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1068
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "17:48"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 9
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "8bdd4e09fd4bf3c55c6b47228508a93387a6507d6227b0ad84a48faa8f011e02",
+        "nextHash": "8149a2c6bc12e026dd860af4815a91e99a083e5d136c8949b358cde1b1f45caa"
+      },
+      {
+        "eventIndex": 10,
+        "intent": {
+          "class": "look_back",
+          "tags": [],
+          "confidence": 0.9,
+          "raw": "look back"
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "looked_back",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "facing.pc",
+                "value": "behind"
+              }
+            ],
+            "summary": "You stop, and turn, and look back the way you came.",
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "look_back"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 10
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1073
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "17:53"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 10
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "law_triggered",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.mile_road.contacts",
+                "value": 1
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.fired_turn",
+                "value": 10
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.witnessed",
+                "value": true
+              }
+            ],
+            "summary": "[The Mile Road]",
+            "data": {
+              "law": "mile_road",
+              "contacts": 1,
+              "firstContact": true
+            },
+            "source": "anomaly.hush"
+          },
+          {
+            "tag": "law_distance",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.behind_mult",
+                "value": 2
+              }
+            ],
+            "summary": "You glance back — and the road behind you yawns suddenly twice as long, the waystation dwindled to a far grey smudge. Something in you slips a notch out of true. (You are Unsettled.)",
+            "data": {
+              "law": "mile_road"
+            },
+            "source": "anomaly.hush"
+          },
+          {
+            "tag": "unsettled",
+            "mutations": [
+              {
+                "op": "adjust",
+                "key": "survival.pc.unsettled",
+                "by": 1,
+                "min": 0,
+                "max": 5
+              }
+            ],
+            "summary": "Something in you slips a notch out of true. (Unsettled.)",
+            "severity": "reversible",
+            "source": "anomaly.hush"
+          }
+        ],
+        "priorHash": "8149a2c6bc12e026dd860af4815a91e99a083e5d136c8949b358cde1b1f45caa",
+        "nextHash": "27197f214ef0e912a919e8d57b544acbac19cafa1a5cdf4dce1937f61def449b"
+      },
+      {
+        "eventIndex": 11,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "on",
+          "target": {
+            "id": "mile_road_high",
+            "raw": "on",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "mile_road_high"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "mile_road_low"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 25
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 11
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "mile_road_low",
+              "to": "mile_road_high"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 11
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "mile_road_high"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1098
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "18:18"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 11
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "phase_change",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "phase.now",
+                "value": "dusk"
+              }
+            ],
+            "summary": "The light goes thin and orange. Dusk settles over the Hush.",
+            "data": {
+              "phase": "dusk"
+            },
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "27197f214ef0e912a919e8d57b544acbac19cafa1a5cdf4dce1937f61def449b",
+        "nextHash": "7c4da35c9172fb02de8f3c521d6fa145a07a108788b183c43840fcec2b26a72a"
+      },
+      {
+        "eventIndex": 12,
+        "intent": {
+          "class": "examine",
+          "target": {
+            "id": "dead_walker",
+            "raw": "walker",
+            "tags": [
+              "examinable"
+            ]
+          },
+          "tags": [],
+          "confidence": 0.88,
+          "raw": "examine the walker"
+        },
+        "owner": "invest.gumshoe",
+        "tape": [],
+        "events": [
+          {
+            "tag": "tell_observed",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.tell.mile_dead_walker",
+                "value": true
+              }
+            ],
+            "summary": "A salvager sits against a milepost, long dead, facing back the way she came. The bootprints around her loop and double and loop again, a thousand steps that never got her home. She kept looking back. The road kept giving her more road to look at. She never reached the end of it.",
+            "data": {
+              "tell": "mile_dead_walker",
+              "law": "mile_road"
+            },
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "examine"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 12
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "dead_walker"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1108
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "18:28"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 12
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "7c4da35c9172fb02de8f3c521d6fa145a07a108788b183c43840fcec2b26a72a",
+        "nextHash": "f4904a0dc44fe838d1f32af47e6f4c8e033931b58511bbfa1933ef79c100f925"
+      },
+      {
+        "eventIndex": 13,
+        "intent": {
+          "class": "deduce",
+          "topic": "mile road",
+          "tags": [
+            "investigation"
+          ],
+          "confidence": 0.85,
+          "raw": "deduce the mile road"
+        },
+        "owner": "invest.gumshoe",
+        "tape": [],
+        "events": [
+          {
+            "tag": "law_surveyed",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.law.mile_road",
+                "value": "surveyed"
+              }
+            ],
+            "summary": "You are certain now. The Mile Road: On the Mile Road, to look back is to double the distance behind you.",
+            "data": {
+              "law": "mile_road"
+            },
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "deduce"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 13
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1118
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "18:38"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 13
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "f4904a0dc44fe838d1f32af47e6f4c8e033931b58511bbfa1933ef79c100f925",
+        "nextHash": "8cff0a0dd880907aab4f5ff7f065ac5bced9baddc54603ce9cdfe159510d628d"
+      },
+      {
+        "eventIndex": 14,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "fork",
+          "target": {
+            "id": "the_fork",
+            "raw": "fork",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "the_fork"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "mile_road_high"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 15
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 14
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "mile_road_high",
+              "to": "the_fork"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 14
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "the_fork"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1133
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "18:53"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 14
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "8cff0a0dd880907aab4f5ff7f065ac5bced9baddc54603ce9cdfe159510d628d",
+        "nextHash": "612143286bd24e2f4274aa4a644debfdab0127aaa30ca2c5bbc3b2df313a84ce"
+      },
+      {
+        "eventIndex": 15,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "water",
+          "target": {
+            "id": "greywater_ford",
+            "raw": "water",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "greywater_ford"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "the_fork"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 18
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 15
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "the_fork",
+              "to": "greywater_ford"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 15
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "greywater_ford"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1151
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "19:11"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 15
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "612143286bd24e2f4274aa4a644debfdab0127aaa30ca2c5bbc3b2df313a84ce",
+        "nextHash": "4d86b62fe85011857b47a4735cafc1afbd602432ff4429547f6ad876c08b64b3"
+      },
+      {
+        "eventIndex": 16,
+        "intent": {
+          "class": "examine",
+          "target": {
+            "id": "rust_bloom",
+            "raw": "rust",
+            "tags": [
+              "examinable"
+            ]
+          },
+          "tags": [],
+          "confidence": 0.88,
+          "raw": "examine the rust"
+        },
+        "owner": "invest.gumshoe",
+        "tape": [],
+        "events": [
+          {
+            "tag": "tell_observed",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.tell.grey_rust_bloom",
+                "value": true
+              }
+            ],
+            "summary": "Rust blooms across every worked rivet and blade like frost across a window — fast enough to watch it spread. Worked iron is rotting here, and quickly. Something in the dark un-makes it.",
+            "data": {
+              "tell": "grey_rust_bloom",
+              "law": "greywater"
+            },
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "codex_advance",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.law.greywater",
+                "value": "approximate"
+              }
+            ],
+            "summary": "",
+            "data": {
+              "law": "greywater",
+              "stage": "approximate"
+            },
+            "visibility": "private",
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "examine"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 16
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "rust_bloom"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1161
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "19:21"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 16
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "4d86b62fe85011857b47a4735cafc1afbd602432ff4429547f6ad876c08b64b3",
+        "nextHash": "e8eba90776e6c16d68761cd6ec396b4c568f4ce0c16467544034dd2571d1e812"
+      },
+      {
+        "eventIndex": 17,
+        "intent": {
+          "class": "listen",
+          "tags": [],
+          "confidence": 0.9,
+          "raw": "listen"
+        },
+        "owner": "invest.gumshoe",
+        "tape": [],
+        "events": [
+          {
+            "tag": "tell_observed",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.tell.grey_low_hum",
+                "value": true
+              }
+            ],
+            "summary": "A low hum comes up through the soles of your boots — and you feel it answer, faintly, in the iron you carry. The hum is in the metal. It is calling your worked iron back to the ground it came from.",
+            "data": {
+              "tell": "grey_low_hum",
+              "law": "greywater"
+            },
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "listen"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 17
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1171
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "19:31"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 17
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "e8eba90776e6c16d68761cd6ec396b4c568f4ce0c16467544034dd2571d1e812",
+        "nextHash": "9980cf62e699bb43af8f51d617f9fe74abb9a5ffeb76a985e1e39a3022595d85"
+      },
+      {
+        "eventIndex": 18,
+        "intent": {
+          "class": "deduce",
+          "topic": "greywater",
+          "tags": [
+            "investigation"
+          ],
+          "confidence": 0.85,
+          "raw": "deduce the greywater"
+        },
+        "owner": "invest.gumshoe",
+        "tape": [],
+        "events": [
+          {
+            "tag": "law_surveyed",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.law.greywater",
+                "value": "surveyed"
+              }
+            ],
+            "summary": "You are certain now. The Greywater: In the Greywater after dark, worked metal slumps back toward ore. Iron tools and blades fail.",
+            "data": {
+              "law": "greywater"
+            },
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "deduce"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 18
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1181
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "19:41"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 18
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "9980cf62e699bb43af8f51d617f9fe74abb9a5ffeb76a985e1e39a3022595d85",
+        "nextHash": "d8a0cc8ba8580011cf0676f6fd7ca05873255c895f4c10388676df7e3a6c7e59"
+      },
+      {
+        "eventIndex": 19,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.92,
+          "raw": "in",
+          "direction": "in"
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "greywater_bottoms"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "greywater_ford"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 10
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 19
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "greywater_ford",
+              "to": "greywater_bottoms"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 19
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1191
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "19:51"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 19
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "d8a0cc8ba8580011cf0676f6fd7ca05873255c895f4c10388676df7e3a6c7e59",
+        "nextHash": "50d7aa8331579b55c241a5a10d571194344054ec26c58b34fd1443d48ec49dda"
+      },
+      {
+        "eventIndex": 20,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "cache",
+          "target": {
+            "id": "greywater_cache",
+            "raw": "cache",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "greywater_cache"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "greywater_bottoms"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 8
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 20
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "greywater_bottoms",
+              "to": "greywater_cache"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 20
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "greywater_cache"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1199
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "19:59"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 20
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "50d7aa8331579b55c241a5a10d571194344054ec26c58b34fd1443d48ec49dda",
+        "nextHash": "4b4f8f9231cd0e4df861ee87dd70e0541bfc173938f7a11dfc7815e7f666bb85"
+      },
+      {
+        "eventIndex": 21,
+        "intent": {
+          "class": "take",
+          "target": {
+            "id": "salvage_core",
+            "raw": "core",
+            "tags": [
+              "item"
+            ]
+          },
+          "tags": [],
+          "confidence": 0.88,
+          "raw": "take core"
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "took_item",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "possession.pc.salvage_core",
+                "value": true
+              },
+              {
+                "op": "set",
+                "key": "possession.pc.salvage_core.class",
+                "value": "salvage"
+              }
+            ],
+            "summary": "You take core.",
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "take"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 21
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "salvage_core"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1209
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "20:09"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 21
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "4b4f8f9231cd0e4df861ee87dd70e0541bfc173938f7a11dfc7815e7f666bb85",
+        "nextHash": "5ffed1edac18b554e17086f1fbcd7804339fc011b472c36a845ea6265955fdfd"
+      },
+      {
+        "eventIndex": 22,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.92,
+          "raw": "out",
+          "direction": "out"
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "greywater_bottoms"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "greywater_cache"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 16
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 22
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "greywater_cache",
+              "to": "greywater_bottoms"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 22
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1225
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "20:25"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 22
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "5ffed1edac18b554e17086f1fbcd7804339fc011b472c36a845ea6265955fdfd",
+        "nextHash": "22db43d595562c58a09b4ad8b5a5580782c09fe03682436264ce0bbdba6253b5"
+      },
+      {
+        "eventIndex": 23,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "back",
+          "target": {
+            "id": "greywater_ford",
+            "raw": "back",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "greywater_ford"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "greywater_bottoms"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 10
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 23
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "greywater_bottoms",
+              "to": "greywater_ford"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 23
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "greywater_ford"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1235
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "20:35"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 23
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "22db43d595562c58a09b4ad8b5a5580782c09fe03682436264ce0bbdba6253b5",
+        "nextHash": "bfc34b0a1053219ef76db9b4c9b5e7d13bdf1435cd1b0ba0869ef7794506cca8"
+      },
+      {
+        "eventIndex": 24,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "back",
+          "target": {
+            "id": "the_fork",
+            "raw": "back",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "the_fork"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "greywater_ford"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 18
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 24
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "greywater_ford",
+              "to": "the_fork"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 24
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "the_fork"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1253
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "20:53"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 24
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "bfc34b0a1053219ef76db9b4c9b5e7d13bdf1435cd1b0ba0869ef7794506cca8",
+        "nextHash": "1c7380775d639c581ee8f29fa500291fbbff97abd5e40dc1aedb29ea09e86632"
+      },
+      {
+        "eventIndex": 25,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "mile",
+          "target": {
+            "id": "mile_road_high",
+            "raw": "mile",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "mile_road_high"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "the_fork"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 15
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 25
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "the_fork",
+              "to": "mile_road_high"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 25
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "mile_road_high"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1268
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "21:08"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 25
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "phase_change",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "phase.now",
+                "value": "night"
+              }
+            ],
+            "summary": "The last of the light fails. It is night now, and the Zone wakes.",
+            "data": {
+              "phase": "night"
+            },
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "1c7380775d639c581ee8f29fa500291fbbff97abd5e40dc1aedb29ea09e86632",
+        "nextHash": "e0bbcef57e0821d2d4deb9a11ef4438f3571443dbb1e9cc7b963d6fec36e4c20"
+      },
+      {
+        "eventIndex": 26,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "back",
+          "target": {
+            "id": "mile_road_low",
+            "raw": "back",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "mile_road_low"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "mile_road_high"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 25
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 26
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "mile_road_high",
+              "to": "mile_road_low"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 26
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "mile_road_low"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1293
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "21:33"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 26
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "e0bbcef57e0821d2d4deb9a11ef4438f3571443dbb1e9cc7b963d6fec36e4c20",
+        "nextHash": "45a9f25586798550748921a5ca2773e24df3c5e6535ea3fea108c569fb5ba3be"
+      },
+      {
+        "eventIndex": 27,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "back",
+          "target": {
+            "id": "lyles_rest",
+            "raw": "back",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "lyles_rest"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "mile_road_low"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 22
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 27
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "mile_road_low",
+              "to": "lyles_rest"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 27
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "lyles_rest"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1315
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "21:55"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 27
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "45a9f25586798550748921a5ca2773e24df3c5e6535ea3fea108c569fb5ba3be",
+        "nextHash": "2fd8f860794515feb52e23b44f8f2b02979528fd3afc0298ad83110f9e5e93c9"
+      },
+      {
+        "eventIndex": 28,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "gate",
+          "target": {
+            "id": "cordon_checkpoint",
+            "raw": "gate",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "cordon_checkpoint"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "lyles_rest"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 18
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 28
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "lyles_rest",
+              "to": "cordon_checkpoint"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 28
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "cordon_checkpoint"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1333
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "22:13"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 28
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "2fd8f860794515feb52e23b44f8f2b02979528fd3afc0298ad83110f9e5e93c9",
+        "nextHash": "3189d90fb4c904bf304482b95316bc977c09265976ee53ecfa1ad0a3e9b97e30"
+      },
+      {
+        "eventIndex": 29,
+        "intent": {
+          "class": "go",
+          "tags": [],
+          "confidence": 0.7,
+          "raw": "back",
+          "target": {
+            "id": "waystation",
+            "raw": "back",
+            "tags": [
+              "exit"
+            ]
+          }
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "moved",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "loc.pc",
+                "value": "waystation"
+              },
+              {
+                "op": "set",
+                "key": "route.last_from",
+                "value": "cordon_checkpoint"
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost",
+                "value": 8
+              },
+              {
+                "op": "set",
+                "key": "flag.time_cost_turn",
+                "value": 29
+              }
+            ],
+            "summary": "You set off.",
+            "data": {
+              "from": "cordon_checkpoint",
+              "to": "waystation"
+            },
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "go"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 29
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "waystation"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1341
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "22:21"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 29
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "3189d90fb4c904bf304482b95316bc977c09265976ee53ecfa1ad0a3e9b97e30",
+        "nextHash": "a83586027d3e72da51ad871c92c265c47a3accac6e53a6a0ec863e3f5f3d2fcb"
+      }
+    ]
+  }
+}
