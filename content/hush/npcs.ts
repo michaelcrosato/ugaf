@@ -59,6 +59,7 @@ export const NPCS: NpcDef[] = [
       { id: 'eun_greet', text: "The Survey trades in knowing. You bring me an observation or a coin, I give you a law you can stake your life on. That is the whole of the arrangement." },
       { id: 'eun_grey_ask', topic: 'greywater', text: "The Greywater? Our table on it is complete and confirmed. It is not free. Make it worth my ink." },
       { id: 'eun_lawmap', topic: 'law-map', text: "Here. The Greywater table, copied fair: the rust-bloom, the hum, the hour it wakes. Read it and you'll know the law cold — though a table is not the same as having seen it for yourself. Verify it in the field before you stake your iron on it.", grantsLeadTell: 'grey_rust_bloom', setsFacts: { 'known.tell.grey_rust_bloom': true, 'known.tell.grey_low_hum': true, 'known.purchased.greywater': true } },
+      { id: 'eun_relic', topic: 'relic', text: "Antenna-glass? If you can carry a shard out of that field without giving it your voice, bring it to me. The Survey trades real knowledge for what the field fused — a law-table for a shard, fair and glad. Most who go for one come back as a name scratched in the concrete; mind you're not one of them." },
     ],
   },
   {

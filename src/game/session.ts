@@ -87,7 +87,7 @@ export class Session {
     if (intent.class === 'unclassified') {
       const w = intent.raw.trim();
       return {
-        text: dim(`You're not sure how to ${w ? `“${w}”` : 'do that'} here. Try LOOK, GO <way>, EXAMINE <thing>, LISTEN, SEARCH, TALK TO <someone>, or — once you have seen enough — DEDUCE <the law>. (CODEX, INVENTORY, MAP, HELP.)`),
+        text: dim(`You're not sure how to ${w ? `“${w}”` : 'do that'} here. Try LOOK, GO <way>, EXAMINE <thing>, LISTEN, SEARCH, TAKE/USE/GIVE <thing>, TALK TO <someone>, or — once you have seen enough — DEDUCE <the law>. (CODEX, INVENTORY, MAP, HELP.)`),
         status: this.ended ? this.endStatus : 'active',
         rejected: true,
       };
@@ -230,8 +230,9 @@ function italicReason(reason: string): string {
 
 const HELP_TEXT = [
   'Type what you want to do in plain words: go north · look · examine the milepost · look back · listen ·',
-  'search · take the knife · drop the knife · talk to lyle · ask lyle about the greywater · deduce the greywater ·',
-  'say maren · hide · wait · rest · back. CODEX shows what you have learned; INVENTORY what you carry; MAP the ways out.',
+  'search · take the knife · drop the knife · use the crowbar · give the relic to eun · talk to lyle ·',
+  'ask lyle about the greywater · deduce the greywater · say maren · hide · wait · rest · back.',
+  'CODEX shows what you have learned (and how far to trust it); INVENTORY what you carry; MAP the ways out.',
   'The Hush is lawful: its dangers obey hidden, consistent rules. The first brush with any law warns you — it never',
-  'kills you outright. Read the tells, deduce the laws, and use them.',
+  'kills you outright. Read the tells, DEDUCE the laws into your codex, and use them.',
 ].join('\n');

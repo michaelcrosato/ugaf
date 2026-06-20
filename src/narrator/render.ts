@@ -41,14 +41,12 @@ export function createRenderer(pack: WorldPack): Renderer {
   const ambientCursor = new Map<string, number>(); // presentation state: no-repeat ambient rotation
 
   function compose(block: DescriptionBlock, facts: FactView, turn: number, nodeId: string, firstVisit: boolean, rotate = false): string {
-    const parts: string[] = [];
-    let base = block.base;
-    for (const v of block.variants ?? []) {
-      if (evalPredicate(v.when, facts)) {
-        if (v.replace) base = v.text;
-        else parts.push(v.text);
-      }
-    }
+    const matching = (block.variants ?? []).filter((v) => evalPredicate(v.when, facts));
+    // a `replace:true` variant SUPPLANTS the whole block (base + every append variant)
+    // for this turn — the last matching replace wins; otherwise base + appends.
+    const replaceV = [...matching].reverse().find((v) => v.replace);
+    const base = replaceV ? replaceV.text : block.base;
+    const parts = replaceV ? [] : matching.filter((v) => !v.replace).map((v) => v.text);
     const out = [base, ...parts];
     if (firstVisit && block.firstReveal) out.push(block.firstReveal);
     if (block.ambient && block.ambient.length) {

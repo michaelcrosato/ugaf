@@ -80,7 +80,7 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
             {
               tag: 'phase_change',
               mutations: [{ op: 'set', key: 'phase.now', value: newPhase }],
-              summary: phaseLine(newPhase),
+              summary: phaseLine(newPhase, minutes),
               data: { phase: newPhase },
             },
           ],
@@ -92,15 +92,28 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
   };
 }
 
-function phaseLine(p: Phase): string {
-  switch (p) {
-    case 'dusk':
-      return 'The light goes thin and orange. Dusk settles over the Hush.';
-    case 'night':
-      return 'The last of the light fails. It is night now, and the Zone wakes.';
-    case 'predawn':
-      return 'A grey, grudging not-yet-light gathers at the edges. Predawn.';
-    case 'day':
-      return 'Day comes up pale and quiet over the cordon.';
-  }
+const PHASE_LINES: Record<Phase, string[]> = {
+  dusk: [
+    'The light goes thin and orange, then grey. Dusk settles over the Hush, and the Zone begins, very quietly, to pay attention.',
+    'The sun gives up without ceremony. In the long shadows the wrong-angled things look almost right, which is worse.',
+    'The day burns down to embers at the horizon. Whatever sleeps in the Hush by daylight is starting to stir.',
+  ],
+  night: [
+    'The last of the light fails. It is night now, and the Zone wakes — you can feel the difference, the way you feel a held breath let go.',
+    'Full dark, and no honest dark at all. The Hush comes awake around you, lawful and patient and hungry.',
+    'Night closes over the cordon like water over a stone. The laws are all in force now, every one of them.',
+  ],
+  predawn: [
+    'A grey, grudging not-yet-light gathers at the edges of things. Predawn, the hour the Zone holds its breath.',
+    'The dark thins toward an ashen non-colour. It is not day, and it is not safe, but it is closer to both.',
+  ],
+  day: [
+    'Day comes up pale and quiet over the cordon, and the Hush pretends, almost convincingly, to be only a ruined place.',
+    'Light returns, thin and apologetic. The night-laws sleep; the day is the closest the Zone comes to mercy.',
+  ],
+};
+
+function phaseLine(p: Phase, minutes: number): string {
+  const lines = PHASE_LINES[p];
+  return lines[((minutes % (lines.length * 7)) / 7 | 0) % lines.length]!;
 }

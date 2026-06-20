@@ -40,8 +40,10 @@ export const HUSH_PACK: WorldPack = {
         all: [
           { fact: 'possession.pc.salvage_core', eq: true },
           { fact: 'loc.pc', eq: 'waystation' },
-          { fact: 'known.law.mile_road', eq: 'surveyed' },
-          { fact: 'known.law.greywater', eq: 'surveyed' },
+          // you READ them true at some point — even if drift has since re-Settled them,
+          // the mastery was real (the ending recognises the high-water mark, not the live stage).
+          { fact: 'known.mile_road.ever_surveyed', eq: true },
+          { fact: 'known.greywater.ever_surveyed', eq: true },
         ],
       },
       outcome: 'won',

@@ -1357,7 +1357,7 @@
                 "value": "dusk"
               }
             ],
-            "summary": "The light goes thin and orange. Dusk settles over the Hush.",
+            "summary": "The light goes thin and orange, then grey. Dusk settles over the Hush, and the Zone begins, very quietly, to pay attention.",
             "data": {
               "phase": "dusk"
             },
@@ -1485,6 +1485,11 @@
                 "op": "set",
                 "key": "known.mile_road.surveyed_turn",
                 "value": 14
+              },
+              {
+                "op": "set",
+                "key": "known.mile_road.ever_surveyed",
+                "value": true
               }
             ],
             "summary": "You are certain now. The Mile Road: On the Mile Road, to look back is to double the distance behind you.",
@@ -1549,7 +1554,7 @@
           }
         ],
         "priorHash": "4f1a583756fb47a97f5cb328ebaa806bb038013744b16998d56a5c618d5dc690",
-        "nextHash": "75122ce892006616ca02891f2c70a622fbd4a79f7b46fab4eb8b946483143533"
+        "nextHash": "b54b8d5e913a1df415d9b78d3b2d07887c8ad542f43fb395fc4ffec9da05f129"
       },
       {
         "eventIndex": 15,
@@ -1656,8 +1661,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "75122ce892006616ca02891f2c70a622fbd4a79f7b46fab4eb8b946483143533",
-        "nextHash": "f3d66df92e639ec553a5296e9eca3c042918439ec72d91481a817c084a53a87d"
+        "priorHash": "b54b8d5e913a1df415d9b78d3b2d07887c8ad542f43fb395fc4ffec9da05f129",
+        "nextHash": "dcc933927a62b3c4080da0bcb9758ad67f35a0a20fc5df995bbedb5b2a38c2da"
       },
       {
         "eventIndex": 16,
@@ -1764,8 +1769,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "f3d66df92e639ec553a5296e9eca3c042918439ec72d91481a817c084a53a87d",
-        "nextHash": "2f4a4a025da1895a499946d9f12ce13aa614d5cf4c35025f43e8198319d72977"
+        "priorHash": "dcc933927a62b3c4080da0bcb9758ad67f35a0a20fc5df995bbedb5b2a38c2da",
+        "nextHash": "4635da0663cb47fdbc2f64c4ace258e6b66fd079d932d13191525a2713182dca"
       },
       {
         "eventIndex": 17,
@@ -1878,8 +1883,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "2f4a4a025da1895a499946d9f12ce13aa614d5cf4c35025f43e8198319d72977",
-        "nextHash": "68189c0fc2603161f3f695aa10abba559c316cc00aa144be314b8457cb798a1b"
+        "priorHash": "4635da0663cb47fdbc2f64c4ace258e6b66fd079d932d13191525a2713182dca",
+        "nextHash": "aec8c525546e2157f4c9180764dcddc2f8262ab34dd083376ac42c41ee1c0d00"
       },
       {
         "eventIndex": 18,
@@ -1963,8 +1968,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "68189c0fc2603161f3f695aa10abba559c316cc00aa144be314b8457cb798a1b",
-        "nextHash": "1286a3aa15cb5ed4cb07d7c64d5fabac6a743d3e983acc52c1c109d642f3fef5"
+        "priorHash": "aec8c525546e2157f4c9180764dcddc2f8262ab34dd083376ac42c41ee1c0d00",
+        "nextHash": "4914e612be63a9209150f7a0046c95682cc06715a11fc99b9d001078687d1593"
       },
       {
         "eventIndex": 19,
@@ -1992,6 +1997,11 @@
                 "op": "set",
                 "key": "known.greywater.surveyed_turn",
                 "value": 19
+              },
+              {
+                "op": "set",
+                "key": "known.greywater.ever_surveyed",
+                "value": true
               }
             ],
             "summary": "You are certain now. The Greywater: In the Greywater after dark, worked metal slumps back toward ore. Iron tools and blades fail.",
@@ -2055,8 +2065,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "1286a3aa15cb5ed4cb07d7c64d5fabac6a743d3e983acc52c1c109d642f3fef5",
-        "nextHash": "7ec408e5a516945600fe4dfcde00d05191192d4f418b1a6c0d427c0ba57ae97a"
+        "priorHash": "4914e612be63a9209150f7a0046c95682cc06715a11fc99b9d001078687d1593",
+        "nextHash": "10c1c009c9abafaf8f353dc44ab49c88d8f46fcc7482abc462b6b91bc4d5f204"
       },
       {
         "eventIndex": 20,
@@ -2163,8 +2173,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "7ec408e5a516945600fe4dfcde00d05191192d4f418b1a6c0d427c0ba57ae97a",
-        "nextHash": "54426223c63bf52a7620f3df1c77222817323f9b3b966af5169e4e5733342afe"
+        "priorHash": "10c1c009c9abafaf8f353dc44ab49c88d8f46fcc7482abc462b6b91bc4d5f204",
+        "nextHash": "a0966b8a0501a723294d090bf3a365873ecc40f05fb50b80954e02442b79487c"
       },
       {
         "eventIndex": 21,
@@ -2271,8 +2281,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "54426223c63bf52a7620f3df1c77222817323f9b3b966af5169e4e5733342afe",
-        "nextHash": "09977e32ab893b5380873ba903210f2c30c3626fc3a339c39d4246df97c04247"
+        "priorHash": "a0966b8a0501a723294d090bf3a365873ecc40f05fb50b80954e02442b79487c",
+        "nextHash": "da87f57edae1c9d228b2642f42505c644d4d53b0805f982442c81f527db6ec27"
       },
       {
         "eventIndex": 22,
@@ -2404,8 +2414,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "09977e32ab893b5380873ba903210f2c30c3626fc3a339c39d4246df97c04247",
-        "nextHash": "2b5eceffebc5f2fa213461e99fadeb90b2c033b2c90e4f7a32ff708c646c33bf"
+        "priorHash": "da87f57edae1c9d228b2642f42505c644d4d53b0805f982442c81f527db6ec27",
+        "nextHash": "31dd4de15e36c94d34a504d775831ba75733984304474cefe9e72235924fabfb"
       },
       {
         "eventIndex": 23,
@@ -2512,8 +2522,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "2b5eceffebc5f2fa213461e99fadeb90b2c033b2c90e4f7a32ff708c646c33bf",
-        "nextHash": "b446a94eab4d11fd125856e8f81c93dadc61f6157ca5254bcbee6770416a66b9"
+        "priorHash": "31dd4de15e36c94d34a504d775831ba75733984304474cefe9e72235924fabfb",
+        "nextHash": "d1c68e5e97b8fdafa1758d23ee7e9af92a43f71d4f30181c30f45c7dedeaea68"
       },
       {
         "eventIndex": 24,
@@ -2616,8 +2626,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b446a94eab4d11fd125856e8f81c93dadc61f6157ca5254bcbee6770416a66b9",
-        "nextHash": "e7349bee8e24336edeb8598913bfd9dd92b06734b303c251b0cabe5e64187899"
+        "priorHash": "d1c68e5e97b8fdafa1758d23ee7e9af92a43f71d4f30181c30f45c7dedeaea68",
+        "nextHash": "b9d35ff75be74a0550d3ae40285abd540c81235783bb1cfe8d3aeb68ed07ae9b"
       },
       {
         "eventIndex": 25,
@@ -2720,8 +2730,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "e7349bee8e24336edeb8598913bfd9dd92b06734b303c251b0cabe5e64187899",
-        "nextHash": "76078ba35e146fe518a1b4c12ab7db0aea59aef5dcd8af769abd34967ec2c762"
+        "priorHash": "b9d35ff75be74a0550d3ae40285abd540c81235783bb1cfe8d3aeb68ed07ae9b",
+        "nextHash": "dc8b709a0525ceba7fa9538aa5a89f8972991b6e0ab5d7a47dc3f87c03d24103"
       },
       {
         "eventIndex": 26,
@@ -2836,7 +2846,7 @@
                 "value": "night"
               }
             ],
-            "summary": "The last of the light fails. It is night now, and the Zone wakes.",
+            "summary": "Full dark, and no honest dark at all. The Hush comes awake around you, lawful and patient and hungry.",
             "data": {
               "phase": "night"
             },
@@ -2877,8 +2887,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "76078ba35e146fe518a1b4c12ab7db0aea59aef5dcd8af769abd34967ec2c762",
-        "nextHash": "b7b7842d6fcbe920eaacd1fc0e4ef80687f39103a7027d1cbcc7ac553a2f2807"
+        "priorHash": "dc8b709a0525ceba7fa9538aa5a89f8972991b6e0ab5d7a47dc3f87c03d24103",
+        "nextHash": "1feb095740712f482a8246030c537a88da4bde1be5fa2ea033e8c89e8838805b"
       },
       {
         "eventIndex": 27,
@@ -2981,8 +2991,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b7b7842d6fcbe920eaacd1fc0e4ef80687f39103a7027d1cbcc7ac553a2f2807",
-        "nextHash": "0afa35325b7ddfb596241dbd74fd491518acf17616dc0cbc3559533e7fd8b41f"
+        "priorHash": "1feb095740712f482a8246030c537a88da4bde1be5fa2ea033e8c89e8838805b",
+        "nextHash": "d66270342ca1b05ffc09ebf357670a24e1f71057acbf57ab18737c122b13445e"
       },
       {
         "eventIndex": 28,
@@ -3110,8 +3120,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "0afa35325b7ddfb596241dbd74fd491518acf17616dc0cbc3559533e7fd8b41f",
-        "nextHash": "c42399008ab68b42b57d1190d6757155c1e4cd04ec9bba68197ba0776b603cb0"
+        "priorHash": "d66270342ca1b05ffc09ebf357670a24e1f71057acbf57ab18737c122b13445e",
+        "nextHash": "7677584088c458f2f4b2d69907754c29c8545c00bab2c2c2d7fb0a7629d3685d"
       },
       {
         "eventIndex": 29,
@@ -3218,8 +3228,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "c42399008ab68b42b57d1190d6757155c1e4cd04ec9bba68197ba0776b603cb0",
-        "nextHash": "fd7940526d6c16f52f1bf686b2be3a9bca3d34ab8c0800ba2c036b8037bed407"
+        "priorHash": "7677584088c458f2f4b2d69907754c29c8545c00bab2c2c2d7fb0a7629d3685d",
+        "nextHash": "be5c8e6b1fce15641d94e9c1b0b98526513912f3553aed957d4aeb362c88ac23"
       },
       {
         "eventIndex": 30,
@@ -3308,8 +3318,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "fd7940526d6c16f52f1bf686b2be3a9bca3d34ab8c0800ba2c036b8037bed407",
-        "nextHash": "b404b899caee36933524d50b521fd4f9d417187d5b445fb40b57adda2ece0d36"
+        "priorHash": "be5c8e6b1fce15641d94e9c1b0b98526513912f3553aed957d4aeb362c88ac23",
+        "nextHash": "3eba3f68e48b4777fdfbaf9da6792525395b0a3c126b0523c6aa3b66c5a70e1c"
       },
       {
         "eventIndex": 31,
@@ -3412,8 +3422,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b404b899caee36933524d50b521fd4f9d417187d5b445fb40b57adda2ece0d36",
-        "nextHash": "f421c04f180b262a3f5798225279939b7c80d34966094ddc241f4b9580f676f1"
+        "priorHash": "3eba3f68e48b4777fdfbaf9da6792525395b0a3c126b0523c6aa3b66c5a70e1c",
+        "nextHash": "791065da41d891005a2090f24042c303ed7b4d467f2b3d2477b37386d4442aa6"
       }
     ]
   }

@@ -35,7 +35,12 @@ export function createGumshoe(pack: WorldPack): Module {
   }
   // examinable id -> the tell it surfaces (so "examine the walker" finds its tell)
   const examTell = new Map<string, string>();
-  for (const n of pack.nodes) for (const ex of n.examinables ?? []) if (ex.tell) examTell.set(ex.id, ex.tell);
+  const examIds = new Set<string>(); // every authored examinable (its look prose carries the description)
+  for (const n of pack.nodes)
+    for (const ex of n.examinables ?? []) {
+      examIds.add(ex.id);
+      if (ex.tell) examTell.set(ex.id, ex.tell);
+    }
 
   const nodeTells = new Map<string, Set<string>>();
   const addNodeTell = (node: string, tell: string) => {
@@ -121,6 +126,7 @@ export function createGumshoe(pack: WorldPack): Module {
                 mutations: [
                   { op: 'set', key: `known.law.${lawId}`, value: 'surveyed' },
                   { op: 'set', key: `known.${lawId}.surveyed_turn`, value: args.ctx.turn },
+                  { op: 'set', key: `known.${lawId}.ever_surveyed`, value: true }, // high-water mark; drift never clears it
                 ],
                 summary: `You are certain now. ${law.title}: ${conclusion ?? 'you understand how it works.'}`,
                 data: { law: lawId },
@@ -148,6 +154,11 @@ export function createGumshoe(pack: WorldPack): Module {
       const fresh = candidates.filter((t) => !facts.getBool(`known.tell.${t}`) && isLive(tellLaw.get(t), facts));
 
       if (fresh.length === 0) {
+        // examining a real authored object: its own look prose carries it — stay quiet
+        // rather than contradict it with "nothing here tells you anything".
+        if (c === 'examine' && args.action.intent.target?.id && examIds.has(args.action.intent.target.id)) {
+          return { nativeNext: native, events: [{ tag: 'invest_examined', mutations: [], summary: '', visibility: 'private' }], control: { kind: 'continue' } };
+        }
         return beat(native, { labels: ['invest.nothing_new'], hints: { intent: c } }, 'You look closely, but nothing here tells you anything you didn’t already know.');
       }
 
