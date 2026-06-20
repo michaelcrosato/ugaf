@@ -29,9 +29,16 @@ The first brush with any law **warns you — it never kills you outright.** Ther
 ways to the core (learn the anomalies' timing, strip your metal, or buy the route). Everything is deterministic
 and replayable — the same seed always tells the same Hush.
 
+**It improves itself.** Two loops, coupled only through immutable artifacts: **Loop A** (build) can't seal a
+red gate; **Loop B** (playtest) drives blind play through PROCTOR, every session realness-verified, and a
+critic swarm synthesizes [`feedback/NNNN.md`](feedback/) that Loop A consumes. The loop has turned 5 cycles
+this build (see the `feedback/` trail). How to turn it yourself: [docs/FLYWHEEL.md](docs/FLYWHEEL.md).
+
 **Developer commands:** `npm run gate` (typecheck + boundaries + integrity + tests + coherence + golden tape) ·
-`npm test` · `npm run playtest` (the Loop B persona swarm) · `npm run coherence` (the law-fairness pass).
-See [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md) for the architecture-as-built.
+`npm test` · `npm run playtest` (the Loop B persona swarm) · `npm run coherence` (the law-fairness pass) ·
+`npm run coverage-report` (catalog + CREDITS from the filesystem).
+See [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md) for the architecture-as-built and
+[docs/FLYWHEEL.md](docs/FLYWHEEL.md) for the self-improvement loop.
 
 ---
 
