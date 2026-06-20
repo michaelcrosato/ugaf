@@ -76,7 +76,7 @@ export function createSpine(): Module {
         }
         return {
           nativeNext: native,
-          events: [{ tag: 'pry_fail', mutations: [], summary: metalKeys.length ? 'You set your iron to the wire and lean — and it folds like warm wax in your hands. The Greywater ate its temper down in the dark, and left you nothing to pry with. You will have to get out another way: unseen, or owed a favour.' : 'You have nothing on you strong enough to lever the wire. Another way, then — slip past unseen, or call in a debt.' }],
+          events: [{ tag: 'pry_fail', mutations: [], summary: metalKeys.length ? 'You set your iron to the wire and lean — and it folds like warm wax in your hands. The Greywater ate its temper down in the dark, and left you nothing to pry with. You will have to get out another way: slip the gate unseen (you will need its blind spot — ask Holt about the gap — then HIDE), or call in a Strider\'s debt.' : 'You have nothing on you strong enough to lever the wire. Another way, then — slip the gate unseen (ask Holt about the gap, then HIDE), or call in a Strider\'s debt.' }],
           control: { kind: 'continue' },
           render: { labels: ['intercept.pry_fail'], valence: 'cost' },
         };
