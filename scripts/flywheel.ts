@@ -64,7 +64,8 @@ async function main() {
   const prompt = [
     'You are one turn of the LOOM self-improvement flywheel for the text game "The Hush" (this repo).',
     'Do EXACTLY this, then stop:',
-    '1. Read playtest-runs/*.md (the fresh realness-verified transcripts), docs/craft/IF-CRAFT-RESEARCH.md (the craft north-star),',
+    '1. Read playtest-runs/*.md (the fresh realness-verified transcripts), docs/craft/IF-CRAFT-RESEARCH.md (the authoring craft north-star),',
+    '   docs/craft/DEMO-NORTH-STAR.md (the demo/engagement & replay north-star — its rules are hypotheses; Loop B findings overrule it),',
     '   and ALL of feedback/0001.md..the latest (do NOT re-file already-fixed items).',
     `2. Critique the CURRENT build for the highest-leverage remaining issue (fun/dwell, fairness, parser, prose, balance, replay).`,
     `   Write your prioritized findings to feedback/${fb}.md (executive summary + a ranked Top-fixes list + what is already great).`,
