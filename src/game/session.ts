@@ -214,7 +214,8 @@ export class Session {
     for (const id of items) {
       const it = this.game.pack.items.find((x) => x.id === id);
       const cond = this.state.facts[`possession.pc.${id}.condition`];
-      lines.push(`  • ${it?.names[0] ?? id}${cond ? dim(` (${cond})`) : ''}`);
+      const count = id === 'coin_roll' ? ` (×${(this.state.facts['meta.coins'] as number) ?? 0})` : '';
+      lines.push(`  • ${it?.names[0] ?? id}${count}${cond ? dim(` (${cond})`) : ''}`);
     }
     return lines.join('\n');
   }

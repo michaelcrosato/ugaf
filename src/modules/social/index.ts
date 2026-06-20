@@ -26,7 +26,7 @@ export function createSocial(pack: WorldPack): Module {
     domain: 'social',
     priority: 25,
     intents: ['talk', 'parley', 'bribe', 'intimidate', 'say', 'give', 'ask_about'],
-    writesFacts: ['reputation', 'aspect', 'known', 'flag', 'objective', 'possession'],
+    writesFacts: ['reputation', 'aspect', 'known', 'flag', 'objective', 'possession', 'meta'],
     readsFacts: ['reputation', 'aspect', 'known', 'flag', 'possession', 'loc'],
   });
 
@@ -156,9 +156,8 @@ export function createSocial(pack: WorldPack): Module {
     return `${npc.name} shakes their head. “Nothing I can tell you about that.”`;
   }
 
-  function coinHeld(facts: import('../../sdk/facts.js').FactView): string | undefined {
-    const k = facts.keysUnder('possession.pc').find((key) => key.endsWith('.class') && facts.getString(key) === 'coin');
-    return k ? k.slice('possession.pc.'.length, -'.class'.length) : undefined;
+  function coinsLeft(facts: import('../../sdk/facts.js').FactView): number {
+    return facts.getNumber('meta.coins') ?? 0;
   }
 
   // give/pay/bribe a merchant -> buy the law-map: spend the payment, grant the map (codex-visible
@@ -173,26 +172,33 @@ export function createSocial(pack: WorldPack): Module {
     if (lawId && stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) >= stageRank('surveyed')) {
       return beat(native, `${npc.name}: “You already know that one cold — I can see it on you. Keep your coin; I'll not sell you what you've read with your own eyes.”`, ['social.already_known']);
     }
-    let payId: string | undefined;
+    // payment: GIVE the relic spends the relic; otherwise (give a coin / pay / bribe) it costs
+    // ONE coin off the purse — coins are a COUNTED resource now (meta.coins), not an all-or-nothing
+    // roll, so a player can afford more than one law and always sees what a purchase cost.
+    let payKind: 'relic' | 'coin' | undefined;
     if (c === 'give') {
       const gid = intent.target?.id;
-      if (gid && facts.getBool(`possession.pc.${gid}`)) {
-        const cls = facts.getString(`possession.pc.${gid}.class`);
-        if (gid === 'antenna_relic' || cls === 'coin' || cls === 'salvage') payId = gid;
-      }
-    } else {
-      payId = coinHeld(facts);
+      if (gid === 'antenna_relic' && facts.getBool('possession.pc.antenna_relic')) payKind = 'relic';
+      else if (gid && facts.getString(`possession.pc.${gid}.class`) === 'coin' && coinsLeft(facts) > 0) payKind = 'coin';
+    } else if (coinsLeft(facts) > 0) {
+      payKind = 'coin';
     }
-    if (!payId) return beat(native, `${npc.name} wants paying first — a coin, or something genuinely worth the trade. Check what you carry (INVENTORY).`, ['social.needs_pay']);
-    const muts: WorldEvent['mutations'] = [
-      ...mutFromLine(lawLine),
-      { op: 'delete', key: `possession.pc.${payId}` },
-      { op: 'delete', key: `possession.pc.${payId}.class` },
-      { op: 'adjust', key: `reputation.pc.${npc.faction ?? npc.id}`, by: 1, min: -3, max: 3 },
-    ];
+    if (!payKind) return beat(native, `${npc.name} wants paying first — a coin, or something genuinely worth the trade. You are out of coin.`, ['social.needs_pay']);
+
+    const muts: import('../../sdk/facts.js').FactMutation[] = [...mutFromLine(lawLine), { op: 'adjust', key: `reputation.pc.${npc.faction ?? npc.id}`, by: 1, min: -3, max: 3 }];
+    let receipt: string;
+    if (payKind === 'relic') {
+      muts.push({ op: 'delete', key: 'possession.pc.antenna_relic' }, { op: 'delete', key: 'possession.pc.antenna_relic.class' });
+      receipt = 'the antenna-shard';
+    } else {
+      const left = coinsLeft(facts) - 1;
+      muts.push({ op: 'adjust', key: 'meta.coins', by: -1, min: 0, max: 9 });
+      if (left <= 0) muts.push({ op: 'delete', key: 'possession.pc.coin_roll' }, { op: 'delete', key: 'possession.pc.coin_roll.class' });
+      receipt = left > 0 ? `a coin — ${left} left` : 'your last coin';
+    }
     return {
       nativeNext: native,
-      events: [{ tag: 'trade', mutations: muts, summary: `${npc.name}: “${lawLine.text}”\n(You hand over ${payId === 'antenna_relic' ? 'the antenna-shard' : 'your coins'}.)`, data: { npc: npc.id, trade: lawId ?? 'lawmap', paid: payId } }],
+      events: [{ tag: 'trade', mutations: muts, summary: `${npc.name}: “${lawLine.text}”\n(You hand over ${receipt}.)`, data: { npc: npc.id, trade: lawId ?? 'lawmap', paid: payKind } }],
       control: { kind: 'continue' },
       render: { labels: ['social.trade', `npc.${npc.id}`], valence: 'boon' },
     };
