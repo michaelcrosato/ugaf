@@ -66,4 +66,21 @@ describe('the NPC information-economy', () => {
     expect(after).not.toContain('Going in, are you'); // greeting changed
     expect(after.toLowerCase()).toContain('core'); // he notices what you carry
   });
+
+  it('give coin (singular) works, not only the plural', () => {
+    const s = sess('econ-singular');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    const r = s.act('give coin to eun');
+    expect(r.rejected).toBeFalsy();
+    expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // the trade fired
+    expect(s.state.facts['possession.pc.coin_roll']).toBeUndefined();
+  });
+
+  it('asking a merchant about its paid law-map is a paywall hint, never a free grant', () => {
+    const s = sess('econ-paywall');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    const r = s.act('ask eun about the law-map');
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // NOT handed over for free
+    expect(r.text.toLowerCase()).toContain('pay'); // it points you at buying instead
+  });
 });
