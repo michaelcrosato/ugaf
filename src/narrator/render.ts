@@ -39,6 +39,7 @@ export function createRenderer(pack: WorldPack): Renderer {
   for (const n of pack.nodes) for (const ex of n.examinables ?? []) exByGlobal.set(ex.id, ex.look);
 
   const ambientCursor = new Map<string, number>(); // presentation state: no-repeat ambient rotation
+  const regionsSeen = new Set<string>(); // presentation state: a region's baseline shows once, not per-room
 
   function compose(block: DescriptionBlock, facts: FactView, turn: number, nodeId: string, firstVisit: boolean, rotate = false): string {
     const matching = (block.variants ?? []).filter((v) => evalPredicate(v.when, facts));
@@ -70,9 +71,13 @@ export function createRenderer(pack: WorldPack): Renderer {
     const region = regions.get(node.regionId);
     const lines: string[] = [];
 
-    // title + (occasional) region sensory baseline
+    // title + the region's sensory baseline, shown ONCE per zone — not re-pasted onto every room
+    // in it (players read the repeat as a copy-paste bug that undercut the prose, the praised asset).
     lines.push(bold(node.title.toUpperCase()));
-    if (optsArg.firstVisit && region) lines.push(dim(region.palette.sight));
+    if (optsArg.firstVisit && region && !regionsSeen.has(region.id)) {
+      regionsSeen.add(region.id);
+      lines.push(dim(region.palette.sight));
+    }
 
     lines.push(compose(node.look, facts, state.turn, node.id, optsArg.firstVisit, true));
 
