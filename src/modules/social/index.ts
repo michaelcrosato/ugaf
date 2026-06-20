@@ -165,8 +165,13 @@ export function createSocial(pack: WorldPack): Module {
   // via the line's setsFacts), once. Honest refusal if there's nothing to pay with.
   function trade(npc: NpcDef, lawLine: DialogueLine, c: string, intent: import('../../sdk/intents.js').ParsedIntent, facts: import('../../sdk/facts.js').FactView, native: JsonObject): ModuleResult {
     const lawId = Object.keys(lawLine.setsFacts ?? {}).find((k) => k.startsWith('known.purchased.'))?.slice('known.purchased.'.length);
-    if (lawId && (facts.getBool(`known.purchased.${lawId}`) || stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) >= stageRank('surveyed'))) {
-      return beat(native, `${npc.name}: “You've had that from me already. Go put it to use.”`, ['social.already']);
+    // already BOUGHT it from this merchant — don't double-sell, don't double-charge
+    if (lawId && facts.getBool(`known.purchased.${lawId}`)) {
+      return beat(native, `${npc.name}: “You've had that map from me already — I don't sell the same law twice. Go put it to use.”`, ['social.already']);
+    }
+    // you already SURVEYED it yourself — refuse the coin honestly (not "you bought this")
+    if (lawId && stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) >= stageRank('surveyed')) {
+      return beat(native, `${npc.name}: “You already know that one cold — I can see it on you. Keep your coin; I'll not sell you what you've read with your own eyes.”`, ['social.already_known']);
     }
     let payId: string | undefined;
     if (c === 'give') {
@@ -187,7 +192,7 @@ export function createSocial(pack: WorldPack): Module {
     ];
     return {
       nativeNext: native,
-      events: [{ tag: 'trade', mutations: muts, summary: `${npc.name}: “${lawLine.text}”`, data: { npc: npc.id, trade: lawId ?? 'lawmap', paid: payId } }],
+      events: [{ tag: 'trade', mutations: muts, summary: `${npc.name}: “${lawLine.text}”\n(You hand over ${payId === 'antenna_relic' ? 'the antenna-shard' : 'your coins'}.)`, data: { npc: npc.id, trade: lawId ?? 'lawmap', paid: payId } }],
       control: { kind: 'continue' },
       render: { labels: ['social.trade', `npc.${npc.id}`], valence: 'boon' },
     };

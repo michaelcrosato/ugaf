@@ -18,6 +18,7 @@ describe('the NPC information-economy', () => {
     expect(s.state.facts['possession.pc.coin_roll']).toBe(true); // every start kit deals a coin
     const r = s.act('give coins to eun');
     expect(r.rejected).toBeFalsy();
+    expect(r.text.toLowerCase()).toContain('hand over'); // a receipt — coins don't vanish silently
     expect(s.state.facts['possession.pc.coin_roll']).toBeUndefined(); // the coin was actually spent
     expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // got the table
     expect(s.state.facts['known.law.greywater']).toBe('approximate'); // codex stage advances
