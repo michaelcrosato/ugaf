@@ -62,8 +62,13 @@ export function createAnomaly(pack: WorldPack): Module {
     if (!facts.getBool(`law.${law.id}.window_drifted`)) return undefined;
     const phaseNow = facts.getString('phase.now');
     if (phaseNow === undefined || !d.widensTo.includes(phaseNow)) return undefined;
-    // override only the phase.now lookup; everything else (intent, carry, facts) is real
-    return { ...facts, getString: (k: string) => (k === 'phase.now' ? 'night' : facts.getString(k)) } as FactView;
+    // override ONLY the phase.now lookup (via both getString and get, so a law that gates on
+    // phase either way widens); everything else (intent, carry, all other facts) stays real.
+    return {
+      ...facts,
+      getString: (k: string) => (k === 'phase.now' ? 'night' : facts.getString(k)),
+      get: (k: string) => (k === 'phase.now' ? 'night' : facts.get(k)),
+    } as FactView;
   }
 
   /** does the law's trigger fire this turn? combines the declared predicate + the effect's physical key. */
