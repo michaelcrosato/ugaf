@@ -172,17 +172,27 @@ export class Session {
       if (conclusion) lines.push(dim(`      ${conclusion}`));
     }
     if (!any) lines.push(dim('  You have learned nothing certain yet. Look. Listen. The Hush is lawful — it can be read.'));
-    // rumors heard — and any CONFLICTS between them (a wrong law gets you killed)
+    // rumors heard — and any CONFLICTS between them (a wrong law gets you killed).
+    // Once you have SURVEYED a law first-hand, the conflict is SETTLED: mark which
+    // rumour proved true, and stop crying "verify it" about a thing you've verified.
     const heardRumors = this.game.pack.rumors.filter((r) => f[`known.rumor.${r.id}`]);
     if (heardRumors.length) {
+      const settled = (topic: string) => stageRank((f[`known.law.${topic}`] as KnowledgeStage) ?? 'unknown') >= stageRank('surveyed');
       lines.push('', dim('Rumours you have heard (reliability varies — a wrong law gets you killed):'));
-      for (const r of heardRumors) lines.push(dim(`  – “${r.text}”`));
+      for (const r of heardRumors) {
+        const verdict = settled(r.topic) ? (r.truth === 'false' ? '  — you have since seen this is FALSE' : r.truth === 'true' ? '  — you have confirmed this true' : '') : '';
+        lines.push(dim(`  – “${r.text}”${verdict}`));
+      }
       const byTopic = new Map<string, Set<string>>();
       for (const r of heardRumors) (byTopic.get(r.topic) ?? byTopic.set(r.topic, new Set()).get(r.topic)!).add(r.truth);
       for (const [topic, truths] of byTopic) {
         if (truths.size > 1) {
           const law = this.game.pack.laws.find((l) => l.id === topic);
-          lines.push(dim(`  ⚠ You have heard opposite things about ${law?.title ?? topic}. One of them is wrong — and here, wrong is fatal. Verify it yourself before you trust it.`));
+          lines.push(
+            settled(topic)
+              ? dim(`  ✓ You once heard opposite things about ${law?.title ?? topic}; you have since settled it by seeing the truth yourself.`)
+              : dim(`  ⚠ You have heard opposite things about ${law?.title ?? topic}. One of them is wrong — and here, wrong is fatal. Verify it yourself before you trust it.`),
+          );
         }
       }
     }
