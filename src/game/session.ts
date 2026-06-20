@@ -165,12 +165,16 @@ export class Session {
       any = true;
       const drift = f[`law.${law.id}.drift_warned`] ? '  (your certainty is decaying)' : '';
       const surveyed = stageRank(stage) >= stageRank('surveyed');
+      // surface the evidence count while you are still gathering it (feedback/0012 #3)
+      const seenCount = law.tells.filter((t) => f[`known.tell.${t.id}`]).length;
+      const need = law.discovery.minTellsToSurvey;
+      const progress = !surveyed && stage !== 'unknown' && seenCount < need ? dim(`  (${seenCount}/${need} signs read)`) : '';
       const purchased = f[`known.purchased.${law.id}`] && !surveyed ? '  (from a bought map — unverified; trust it at your own risk)' : '';
       const nearly = stage === 'approximate' ? dim(`  — you have almost named it; try: deduce the ${law.title.replace(/^the /i, '').toLowerCase()}`) : '';
       const conclusion = surveyed ? law.tells.map((t) => this.game.pack.tellLibrary.find((p) => p.id === t.id)?.conclusion).find(Boolean) : undefined;
       // a law whose window has drifted wider carries the spread in its codex entry too
       const spread = surveyed && f[`law.${law.id}.window_drifted`] ? ' (its hungry hours have crept into the grey hour before dawn)' : '';
-      lines.push(`  • ${bold(law.title)} — ${stage}${drift}${purchased}${nearly}`);
+      lines.push(`  • ${bold(law.title)} — ${stage}${drift}${progress}${purchased}${nearly}`);
       if (conclusion) lines.push(dim(`      ${conclusion}${spread}`));
     }
     if (!any) lines.push(dim('  You have learned nothing certain yet. Look. Listen. The Hush is lawful — it can be read.'));
