@@ -21,6 +21,7 @@
     "golden": "tsx scripts/golden-tape.ts",
     "coherence": "tsx scripts/coherence-pass.ts",
     "playtest": "tsx scripts/playtest.ts",
+    "flywheel": "tsx scripts/flywheel.ts",
     "gate": "tsx scripts/gate.ts"
   },
   "dependencies": {
