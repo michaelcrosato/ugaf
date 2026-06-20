@@ -37,6 +37,7 @@ export function createGumshoe(pack: WorldPack): Module {
   const examTell = new Map<string, string>();
   const examIds = new Set<string>(); // every authored examinable (its look prose carries the description)
   const npcIds = new Set<string>(pack.npcs.map((n) => n.id)); // NPCs carry their own authored look prose too
+  const itemIds = new Set<string>(pack.items.map((i) => i.id)); // items carry their own authored look prose too
   for (const n of pack.nodes)
     for (const ex of n.examinables ?? []) {
       examIds.add(ex.id);
@@ -158,7 +159,7 @@ export function createGumshoe(pack: WorldPack): Module {
         // examining a real authored object OR an NPC: its own look prose carries it —
         // stay quiet rather than contradict it with "nothing here tells you anything".
         const exTarget = args.action.intent.target?.id;
-        if (c === 'examine' && exTarget && (examIds.has(exTarget) || npcIds.has(exTarget))) {
+        if (c === 'examine' && exTarget && (examIds.has(exTarget) || npcIds.has(exTarget) || itemIds.has(exTarget))) {
           return { nativeNext: native, events: [{ tag: 'invest_examined', mutations: [], summary: '', visibility: 'private' }], control: { kind: 'continue' } };
         }
         return beat(native, { labels: ['invest.nothing_new'], hints: { intent: c } }, 'You look closely, but nothing here tells you anything you didn’t already know.');

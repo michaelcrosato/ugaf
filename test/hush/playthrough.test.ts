@@ -69,7 +69,8 @@ describe('The Hush — Cordon’s Edge', () => {
 
     // (b) SLUMPED iron (Greywater ate its temper): the pry FAILS
     const slumped = base();
-    slumped.state = { ...slumped.state, facts: { ...slumped.state.facts, 'possession.pc.crowbar': true, 'possession.pc.crowbar.class': 'metal', 'possession.pc.crowbar.condition': 'ore' } };
+    // every start kit now deals iron; degrade ALL of it so the only iron on hand is the slumped bar
+    slumped.state = { ...slumped.state, facts: { ...slumped.state.facts, 'possession.pc.crowbar': true, 'possession.pc.crowbar.class': 'metal', 'possession.pc.crowbar.condition': 'ore', 'possession.pc.iron_knife.condition': 'ore' } };
     const fail = slumped.act('use the crowbar');
     expect(slumped.state.facts['flag.intercept_clear']).toBeUndefined();
     expect(fail.text.toLowerCase()).toContain('warm wax');

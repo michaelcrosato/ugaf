@@ -59,7 +59,7 @@ export const NODES: NodeDef[] = [
       variants: [
         { when: { fact: 'awareness.cordon_patrol', eq: 'alert' }, text: 'The troopers are up and scanning now, torches swinging. The gap in the wire is not an option while they are looking.' },
         { when: { fact: 'flag.hidden', eq: true }, text: 'You are low in the dark at the edge of the floodlight\'s throw. The troopers\' attention slides over you and away.' },
-        { when: { fact: 'possession.pc.salvage_core', eq: true }, text: 'Warden Holt\'s eyes go to your pack and stay there. He knows the shape of what you carry — they all do, eventually. He does not stop you; stopping people is not really what the Cordon is for, out here. But he marks your face the way a man marks a debt he means to collect.' },
+        { when: { fact: 'possession.pc.salvage_core', eq: true }, text: 'Warden Holt\'s eyes go to your pack and stay there. He knows the shape of what you carry — they all do, eventually. The boom gate is down and the troopers have drifted to the wire, watching the open ground for exactly what rides in your pack: you will not simply walk it out under their noses. You could slip past unseen (HIDE), lever the wire-gap wide with good iron, or lean on a Strider who owes you a debt. Holt himself does not stop you — stopping people is not really what the Cordon is for, out here — but he marks your face the way a man marks a debt he means to collect.' },
       ],
       ambient: ['A radio crackles in the post and someone answers it in a bored monotone.', 'One of the troopers lights a cigarette and does not offer you one.'],
     },
@@ -107,6 +107,10 @@ export const NODES: NodeDef[] = [
       base: 'A weatherproof lean-to crammed with paper: hand-drawn maps, law-tables in three colours of ink, a wall of index cards each bearing one observed rule of the Hush. The Survey trades in exactly one thing — knowing — and they price it like the lifesaver it is.',
       ambient: ['A pendulum on a string traces a slow figure that should be a circle and is not.', 'Index cards riffle in a draught and settle wrong, in an order someone will have to fix.'],
     },
+    examinables: [
+      { id: 'index_cards', names: ['cards', 'index cards', 'index card', 'card'], look: { base: 'Hundreds of cards, each a single observed rule in a different cramped hand: WORKED IRON SOFTENS IN THE GREYWATER AFTER DARK. THE MILE ROAD GROWS LONG BEHIND THE EYE. A NAME SPOKEN AT THE ANTENNAS IS ANSWERED. Most are crossed out and re-written twice over — the laws drift, and the Survey re-files them, forever. Eun will sell you the fair copy of any one, for a coin or a thing you have seen yourself.' } },
+      { id: 'law_tables', names: ['law-tables', 'law tables', 'law table', 'tables', 'maps'], look: { base: 'Great sheets ruled in three colours of ink — black for the confirmed, red for the contested, a thin green for the merely rumoured. The Greywater table is complete and black-inked: the rust-bloom, the hum, the hour it wakes. Others trail off into red question-marks. This is knowing, made into a thing you can hold — and the Survey sells it by the law, never the sheet.' } },
+    ],
     npcs: ['survey_factor'],
     exits: [{ dir: 'out', to: 'lyles_rest', label: "back to Lyle's Rest", via: 'e_lyle_survey' }],
   },

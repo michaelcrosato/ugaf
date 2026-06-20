@@ -115,6 +115,9 @@ export function createRenderer(pack: WorldPack): Renderer {
       // examining an NPC returns their authored look (don't discard hand-written prose)
       const npc = pack.npcs.find((n) => n.id === targetId);
       if (npc) return compose(npc.look, facts, state.turn, node?.id ?? '', false);
+      // examining a carried or present ITEM returns its authored look (the core, the crowbar, the knife)
+      const item = pack.items.find((i) => i.id === targetId);
+      if (item?.look) return compose(item.look, facts, state.turn, node?.id ?? '', false);
       const t = tellProse.get(targetId);
       return t ? `${t.cue} ${t.note}` : undefined;
     }

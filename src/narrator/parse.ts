@@ -78,6 +78,11 @@ export function createParser(pack: WorldPack): Parser {
   for (const npc of pack.npcs) lexicon.push({ id: npc.id, names: npc.names.map((s) => s.toLowerCase()), kind: 'npc' });
   for (const it of pack.items) lexicon.push({ id: it.id, names: it.names.map((s) => s.toLowerCase()), kind: 'item' });
   const itemClass = new Map(pack.items.map((i) => [i.id, i.itemClass]));
+  // examinables, indexed by the node they live in — so a named prop resolves to the one in
+  // the room you are standing in, not a same-named prop from another location (cross-room leak).
+  const nodeExaminables = new Map<string, { id: string; names: string[] }[]>(
+    pack.nodes.map((n) => [n.id, (n.examinables ?? []).map((ex) => ({ id: ex.id, names: ex.names.map((s) => s.toLowerCase()) }))]),
+  );
 
   type Kind = 'exit' | 'item' | 'examinable' | 'npc';
 
@@ -101,6 +106,12 @@ export function createParser(pack: WorldPack): Parser {
 
   function matchKind(q: string, kind: Kind, obs: RoleObservation): EntityRef | undefined {
     if (kind === 'exit') return matchExit(q, obs);
+    // an examinable in the CURRENT room wins over a same-named one elsewhere (no cross-room leak)
+    if (kind === 'examinable') {
+      for (const ex of nodeExaminables.get(obs.location) ?? []) {
+        if (ex.names.some((nm) => q === nm || q.includes(nm) || nm.includes(q))) return { id: ex.id, raw: q, tags: ['examinable'] };
+      }
+    }
     // scene-present entities of this kind first (more specific than the global lexicon)
     for (const ent of obs.scene.entities) {
       if (ent.kind === kind && (ent.label.toLowerCase().includes(q) || ent.id.toLowerCase().includes(q))) {
