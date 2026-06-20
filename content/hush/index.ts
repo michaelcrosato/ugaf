@@ -87,6 +87,17 @@ export const HUSH_PACK: WorldPack = {
         'The waystation is gone — there is only road behind you, and more road, growing, and you understand with a calm and final clarity that you will walk it now until you are the next salvager someone finds facing the wrong way. You were warned, three times and then in your own gut: do not look back. You looked back, and the Mile Road kept its true length, and gave you the whole of it at once. The Hush did not kill you. It simply stopped letting you arrive.',
     },
     {
+      // The Hollow Dark bites: hold still in the deep night four times (after three escalating
+      // warnings) and the dark closes the last of the distance. Telegraphed, deducible — the same
+      // fair ladder as the Mile Road, for the agency law the swarm found toothless ("never charges").
+      id: 'lost_to_hollow_dark',
+      when: { fact: 'law.hollow_dark.closer', gte: 4 },
+      outcome: 'lost',
+      title: 'The Dark Closed the Distance',
+      epilogue:
+        'You stopped, in the deep, after dark, the way the salvager at the fork stopped — and the dark came up to you and stopped too. There was no wound, no struggle; with the Hollow Dark there rarely is. You were warned, three times and then by the loudening of your own heart: do not be still here. You were still, once too often. The Hollow Dark does not chase. It waits for you to stop, and you stopped, and now you are a part of the quiet it keeps.',
+    },
+    {
       id: 'lost_to_hush',
       when: { fact: 'survival.pc', eq: 'dead' },
       outcome: 'lost',

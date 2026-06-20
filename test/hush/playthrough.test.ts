@@ -179,8 +179,9 @@ describe('The Hush — Cordon’s Edge', () => {
 
   it('Law Drift: a surveyed law is warned, then demoted — the codex is fallible (dwell engine)', () => {
     const s = freshSession('drift-1');
-    // survey the Mile Road early, then dwell at a safe spot (mile_road_high, no night-lethal law)
-    for (const c of ['out', 'road', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road']) s.act(c);
+    // survey the Mile Road early, then dwell at a TRULY safe spot — mile_road_low, OUTSIDE the
+    // Hollow Dark's scope (mile_road_high is inside it, and the Dark now bites after dark).
+    for (const c of ['out', 'road', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road', 'back']) s.act(c);
     expect(s.state.facts['known.law.mile_road']).toBe('surveyed');
     const surveyTurn = s.state.facts['known.mile_road.surveyed_turn'] as number;
     expect(typeof surveyTurn).toBe('number');
