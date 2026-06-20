@@ -70,8 +70,10 @@ async function main() {
   ].join('\n');
 
   console.log(`\n② Loop B critique + Loop A implement: invoking a headless agent (feedback/${fb}.md) …`);
-  const claudeArgs = ['-p', prompt, '--permission-mode', autonomous ? 'bypassPermissions' : 'acceptEdits'];
-  if (autonomous) claudeArgs.push('--dangerously-skip-permissions');
+  // autonomous = skip all permission prompts (the gate is the safety net); else auto-accept edits only.
+  const claudeArgs = autonomous
+    ? ['-p', prompt, '--dangerously-skip-permissions']
+    : ['-p', prompt, '--permission-mode', 'acceptEdits'];
   const agent = sh('claude', claudeArgs);
   if (agent.status !== 0) {
     console.error('\n✗ the agent step did not complete cleanly. If it stopped on a permission prompt, re-run with FLYWHEEL_AUTONOMOUS=1 (unattended) or drive it interactively.');
