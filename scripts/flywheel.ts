@@ -22,8 +22,15 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const sh = (cmd: string, args: string[], opts: { quiet?: boolean } = {}) =>
-  spawnSync(cmd, args, { cwd: ROOT, stdio: opts.quiet ? 'pipe' : 'inherit', shell: process.platform === 'win32', encoding: 'utf8' });
+// win32 needs a shell to resolve the npm/git shims, but combining an args array
+// with shell:true is deprecated (DEP0190); join into one command string there.
+// Every call site passes fixed literal args with no spaces, so this is exact.
+const sh = (cmd: string, args: string[], opts: { quiet?: boolean } = {}) => {
+  const stdio = opts.quiet ? 'pipe' : 'inherit';
+  return process.platform === 'win32'
+    ? spawnSync([cmd, ...args].join(' '), { cwd: ROOT, stdio, shell: true, encoding: 'utf8' })
+    : spawnSync(cmd, args, { cwd: ROOT, stdio, encoding: 'utf8' });
+};
 
 function nextFeedbackNumber(): string {
   const nums = readdirSync(resolve(ROOT, 'feedback'))
@@ -74,14 +81,24 @@ async function main() {
   // concatenated into a win32 shell command gets mangled (quotes/newlines/parens).
   // autonomous = skip all permission prompts (the gate is the safety net); else auto-accept edits only.
   const claudeArgs = autonomous ? ['-p', '--dangerously-skip-permissions'] : ['-p', '--permission-mode', 'acceptEdits'];
-  const agent = spawnSync('claude', claudeArgs, {
-    cwd: ROOT,
-    shell: process.platform === 'win32',
-    encoding: 'utf8',
-    input: prompt,
-    stdio: ['pipe', 'inherit', 'inherit'],
-    maxBuffer: 64 * 1024 * 1024,
-  });
+  // Same DEP0190 avoidance: on win32 pass one shell command string (flags are
+  // literal, no spaces). The multi-line prompt still rides stdin, never the args.
+  const agent = process.platform === 'win32'
+    ? spawnSync(['claude', ...claudeArgs].join(' '), {
+        cwd: ROOT,
+        shell: true,
+        encoding: 'utf8',
+        input: prompt,
+        stdio: ['pipe', 'inherit', 'inherit'],
+        maxBuffer: 64 * 1024 * 1024,
+      })
+    : spawnSync('claude', claudeArgs, {
+        cwd: ROOT,
+        encoding: 'utf8',
+        input: prompt,
+        stdio: ['pipe', 'inherit', 'inherit'],
+        maxBuffer: 64 * 1024 * 1024,
+      });
   if (agent.status !== 0) {
     console.error('\n✗ the agent step did not complete cleanly. If it stopped on a permission prompt, re-run with FLYWHEEL_AUTONOMOUS=1 (unattended) or drive it interactively.');
     process.exit(1);
