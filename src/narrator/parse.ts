@@ -153,8 +153,8 @@ export function createParser(pack: WorldPack): Parser {
     // meta queries -> recall (a free, non-committing view; handled by the Session)
     if (META[lower]) return mk('recall', { topic: META[lower], confidence: 1 });
 
-    // bare "return" word -> go back the way you came (generic affordance)
-    if (RETURN_WORDS.has(lower)) return mk('go', { direction: lower, tags: ['movement', 'return'], confidence: 0.9 });
+    // bare "return" word -> go back the way you came (canonicalized to "back")
+    if (RETURN_WORDS.has(lower)) return mk('go', { direction: 'back', tags: ['movement', 'return'], confidence: 0.9 });
 
     // a single token that names an exit HERE wins over a same-spelled verb
     // (so "survey" / "salvage" walk to the Survey / Striders, not deduce-a-law)

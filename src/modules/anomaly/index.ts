@@ -121,7 +121,11 @@ export function createAnomaly(pack: WorldPack): Module {
         });
         events.push({
           tag: 'law_summon',
-          mutations: [{ op: 'set', key: `law.${law.id}.summoned_turn`, value: turn }],
+          mutations: [
+            { op: 'set', key: `law.${law.id}.summoned_turn`, value: turn },
+            { op: 'set', key: `law.${law.id}.active`, value: true }, // the Changed is now hunting
+            { op: 'set', key: `law.${law.id}.active_turn`, value: turn },
+          ],
           summary: firstContact ? law.failSafe.firstContact.tell : 'The hum sharpens. Something has heard you, and it is coming.',
           data: { law: law.id },
         });
@@ -174,13 +178,32 @@ export function createAnomaly(pack: WorldPack): Module {
         return applyDrift(laws, facts, ctx.turn, native);
       }
 
+      // the Antenna's "still hunting" state machine: after the first warning, the
+      // Changed hunts. Leaving the field escapes (non-lethal); speaking again or
+      // lingering a turn lets it close. A knowledge test, not a twitch test.
+      const huntEvents: WorldEvent[] = [];
+      const huntScheduled: ScheduledEvent[] = [];
+      let huntRender: BeatResult['render'] | undefined;
+      if (facts.getBool('law.antenna_field.active')) {
+        const activeTurn = facts.getNumber('law.antenna_field.active_turn');
+        const spokeThisTurn = facts.getString('flag.last_intent') === 'speak_aloud' && facts.getNumber('flag.last_turn') === ctx.turn;
+        if (node !== 'antenna_field') {
+          huntEvents.push({ tag: 'antenna_escape', mutations: [{ op: 'set', key: 'law.antenna_field.active', value: false }], summary: 'You put the antenna field behind you. Out in the dark, the thing that heard you loses the thread of you — and turns away, slow and reluctant, to listen for someone else.', data: { law: 'antenna_field' } });
+          huntRender = { labels: ['antenna.escape'], valence: 'boon' };
+        } else if (!spokeThisTurn && activeTurn !== undefined && activeTurn < ctx.turn) {
+          huntScheduled.push({ fireAtTurn: ctx.turn, phase: 'summon_act', module: 'combat.ito', kind: 'changed_strike', id: `changed:antenna_field:${ctx.turn}`, order: 0, payload: { law: 'antenna_field', firstContact: false, entity: 'the_changed' } });
+          huntEvents.push({ tag: 'antenna_close', mutations: [{ op: 'set', key: 'law.antenna_field.active', value: false }], summary: 'You stayed in the field a beat too long. The Changed has closed the distance, and the hum is the sound of it arriving.', data: { law: 'antenna_field' } });
+          huntRender = { labels: ['antenna.close'], valence: 'cost' };
+        }
+      }
+
       // law_trigger: fold all firing laws in canonical order (K6)
       const firing = foldOrder([...laws.values()].filter((l) => inScope(l, node) && triggers(l, facts, ctx.turn)));
-      if (firing.length === 0) return {};
+      if (firing.length === 0 && huntEvents.length === 0) return {};
 
-      const events: WorldEvent[] = [];
-      const scheduled: ScheduledEvent[] = [];
-      let render: BeatResult['render'] | undefined;
+      const events: WorldEvent[] = [...huntEvents];
+      const scheduled: ScheduledEvent[] = [...huntScheduled];
+      let render: BeatResult['render'] | undefined = huntRender;
       for (const law of firing) {
         const contacts = (facts.getNumber(`law.${law.id}.contacts`) ?? 0) + 1;
         const surveyed = facts.getString(`known.law.${law.id}`) === 'surveyed';

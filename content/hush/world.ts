@@ -232,8 +232,12 @@ export const NODES: NodeDef[] = [
     kind: 'event-site',
     look: {
       base: 'A field of dead broadcast antennas, rust-red, leaning, humming on channels that closed with the Settling. Names are scratched into their concrete bases — dozens of names. The hum changes shape when you breathe, as if it were waiting to be given a word to carry.',
-      variants: [{ when: { fact: 'phase.now', eq: 'night' }, text: 'At night the field is worse. The hum is hungry. You can feel how badly it wants you to say something — anything — aloud.' }],
+      variants: [
+        { when: { fact: 'phase.now', eq: 'night' }, text: 'At night the field is worse. The hum is hungry. You can feel how badly it wants you to say something — anything — aloud.' },
+        { when: { fact: 'law.antenna_field.active', eq: true }, text: 'The Changed is still out there, somewhere past the light, circling the hum that carried your voice. Get clear of the field — or be silent, and be quick.', replace: false },
+      ],
       ambient: ['An antenna sways with no wind, slow, like a head turning to listen.', 'The hum briefly takes the shape of a word you did not say, and lets it go.'],
+      firstReveal: 'Beneath the freshest name scratched into the concrete lies a body not three days cold, mouth still open on a last syllable it never got to finish. Whatever he said here, the field answered him — and what answered is still nearby. The lesson is not subtle: do not give your voice to this place.',
     },
     tells: ['antenna_field_hum', 'antenna_name_stones'],
     examinables: [

@@ -58,14 +58,29 @@ describe('The Hush — Cordon’s Edge', () => {
     expect(s.state.facts['survival.pc']).toBe('alive'); // material law is non-lethal (a fail-state, not a kill)
   });
 
-  it('Antenna Field (summon): a spoken name calls the Changed — first contact is clamped non-lethal', () => {
+  it('Antenna Field (summon): first contact is clamped non-lethal AND leaving the field is a fair escape', () => {
     const s = freshSession('antenna-1');
     for (const cmd of ['out', 'road', 'road', 'on', 'antennas']) s.act(cmd); // -> antenna_field
     expect(s.state.facts['loc.pc']).toBe('antenna_field');
-    const said = s.act('say maren'); // speak a name aloud -> summon
+    const said = s.act('say maren'); // speak a name aloud -> summon (first contact, clamped)
     expect(s.state.facts['law.antenna_field.contacts']).toBe(1);
     expect(s.state.facts['survival.pc']).toBe('alive'); // delegated-lethality clamp: first Changed never kills
+    expect(s.state.facts['law.antenna_field.active']).toBe(true); // the Changed is now hunting
     expect(said.text.toLowerCase()).toMatch(/changed|antenna|voice|dark/);
+    // LEAVING the field is the fair escape — the Changed loses the thread (knowledge, not twitch)
+    const fled = s.act('mile'); // leave to the Mile Road
+    expect(s.state.facts['survival.pc']).toBe('alive');
+    expect(s.state.facts['law.antenna_field.active']).toBe(false);
+    expect(fled.text.toLowerCase()).toMatch(/loses the thread|behind you|turns away/);
+  });
+
+  it('Antenna Field: speaking the name twice is lethal — but you were warned and given a way out', () => {
+    const s = freshSession('antenna-2');
+    for (const cmd of ['out', 'road', 'road', 'on', 'antennas']) s.act(cmd);
+    s.act('say maren'); // warning
+    const dead = s.act('say maren'); // ignore the warning, speak again -> lethal
+    expect(s.state.facts['survival.pc']).toBe('dead');
+    expect(dead.status).toBe('lost');
   });
 
   it('the non-metal path: drop your iron, and the Greywater has nothing to take', () => {

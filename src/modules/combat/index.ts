@@ -64,25 +64,23 @@ export function createCombat(): Module {
         };
       }
 
-      const dmg = tape.die('combat', 6, 'changed damage');
-      const nextHp = hp - dmg;
-      const events: WorldEvent[] = [];
-      if (nextHp <= 0) {
-        events.push({
-          tag: 'changed_kill',
-          mutations: [{ op: 'set', key: 'survival.pc.hp', value: 0 }, { op: 'set', key: 'survival.pc', value: 'dead' }],
-          summary: 'The Changed does not warn twice. It takes you the way the Zone takes everything — completely, and without malice.',
-          severity: 'lethal',
-        });
-        return { nativeNext: native, events, control: { kind: 'terminate', label: 'dead' } };
-      }
-      events.push({
-        tag: 'changed_wound',
-        mutations: [{ op: 'set', key: 'survival.pc.hp', value: nextHp }, { op: 'set', key: 'survival.pc', value: 'wounded' }],
-        summary: 'It closes the distance and rakes you. You get clear, bleeding, breath sawing.',
-        severity: 'reversible',
-      });
-      return { nativeNext: native, events, control: { kind: 'continue' }, render: { labels: ['combat.changed_wound'], valence: 'cost' } };
+      // the Changed does not warn twice — once you've spent the warning and the
+      // escape window, it is lethal. (The fairness is the first-contact warning +
+      // the chance to leave the field, not a damage roll.)
+      tape.die('combat', 6, 'changed strike'); // recorded for provenance; outcome is fixed
+      void hp;
+      return {
+        nativeNext: native,
+        events: [
+          {
+            tag: 'changed_kill',
+            mutations: [{ op: 'set', key: 'survival.pc.hp', value: 0 }, { op: 'set', key: 'survival.pc', value: 'dead' }],
+            summary: 'The Changed does not warn twice. It takes you the way the Zone takes everything — completely, and without malice.',
+            severity: 'lethal',
+          },
+        ],
+        control: { kind: 'terminate', label: 'dead' },
+      };
     },
   };
 }

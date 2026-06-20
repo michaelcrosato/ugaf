@@ -171,11 +171,19 @@ export class Session {
       if (conclusion) lines.push(dim(`      ${conclusion}`));
     }
     if (!any) lines.push(dim('  You have learned nothing certain yet. Look. Listen. The Hush is lawful — it can be read.'));
-    // rumors heard
+    // rumors heard — and any CONFLICTS between them (a wrong law gets you killed)
     const heardRumors = this.game.pack.rumors.filter((r) => f[`known.rumor.${r.id}`]);
     if (heardRumors.length) {
       lines.push('', dim('Rumours you have heard (reliability varies — a wrong law gets you killed):'));
       for (const r of heardRumors) lines.push(dim(`  – “${r.text}”`));
+      const byTopic = new Map<string, Set<string>>();
+      for (const r of heardRumors) (byTopic.get(r.topic) ?? byTopic.set(r.topic, new Set()).get(r.topic)!).add(r.truth);
+      for (const [topic, truths] of byTopic) {
+        if (truths.size > 1) {
+          const law = this.game.pack.laws.find((l) => l.id === topic);
+          lines.push(dim(`  ⚠ You have heard opposite things about ${law?.title ?? topic}. One of them is wrong — and here, wrong is fatal. Verify it yourself before you trust it.`));
+        }
+      }
     }
     return lines.join('\n');
   }
