@@ -163,3 +163,64 @@ describe('Law Drift charges — the hungry hours lengthen', () => {
     expect(reRead.text.toLowerCase()).toMatch(/before dawn|grey hour|crept|spread/);
   });
 });
+
+describe('Law Drift is FAIR — it does not strand you, and it does not over-alarm (feedback/0013 #2)', () => {
+  // prime a surveyed Mile Road dwelling at a safe spot; optionally carrying the core
+  const dwelling = (seed: string, core: boolean) => {
+    const s = freshSession(seed);
+    s.state = {
+      ...s.state,
+      facts: {
+        ...s.state.facts,
+        'loc.pc': 'mile_road_low', // safe to dwell (no wait-law here)
+        'known.law.mile_road': 'surveyed',
+        'known.mile_road.surveyed_turn': 0,
+        'known.mile_road.ever_surveyed': true,
+        ...(core ? { 'possession.pc.salvage_core': true } : {}),
+      },
+    };
+    return s;
+  };
+
+  it('drift PAUSES while you carry the core — knowledge will not rot out from under you mid-escape', () => {
+    const withCore = dwelling('drift-core', true);
+    for (let i = 0; i < 30 && withCore.state.status === 'active'; i++) withCore.act('wait');
+    expect(withCore.state.facts['known.law.mile_road']).toBe('surveyed'); // NOT demoted — drift paused
+    expect(withCore.state.facts['law.mile_road.drift_warned']).toBeFalsy(); // never even warned
+
+    // CONTROL: without the core, the SAME dwell DOES drift (proves the guard is what paused it)
+    const noCore = dwelling('drift-nocore', false);
+    let warned = false;
+    for (let i = 0; i < 30 && noCore.state.status === 'active'; i++) {
+      noCore.act('wait');
+      if (noCore.state.facts['law.mile_road.drift_warned']) warned = true;
+    }
+    expect(warned).toBe(true);
+  });
+
+  it('a non-widening law (Mile Road) drift REASSURES — the rule\'s shape holds, not "you are guessing"', () => {
+    const s = dwelling('drift-reassure', false);
+    let demoteMsg = '';
+    for (let i = 0; i < 40 && s.state.status === 'active'; i++) {
+      const r = s.act('wait');
+      if (!demoteMsg && s.state.facts['known.law.mile_road'] === 'approximate') demoteMsg = r.text;
+    }
+    expect(s.state.facts['known.law.mile_road']).toBe('approximate');
+    expect(demoteMsg.toLowerCase()).toMatch(/shape|still hold/); // reassuring
+    expect(demoteMsg.toLowerCase()).not.toContain('guessing'); // not the old alarm
+  });
+
+  it('the Greywater "iron goes soft" line fires ONCE on the ore transition, not every move (feedback/0013 #6)', () => {
+    const s = freshSession('grey-once');
+    s.state = {
+      ...s.state,
+      native: { ...s.state.native, 'time.cycle': { minutes: 1320 } }, // night
+      facts: { ...s.state.facts, 'loc.pc': 'greywater_bottoms', 'phase.now': 'night', 'clock.minutes': 1320 },
+    };
+    const first = s.act('listen'); // worked iron transitions to ore
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('ore');
+    expect(first.text.toLowerCase()).toContain('soft'); // the transition line shows once
+    const second = s.act('wait'); // still in the water, iron already ore
+    expect(second.text.toLowerCase()).not.toContain('goes soft'); // ...and is NOT repeated
+  });
+});

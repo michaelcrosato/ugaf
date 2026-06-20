@@ -122,10 +122,14 @@ export function createAnomaly(pack: WorldPack): Module {
         break;
       }
       case 'degrade_item_class': {
-        // the law slumps worked metal toward ore — a reversible material degrade
+        // the law slumps worked metal toward ore — a reversible material degrade. Fire the
+        // "iron goes soft" line ONCE, on the transition to ore; suppress it for metal that has
+        // already slumped, so the per-move repeat does not train the player to skip the status
+        // line (feedback/0013 #6).
         for (const k of facts.keysUnder('possession.pc')) {
           if (k.endsWith('.class') && facts.getString(k) === effect.itemClass) {
             const itemKey = k.slice(0, -'.class'.length);
+            if (facts.getString(`${itemKey}.condition`) === effect.toCondition) continue; // already ore — no repeat
             events.push({
               tag: 'law_degrade',
               mutations: [{ op: 'set', key: `${itemKey}.condition`, value: effect.toCondition }],
@@ -265,12 +269,22 @@ export function createAnomaly(pack: WorldPack): Module {
 /** Law Drift — periodic re-Settling. Emits a pre-demotion tell >=1 beat before demoting (fairness). */
 function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: number, native: JsonObject): BeatResult {
   const events: WorldEvent[] = [];
+  // feedback/0013 #2 (the unfair-stranding guard): while you carry the core you are committed to
+  // the way out, with no safe re-entry to re-read a law — so Law Drift PAUSES. Your hard-won
+  // knowledge will not rot out from under you mid-escape; the "certainty is decaying" warning
+  // never fires for a law you have no chance to re-verify. Drift resumes once the core is delivered.
+  if (facts.getBool('possession.pc.salvage_core')) return {};
   for (const law of laws.values()) {
     if (!law.drift) continue;
     if (turn === 0) continue;
     if (facts.getNumber(`law.${law.id}.drift_check_turn`) === turn) continue; // once per law per turn
     const surveyed = facts.getString(`known.law.${law.id}`) === 'surveyed';
     const warned = facts.getBool(`law.${law.id}.drift_warned`);
+    // does this law's window WIDEN on drift (the decay that BITES — feedback/0012 #5)? It drives the
+    // TONE: a widening law's drift is a real, alarming change in the world; a non-widening law's drift
+    // only dulls the fine edge of your certainty — its SHAPE still holds, so reassure rather than alarm
+    // (feedback/0013 #2: the Mile-Road decay must not read as an unfair stranding).
+    const widens = law.drift.mutates === 'window' && (law.drift.widensTo?.length ?? 0) > 0;
 
     // dwell-based drift (preferred): fire relative to WHEN the law was surveyed,
     // so mastery refreshes on its own clock. Falls back to absolute everyTurns.
@@ -297,12 +311,12 @@ function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: num
           { op: 'set', key: `law.${law.id}.drift_warn_turn`, value: turn },
           { op: 'set', key: `law.${law.id}.drift_check_turn`, value: turn },
         ],
-        summary: `Something about ${law.title} feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)`,
-        data: { law: law.id },
+        summary: widens
+          ? `Something about ${law.title} feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)`
+          : `Your reading of ${law.title} has aged a little — the fine detail going soft at the edges, the way an old memory does. The shape of it you still hold; only the particulars are worth confirming again, when you can.`,
+        data: { law: law.id, widened: widens },
       });
     } else if (surveyed && warned) {
-      // does this law's window WIDEN on drift (the decay that bites — feedback/0012 #5)?
-      const widens = law.drift.mutates === 'window' && (law.drift.widensTo?.length ?? 0) > 0;
       const muts: FactMutation[] = [
         { op: 'set', key: `known.law.${law.id}`, value: 'approximate' },
         { op: 'set', key: `law.${law.id}.drift_warned`, value: false },
@@ -316,7 +330,7 @@ function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: num
         mutations: muts,
         summary: widens
           ? `${law.title} has re-Settled — and it has crept wider than you learned it, its hungry hours reaching now into the grey hour before dawn. The safe margin you read no longer covers the whole of it. Read it again before you trust the old hours.`
-          : `${law.title} has re-Settled. The certainty has gone out of your reading of it — you are guessing again until you confirm it with your own eyes.`,
+          : `${law.title} has slipped a little out of true with the passing hours — the fine edge of your certainty has dulled. You still hold its shape; you would do well to read it again, when you can, to be sure of the particulars.`,
         data: { law: law.id, widened: widens },
       });
     }

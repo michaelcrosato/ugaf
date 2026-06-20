@@ -104,11 +104,11 @@ describe('The Hush — Cordon’s Edge', () => {
     const s = freshSession('grey-1');
     for (const cmd of ['out', 'road', 'road', 'on', 'fork', 'water']) s.act(cmd); // -> greywater_ford, ~dusk
     expect(s.state.facts['possession.pc.iron_knife.condition']).toBeUndefined();
-    s.act('rest'); // -> dusk/night
-    const r = s.act('rest'); // -> night: the law fires on metal
+    const r1 = s.act('rest'); // -> dusk/night: the law first fires on metal (the ore transition)
+    const r2 = s.act('rest'); // -> night
     expect(s.state.facts['phase.now']).toBe('night');
     expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('ore');
-    expect(r.text.toLowerCase()).toContain('iron');
+    expect((r1.text + ' ' + r2.text).toLowerCase()).toContain('iron'); // the degrade line shows (once, on the transition)
     expect(s.state.facts['survival.pc']).toBe('alive'); // material law is non-lethal (a fail-state, not a kill)
   });
 
