@@ -15,6 +15,14 @@ import type { WorldPack } from '../sdk/worldpack.js';
 
 const RETURN_WORDS = new Set(['back', 'leave', 'return', 'exit', 'away', 'retreat', 'go back', 'turn back']);
 
+// meta queries route to `recall` (the Session renders them without committing a turn)
+const META: Record<string, string> = {
+  codex: 'codex', laws: 'codex', journal: 'codex', knowledge: 'codex', recall: 'codex',
+  inventory: 'inv', inv: 'inv', i: 'inv', 'check inventory': 'inv',
+  map: 'map', exits: 'map', ways: 'map',
+  help: 'help', '?': 'help', commands: 'help',
+};
+
 const DIRECTIONS: Record<string, string> = {
   n: 'north', s: 'south', e: 'east', w: 'west', ne: 'northeast', nw: 'northwest', se: 'southeast', sw: 'southwest',
   u: 'up', d: 'down', up: 'up', down: 'down', in: 'in', out: 'out', north: 'north', south: 'south', east: 'east', west: 'west',
@@ -56,6 +64,14 @@ export interface Parser {
 }
 
 export function createParser(pack: WorldPack): Parser {
+  // node aliases: a destination node's title-words / region / id, so "go to the holdout" works
+  const nodeAlias = new Map<string, string[]>();
+  for (const n of pack.nodes) {
+    const words = [n.id, n.regionId, ...n.title.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(/\s+/).filter((w) => w.length > 2 && !['the', 'and'].includes(w))];
+    nodeAlias.set(n.id, [...new Set(words.map((w) => w.toLowerCase()))]);
+  }
+  const regionName = new Map(pack.regions.map((r) => [r.id, r.name.toLowerCase()]));
+
   // global lexicon: id -> names (examinables, npcs, items)
   const lexicon: { id: string; names: string[]; kind: string }[] = [];
   for (const n of pack.nodes) for (const ex of n.examinables ?? []) lexicon.push({ id: ex.id, names: ex.names.map((s) => s.toLowerCase()), kind: 'examinable' });
@@ -69,6 +85,15 @@ export function createParser(pack: WorldPack): Parser {
     for (const e of obs.scene.exits) {
       if (e.label.toLowerCase().includes(q) || (e.to && e.to.toLowerCase().includes(q)) || e.dir.toLowerCase() === q) {
         return { id: e.to ?? e.dir, raw: q, tags: ['exit'] };
+      }
+    }
+    // a named destination: match the target node's title-words / region / aliases
+    for (const e of obs.scene.exits) {
+      if (!e.to) continue;
+      const aliases = nodeAlias.get(e.to) ?? [];
+      const region = aliases[1] ? regionName.get(aliases[1]) : undefined;
+      if (aliases.some((a) => a === q || q.includes(a)) || (region && q.includes(region))) {
+        return { id: e.to, raw: q, tags: ['exit'] };
       }
     }
     return undefined;
@@ -124,6 +149,9 @@ export function createParser(pack: WorldPack): Parser {
   function parse(input: string, obs: RoleObservation): ParsedIntent {
     const raw = input.trim();
     const lower = raw.toLowerCase().replace(/^\s*(please|then)\s+/, '').replace(/[.!?]+$/, '');
+
+    // meta queries -> recall (a free, non-committing view; handled by the Session)
+    if (META[lower]) return mk('recall', { topic: META[lower], confidence: 1 });
 
     // bare "return" word -> go back the way you came (generic affordance)
     if (RETURN_WORDS.has(lower)) return mk('go', { direction: lower, tags: ['movement', 'return'], confidence: 0.9 });

@@ -172,7 +172,8 @@ export const NODES: NodeDef[] = [
     look: {
       base: 'Black standing water laps a broken causeway. A drowned hamlet leans out of the flood, roofs at the wrong angles. Worked metal lies everywhere in the silt — and some of it has gone soft, slumping into red smears of ore as you watch.',
       variants: [
-        { when: { fact: 'phase.now', eq: 'night' }, text: 'It is dark now, and the water has woken. A low hum comes up through the causeway stones and into the iron of your kit. The rust-bloom is faster than rust has any right to be.' },
+        { when: { fact: 'phase.now', eq: 'dusk' }, text: 'The light is going, and the water is starting to wake. A low hum is finding the iron in your kit — you can feel it answer. Whatever un-makes worked metal here, it is opening its eyes. You have minutes, not hours.' },
+        { when: { fact: 'phase.now', eq: 'night' }, text: 'It is full dark now, and the water has woken. The hum comes up through the causeway stones and into every rivet and blade you carry. The rust-bloom is faster than rust has any right to be.' },
         { when: { fact: 'phase.now', eq: 'day' }, text: 'In daylight the bottoms are only flooded and sad. Whatever lives in the dark here is sleeping; the metal in the silt is just metal.' },
       ],
       ambient: ['Something drips, and the drip is answered, a beat late, from inside a drowned house.', 'A fish that is the wrong shape turns over once and is gone.'],
@@ -194,7 +195,10 @@ export const NODES: NodeDef[] = [
     kind: 'poi',
     look: {
       base: 'You wade the bottoms between drowned walls. The water is cold past cold. Somewhere ahead, in the wreck of the old pump-house, the Survey\'s question-mark cache is supposed to lie.',
-      variants: [{ when: { fact: 'phase.now', eq: 'night' }, text: 'The hum is everywhere now, in the water and the iron and your teeth. Any worked metal you carry is dying in your hands.' }],
+      variants: [
+        { when: { fact: 'phase.now', eq: 'dusk' }, text: 'The hum is rising as the light dies. The iron in your kit is beginning to go soft and rotten-red at the edges.' },
+        { when: { fact: 'phase.now', eq: 'night' }, text: 'The hum is everywhere now, in the water and the iron and your teeth. Any worked metal you carry is dying in your hands.' },
+      ],
       ambient: ['A door bangs underwater, slow and deliberate.', 'The hum rises a half-tone, considering you.'],
     },
     tells: ['grey_low_hum'],

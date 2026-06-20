@@ -93,6 +93,34 @@ describe('The Hush — Cordon’s Edge', () => {
     expect(res.ok, JSON.stringify(res)).toBe(true);
   });
 
+  it('Law Drift: a surveyed law is warned, then demoted — the codex is fallible (dwell engine)', () => {
+    const s = freshSession('drift-1');
+    // survey the Mile Road early
+    for (const c of ['out', 'road', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road']) s.act(c);
+    expect(s.state.facts['known.law.mile_road']).toBe('surveyed');
+    // wait out the drift cadence (everyTurns 40): turn 40 warns, turn 80 demotes
+    let warnedSeen = false;
+    while (s.state.turn < 41) {
+      const r = s.act('wait');
+      if (s.state.facts['law.mile_road.drift_warned']) warnedSeen = true;
+      if (r.status !== 'active') break;
+    }
+    expect(warnedSeen).toBe(true); // pre-demotion drift tell fired before any demotion
+    expect(s.state.facts['known.law.mile_road']).toBe('surveyed'); // still surveyed at the warning
+    while (s.state.turn < 81) s.act('wait');
+    expect(s.state.facts['known.law.mile_road']).toBe('approximate'); // re-Settled: must re-learn
+  });
+
+  it('per-seed variance: different seeds can deal different starting kits', () => {
+    const kitOf = (seed: string) => {
+      const game = createGame(HUSH_PACK, seed);
+      const st = game.initialState();
+      return Object.keys(st.facts).filter((k) => k.startsWith('possession.pc.') && !k.includes('.', 'possession.pc.'.length) && st.facts[k] === true).sort().join(',');
+    };
+    const kits = new Set(['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8'].map(kitOf));
+    expect(kits.size).toBeGreaterThan(1); // not every seed gives the identical kit
+  });
+
   it('determinism: two runs of the same seed + commands reach the identical state hash', () => {
     const run = () => {
       const s = freshSession('det-1');

@@ -77,6 +77,21 @@ export class Session {
 
   /** Apply an already-parsed intent (PROCTOR path: parse is recorded as the intent). */
   applyIntent(intent: ParsedIntent, _raw: string): TurnResult {
+    // meta queries: a free, non-committing view (reachable from BOTH the CLI and PROCTOR)
+    if (intent.class === 'recall') {
+      const topic = intent.topic ?? 'codex';
+      const text = topic === 'inv' ? this.inventory() : topic === 'map' ? this.mapText() : topic === 'help' ? HELP_TEXT : this.codex();
+      return { text, status: this.ended ? this.endStatus : 'active' };
+    }
+    // unclassified input is a FREE, helpful nudge — it never burns a turn (research rule 19)
+    if (intent.class === 'unclassified') {
+      const w = intent.raw.trim();
+      return {
+        text: dim(`You're not sure how to ${w ? `“${w}”` : 'do that'} here. Try LOOK, GO <way>, EXAMINE <thing>, LISTEN, SEARCH, or TALK TO <someone>. (CODEX, INVENTORY, MAP, HELP.)`),
+        status: this.ended ? this.endStatus : 'active',
+        rejected: true,
+      };
+    }
     const before = this.state;
     const beforeLoc = before.facts['loc.pc'];
     const outcome = step(before, this.game.registry, intent, { armed: this.game.armedAt(before), observation: this.obs() });
@@ -164,6 +179,12 @@ export class Session {
     return lines.join('\n');
   }
 
+  mapText(): string {
+    const exits = this.obs().scene.exits;
+    if (!exits.length) return dim('There are no obvious ways from here.');
+    return [bold('Ways from here:'), ...exits.map((e) => '  • ' + e.label)].join('\n');
+  }
+
   inventory(): string {
     const items = Object.keys(this.state.facts)
       .filter((k) => k.startsWith('possession.pc.') && !k.endsWith('.class') && !k.endsWith('.condition') && this.state.facts[k] === true)
@@ -196,3 +217,11 @@ export class Session {
 function italicReason(reason: string): string {
   return dim(reason.charAt(0).toUpperCase() + reason.slice(1) + '.');
 }
+
+const HELP_TEXT = [
+  'Type what you want to do in plain words: go north · look · examine the milepost · look back · listen ·',
+  'search · take the knife · drop the knife · talk to lyle · ask lyle about the greywater · deduce the greywater ·',
+  'say maren · hide · wait · rest · back. CODEX shows what you have learned; INVENTORY what you carry; MAP the ways out.',
+  'The Hush is lawful: its dangers obey hidden, consistent rules. The first brush with any law warns you — it never',
+  'kills you outright. Read the tells, deduce the laws, and use them.',
+].join('\n');

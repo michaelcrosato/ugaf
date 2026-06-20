@@ -163,9 +163,13 @@ export function createGame(pack: WorldPack, seed: string, opts: GameOptions = {}
       const n = pack.npcs.find((x) => x.id === id)!;
       return { id: `npc.${id}`, label: n.name, kind: 'npc' };
     });
-    const itemsHere = (node?.items ?? []).filter((id) => state.facts[`possession.pc.${id}`] !== true).map((id) => {
+    const groundHere = Object.keys(state.facts)
+      .filter((k) => k.startsWith(`world.ground.${nodeId}.`) && state.facts[k] === true)
+      .map((k) => k.slice(`world.ground.${nodeId}.`.length));
+    const itemIdsHere = [...new Set([...(node?.items ?? []).filter((id) => state.facts[`possession.pc.${id}`] !== true), ...groundHere])];
+    const itemsHere = itemIdsHere.map((id) => {
       const it = pack.items.find((x) => x.id === id)!;
-      return { id: `item.${id}`, label: it.names[0] ?? id, kind: 'item' };
+      return { id: `item.${id}`, label: it?.names[0] ?? id, kind: 'item' };
     });
     const tellHints = (node?.tells ?? []).filter((t) => state.facts[`known.tell.${t}`] !== true);
     return {

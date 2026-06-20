@@ -36,9 +36,13 @@ export const LAWS: LawDefinition[] = [
     id: 'greywater',
     title: 'The Greywater',
     scope: { nodes: ['greywater_ford', 'greywater_bottoms', 'greywater_cache'] },
-    ambientGate: { phase: ['night'] },
+    // "after dark" begins at dusk — so a naive straight march to the cache lands
+    // in the law's teeth (first contact warns; it never kills), and beating it
+    // means going fast (the stealth shortcut, by day), stripping metal, or buying
+    // the safe hour. This is the seam where knowledge has to start paying.
+    ambientGate: { phase: ['dusk', 'night'] },
     effectCategory: 'material',
-    trigger: { phase: ['night'] },
+    trigger: { phase: ['dusk', 'night'] },
     effect: { kind: 'degrade_item_class', itemClass: 'metal', toCondition: 'ore' },
     tells: [
       { id: 'grey_rust_bloom', channel: 'sight', weight: 3, advancesTo: 'referenced', at: { nodes: ['greywater_ford', 'greywater_bottoms'] } },

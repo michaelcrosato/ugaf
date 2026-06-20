@@ -9,6 +9,12 @@ import { evalPredicate } from '../../sdk/law.js';
 import { makeManifest } from '../../sdk/define.js';
 
 const RETURN_WORDS = new Set(['back', 'leave', 'return', 'exit', 'away', 'retreat']);
+
+/** bespoke flavour for the demo's most important pickup (research rule 12). */
+function bespokeTake(id: string, name: string): string {
+  if (id === 'salvage_core') return 'You close your hand around the core. It is warmer than it should be, and it settles into your pack like it has decided to come with you.';
+  return `You take the ${name}.`;
+}
 import type { JsonObject } from '../../sdk/json.js';
 import type { Module, ModuleResult, WorldEvent } from '../../sdk/types.js';
 import type { WorldPack, ExitDef, EdgeDef, ItemDef } from '../../sdk/worldpack.js';
@@ -38,8 +44,8 @@ export function createTravel(pack: WorldPack): Module {
     domain: 'travel',
     priority: 10,
     intents: ['go', 'cross_threshold', 'look_back', 'flee', 'take', 'drop'],
-    writesFacts: ['loc', 'facing', 'route', 'possession', 'flag'],
-    readsFacts: ['loc', 'facing', 'route', 'possession', 'flag', 'phase', 'law'],
+    writesFacts: ['loc', 'facing', 'route', 'possession', 'flag', 'world'],
+    readsFacts: ['loc', 'facing', 'route', 'possession', 'flag', 'phase', 'law', 'world'],
   });
 
   function resolveExit(node: string, target?: string, direction?: string, raw?: string): ExitDef | undefined {
@@ -68,7 +74,8 @@ export function createTravel(pack: WorldPack): Module {
       if (c === 'take') {
         const id = intent.target?.id ?? matchItem(intent.target?.raw);
         const here = nodeItems.get(n.node) ?? [];
-        if (id && here.includes(id) && !n.taken.includes(id)) return { legal: true, args: { item: id } as JsonObject };
+        const onGround = id ? facts.getBool(`world.ground.${n.node}.${id}`) === true : false;
+        if (id && ((here.includes(id) && !n.taken.includes(id)) || onGround)) return { legal: true, args: { item: id, ground: onGround } as JsonObject };
         return { legal: false, reason: `there is nothing like that here to take` };
       }
       if (c === 'drop') {
@@ -99,7 +106,7 @@ export function createTravel(pack: WorldPack): Module {
     execute: (args): ModuleResult => {
       const n = args.native as TravelNative;
       const c = args.action.intent.class;
-      const a = args.action.args as { to?: string; edge?: string | null; label?: string; item?: string };
+      const a = args.action.args as { to?: string; edge?: string | null; label?: string; item?: string; ground?: boolean };
 
       if (c === 'look_back') {
         return {
@@ -118,8 +125,9 @@ export function createTravel(pack: WorldPack): Module {
             mutations: [
               { op: 'set', key: `possession.pc.${id}`, value: true },
               ...(it?.itemClass ? ([{ op: 'set', key: `possession.pc.${id}.class`, value: it.itemClass }] as const) : []),
+              ...(a.ground ? ([{ op: 'delete', key: `world.ground.${n.node}.${id}` }] as const) : []),
             ],
-            summary: `You take the ${it?.names[0] ?? id}.`,
+            summary: bespokeTake(id, it?.names[0] ?? id),
           },
         ];
         return { nativeNext: { ...n, taken: [...n.taken, id] }, events: ev, control: { kind: 'continue' }, render: { labels: ['travel.take'], entities: [`item.${id}`] } };
@@ -128,7 +136,7 @@ export function createTravel(pack: WorldPack): Module {
         const id = a.item!;
         return {
           nativeNext: n,
-          events: [{ tag: 'dropped_item', mutations: [{ op: 'delete', key: `possession.pc.${id}` }, { op: 'delete', key: `possession.pc.${id}.class` }], summary: `You set it down.` }],
+          events: [{ tag: 'dropped_item', mutations: [{ op: 'delete', key: `possession.pc.${id}` }, { op: 'delete', key: `possession.pc.${id}.class` }, { op: 'set', key: `world.ground.${n.node}.${id}`, value: true }], summary: `You set the ${items.get(id)?.names[0] ?? id} down. It is here if you want it again.` }],
           control: { kind: 'continue' },
         };
       }

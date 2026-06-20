@@ -91,9 +91,13 @@ export function createGumshoe(pack: WorldPack): Module {
 
       // ---- DEDUCE / SURVEY: the deliberate, fallible assembly --------------
       if (c === 'deduce' || c === 'survey') {
-        const lawId = matchLaw(args.action.intent.topic ?? args.action.intent.target?.raw);
+        let lawId = matchLaw(args.action.intent.topic ?? args.action.intent.target?.raw);
+        // broaden: if no exact law named, fall back to a law whose scope covers where you stand
+        if (!lawId) lawId = lawInScope(node);
         if (!lawId) {
-          return beat(native, { labels: ['invest.deduce_nothing'], hints: { result: 'no_subject' } }, 'You turn it over, but you are not even sure what rule you are reaching for.');
+          const candidate = bestLawHint(facts);
+          const hint = candidate ? ` Do you mean ${laws.get(candidate)!.title}? Try: deduce the ${laws.get(candidate)!.title.replace(/^the /i, '').toLowerCase()}.` : '';
+          return beat(native, { labels: ['invest.deduce_nothing'], hints: { result: 'no_subject' } }, `You turn it over, but you are not sure which rule you are reaching for.${hint}`);
         }
         const law = laws.get(lawId)!;
         const tells = lawTells.get(lawId) ?? [];
@@ -178,8 +182,33 @@ export function createGumshoe(pack: WorldPack): Module {
   function matchLaw(topic: string | undefined): string | undefined {
     if (!topic) return undefined;
     const q = topic.toLowerCase();
-    for (const [id, law] of laws) if (id === topic || law.title.toLowerCase().includes(q) || q.includes(law.title.toLowerCase())) return id;
+    for (const [id, law] of laws) {
+      const title = law.title.toLowerCase();
+      const bare = title.replace(/^the /, '');
+      if (id === topic || title.includes(q) || q.includes(bare) || (law.scope.nodes ?? []).some((n) => q.includes(n))) return id;
+    }
     return undefined;
+  }
+
+  /** a law whose authored scope covers the node you stand in (so "deduce" works in place). */
+  function lawInScope(node: string | undefined): string | undefined {
+    if (!node) return undefined;
+    for (const [id, law] of laws) if ((law.scope.nodes ?? []).includes(node) || (law.scope.region && nodeRegion.get(node) === law.scope.region)) return id;
+    return undefined;
+  }
+
+  /** the law the player has observed the most tells for — used to nudge a vague deduce. */
+  function bestLawHint(facts: FactView): string | undefined {
+    let best: string | undefined;
+    let bestN = 0;
+    for (const [id] of laws) {
+      const seen = (lawTells.get(id) ?? []).filter((t) => facts.getBool(`known.tell.${t}`)).length;
+      if (seen > bestN) {
+        bestN = seen;
+        best = id;
+      }
+    }
+    return best;
   }
 
   // helper: a fact view that also treats just-acquired tells as observed

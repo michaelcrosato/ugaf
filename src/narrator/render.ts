@@ -38,7 +38,9 @@ export function createRenderer(pack: WorldPack): Renderer {
   const exByGlobal = new Map<string, DescriptionBlock>();
   for (const n of pack.nodes) for (const ex of n.examinables ?? []) exByGlobal.set(ex.id, ex.look);
 
-  function compose(block: DescriptionBlock, facts: FactView, turn: number, nodeId: string, firstVisit: boolean): string {
+  const ambientCursor = new Map<string, number>(); // presentation state: no-repeat ambient rotation
+
+  function compose(block: DescriptionBlock, facts: FactView, turn: number, nodeId: string, firstVisit: boolean, rotate = false): string {
     const parts: string[] = [];
     let base = block.base;
     for (const v of block.variants ?? []) {
@@ -50,7 +52,14 @@ export function createRenderer(pack: WorldPack): Renderer {
     const out = [base, ...parts];
     if (firstVisit && block.firstReveal) out.push(block.firstReveal);
     if (block.ambient && block.ambient.length) {
-      const pick = strHash(`${nodeId}#${turn}`) % block.ambient.length;
+      let pick: number;
+      if (rotate) {
+        const cur = ambientCursor.get(nodeId) ?? strHash(nodeId) % block.ambient.length;
+        pick = cur % block.ambient.length;
+        ambientCursor.set(nodeId, cur + 1); // cycle through all lines before repeating
+      } else {
+        pick = strHash(`${nodeId}#${turn}`) % block.ambient.length;
+      }
       out.push(block.ambient[pick]!);
     }
     return out.join(' ');
@@ -67,7 +76,7 @@ export function createRenderer(pack: WorldPack): Renderer {
     lines.push(bold(node.title.toUpperCase()));
     if (optsArg.firstVisit && region) lines.push(dim(region.palette.sight));
 
-    lines.push(compose(node.look, facts, state.turn, node.id, optsArg.firstVisit));
+    lines.push(compose(node.look, facts, state.turn, node.id, optsArg.firstVisit, true));
 
     // entities present
     const ents = obs.scene.entities;
@@ -105,6 +114,9 @@ export function createRenderer(pack: WorldPack): Renderer {
     const scoped = node ? examinables.get(`${node.id}:${targetId}`) : undefined;
     const block = scoped ?? exByGlobal.get(targetId);
     if (!block) {
+      // examining an NPC returns their authored look (don't discard hand-written prose)
+      const npc = pack.npcs.find((n) => n.id === targetId);
+      if (npc) return compose(npc.look, facts, state.turn, node?.id ?? '', false);
       const t = tellProse.get(targetId);
       return t ? `${t.cue} ${t.note}` : undefined;
     }
