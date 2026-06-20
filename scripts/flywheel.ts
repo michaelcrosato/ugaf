@@ -70,11 +70,18 @@ async function main() {
   ].join('\n');
 
   console.log(`\n② Loop B critique + Loop A implement: invoking a headless agent (feedback/${fb}.md) …`);
+  // The prompt goes via STDIN, never as a shell arg — a big multi-line prompt
+  // concatenated into a win32 shell command gets mangled (quotes/newlines/parens).
   // autonomous = skip all permission prompts (the gate is the safety net); else auto-accept edits only.
-  const claudeArgs = autonomous
-    ? ['-p', prompt, '--dangerously-skip-permissions']
-    : ['-p', prompt, '--permission-mode', 'acceptEdits'];
-  const agent = sh('claude', claudeArgs);
+  const claudeArgs = autonomous ? ['-p', '--dangerously-skip-permissions'] : ['-p', '--permission-mode', 'acceptEdits'];
+  const agent = spawnSync('claude', claudeArgs, {
+    cwd: ROOT,
+    shell: process.platform === 'win32',
+    encoding: 'utf8',
+    input: prompt,
+    stdio: ['pipe', 'inherit', 'inherit'],
+    maxBuffer: 64 * 1024 * 1024,
+  });
   if (agent.status !== 0) {
     console.error('\n✗ the agent step did not complete cleanly. If it stopped on a permission prompt, re-run with FLYWHEEL_AUTONOMOUS=1 (unattended) or drive it interactively.');
     process.exit(1);
