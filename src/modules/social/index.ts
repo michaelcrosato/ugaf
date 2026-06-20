@@ -81,7 +81,7 @@ export function createSocial(pack: WorldPack): Module {
       if (c === 'talk' || c === 'ask_about' || c === 'say') {
         if (c === 'ask_about' && topic) {
           const hit = pickTopicLine(npc, topic, facts);
-          if (!hit) return beat(args.native, `${npc.name} shakes their head. “Nothing I can tell you about that.”`, ['social.no_topic']);
+          if (!hit) return beat(args.native, deflect(npc, facts), ['social.no_topic']);
           return dialogue(npc, hit, args.native);
         }
         const line = pickLine(npc, undefined, facts); // greeting (state-aware via `when`)
@@ -142,7 +142,18 @@ export function createSocial(pack: WorldPack): Module {
     const q = topic.toLowerCase();
     return (npc.dialogue ?? [])
       .filter((l) => !l.when || evalPredicate(l.when, facts))
-      .find((l) => l.topic !== undefined && (l.topic === topic || q.includes(l.topic.toLowerCase())));
+      // a grantsLeadTell line is the PAID law-map payload — never hand it over via a free ask
+      .find((l) => l.topic !== undefined && !l.grantsLeadTell && (l.topic === topic || q.includes(l.topic.toLowerCase())));
+  }
+
+  // an unmatched ask: a merchant with an unbought law-map points you at PAYING (so a paywall
+  // never reads as a parser miss); anyone else honestly admits they have nothing to say.
+  function deflect(npc: NpcDef, facts: import('../../sdk/facts.js').FactView): string {
+    const sells = (npc.dialogue ?? []).find((l) => l.grantsLeadTell && (!l.when || evalPredicate(l.when, facts)));
+    const lawId = sells ? Object.keys(sells.setsFacts ?? {}).find((k) => k.startsWith('known.purchased.'))?.slice('known.purchased.'.length) : undefined;
+    const unbought = lawId !== undefined && !facts.getBool(`known.purchased.${lawId}`) && stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) < stageRank('surveyed');
+    if (unbought) return `${npc.name}: “That is not free talk — that is what I sell. Pay me for it (give a coin, or “pay ${npc.names[0]}”) and it is yours.”`;
+    return `${npc.name} shakes their head. “Nothing I can tell you about that.”`;
   }
 
   function coinHeld(facts: import('../../sdk/facts.js').FactView): string | undefined {
