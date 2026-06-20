@@ -156,7 +156,11 @@ ${corpus}`;
 
 console.log(`▸ compiling ${N} interviews from ${RUN} via ${MODEL} …`);
 const useShell = process.platform === 'win32';
-const args = ['-p', '--model', MODEL, '--output-format', 'json', '--dangerously-skip-permissions'];
+// SANDBOX the synth: it is a pure text-in -> text-out task. It must NOT touch the repo. The old
+// invocation used --dangerously-skip-permissions, which let the opus agent autonomously EDIT files
+// (it wrote a report straight into feedback/0013.md). Drop the bypass (headless auto-denies tools
+// without it), pin out MCP, and explicitly deny every mutation tool. The report comes back as TEXT.
+const args = ['-p', '--model', MODEL, '--output-format', 'json', '--strict-mcp-config', '--disallowedTools', 'Edit,Write,MultiEdit,NotebookEdit,Bash'];
 const res = spawnSync(useShell ? ['claude', ...args].join(' ') : 'claude', useShell ? [] : args, {
   shell: useShell,
   input: prompt,
