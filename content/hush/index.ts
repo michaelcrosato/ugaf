@@ -74,6 +74,17 @@ export const HUSH_PACK: WorldPack = {
         "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. Outside the wire, the Hush goes on keeping its lawful, patient strangeness — the Mile Road measuring dishonestly, the Greywater calling iron home, the antennas listening for a name. You came through it more by nerve than by knowing, and you can feel how thin that margin was. That is the Hush's lesson, offered free to anyone who survives it: it is lawful, and the laws can be learned — and next time, you might learn them before they teach you.",
     },
     {
+      // The Mile Road bites: look back four times (after three escalating warnings) and the
+      // road behind you grows endless — you are trapped on it, the next salvager facing the
+      // wrong way. A telegraphed, deducible death; the rule the blind swarm found toothless.
+      id: 'lost_to_mile_road',
+      when: { fact: 'law.mile_road.contacts', gte: 4 },
+      outcome: 'lost',
+      title: 'The Road Took You Home',
+      epilogue:
+        'The waystation is gone — there is only road behind you, and more road, growing, and you understand with a calm and final clarity that you will walk it now until you are the next salvager someone finds facing the wrong way. You were warned, three times and then in your own gut: do not look back. You looked back, and the Mile Road kept its true length, and gave you the whole of it at once. The Hush did not kill you. It simply stopped letting you arrive.',
+    },
+    {
       id: 'lost_to_hush',
       when: { fact: 'survival.pc', eq: 'dead' },
       outcome: 'lost',

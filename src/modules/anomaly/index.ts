@@ -76,17 +76,22 @@ export function createAnomaly(pack: WorldPack): Module {
 
     switch (effect.kind) {
       case 'distance_mult': {
+        // each look-back doubles the way home AND tightens the trap: warn (fail-safe),
+        // then dread, then an EXPLICIT last warning. The 4th look-back is fatal (the
+        // lost_to_mile_road goal) — fair, because three escalating warnings precede it.
+        // This is the "teeth" the blind swarm found missing: a rule that actually bites.
+        const lookbacks = (facts.getNumber(`law.${law.id}.contacts`) ?? 0) + 1;
         events.push({
           tag: 'law_distance',
           mutations: [{ op: 'set', key: 'law.behind_mult', value: effect.factor }],
-          summary: law.failSafe.firstContact.tell,
-          data: { law: law.id },
+          summary: mileRoadTell(law, lookbacks),
+          data: { law: law.id, lookbacks },
         });
-        // first contact cost: a reversible Unsettled condition (never lethal)
+        // a reversible Unsettled condition (the fail-safe tell already names it)
         events.push({
           tag: 'unsettled',
           mutations: [{ op: 'adjust', key: 'survival.pc.unsettled', by: 1, min: 0, max: 5 }],
-          summary: 'Something in you slips a notch out of true. (Unsettled.)',
+          summary: '',
           severity: 'reversible',
         });
         break;
@@ -283,4 +288,14 @@ function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: num
   }
   if (!events.length) return {};
   return { nativeNext: native, events, render: { labels: ['drift'], valence: 'cost' } };
+}
+
+/** The Mile Road's escalating warning ladder: it warns, dreads, warns explicitly, then takes you. */
+function mileRoadTell(law: LawDefinition, lookbacks: number): string {
+  if (lookbacks <= 1) return law.failSafe.firstContact.tell;
+  if (lookbacks === 2)
+    return 'You look back again — and the lamps of the waystation are smaller than a few minutes’ walking could account for. The road is growing behind you, and you feel, with a cold certainty, that it is doing it on purpose.';
+  if (lookbacks === 3)
+    return 'You look back a third time. The way home is a thin grey thread now, dwindling as you watch. Do not look back again: the road is nearly long enough to keep you, the way it kept the salvager who sits facing the wrong way, forever. One more, and you will be the next of them.';
+  return 'You look back one time too many.';
 }
