@@ -27,6 +27,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const TSX = resolve(ROOT, 'node_modules/tsx/dist/cli.mjs');
 const SERVER = resolve(ROOT, 'scripts/proctor-mcp.ts');
+const ACTIVE_CHILDREN = new Set<ReturnType<typeof spawn>>(); // tracked so we can force a clean exit
 
 // ---- the cynical persona roster -------------------------------------------------
 // Every persona shares the blind-play contract and the anti-sycophant mandate; the
@@ -137,11 +138,13 @@ function spawnPlayer(pl: PlayerSpec): Promise<{ ok: boolean; result?: string; me
     const child = useShell
       ? spawn(['claude', ...args].join(' '), { shell: true, env })
       : spawn('claude', args, { env });
+    ACTIVE_CHILDREN.add(child);
     let out = '';
     let err = '';
     child.stdout.on('data', (d) => (out += d));
     child.stderr.on('data', (d) => (err += d));
     child.on('close', () => {
+      ACTIVE_CHILDREN.delete(child);
       let result: string | undefined;
       let meta: Record<string, unknown> | undefined;
       try {
@@ -213,6 +216,17 @@ async function main() {
   console.log(`\n✓ swarm done in ${((Date.now() - t0) / 1000).toFixed(0)}s · ${index.summary.ok}/${N} interviews · ${index.summary.realnessVerified} realness-verified`);
   console.log(`  won=${index.summary.won} lost=${index.summary.lost} active=${index.summary.active}`);
   console.log(`  index: ${resolve(OUT, 'index.json')}`);
+  // Force a clean exit. The data is already written; a lingering child handle (or the win32
+  // tsx console-title quirk at process teardown) can otherwise hang this process for HOURS
+  // after the work is done. Reap any stragglers, then exit hard.
+  for (const ch of ACTIVE_CHILDREN) {
+    try {
+      ch.kill();
+    } catch {
+      /* already gone */
+    }
+  }
+  process.exit(0);
 }
 
 main().catch((e) => {
