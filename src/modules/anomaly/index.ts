@@ -137,17 +137,21 @@ export function createAnomaly(pack: WorldPack): Module {
         break;
       }
       case 'impose_condition': {
-        // an agency law that costs you nerve and lets the dark close the distance
+        // the Hollow Dark (agency): each beat you hold still, the dark closes. It warns, dreads,
+        // warns explicitly, then closes the last of the distance — the lost_to_hollow_dark goal at
+        // closer >= 4. The same fair, telegraphed ladder as the Mile Road; the teeth the swarm
+        // found missing on this law ("a fake threat that never charges").
         const cond = effect.condition ?? 'unsettled';
+        const closer = (facts.getNumber(`law.${law.id}.closer`) ?? 0) + 1;
         events.push({
           tag: 'law_condition',
           mutations: [
             { op: 'adjust', key: `survival.pc.${cond}`, by: 1, min: 0, max: 5 },
             { op: 'adjust', key: 'survival.pc.exposure', by: 1, min: 0, max: 10 },
-            { op: 'adjust', key: `law.${law.id}.closer`, by: 1, min: 0, max: 5 },
+            { op: 'adjust', key: `law.${law.id}.closer`, by: 1, min: 0, max: 9 },
           ],
-          summary: firstContact ? law.failSafe.firstContact.tell : 'You hold still a beat too long, and the dark takes another step toward you. (Unsettled.)',
-          data: { law: law.id, condition: cond },
+          summary: hollowDarkTell(law, closer),
+          data: { law: law.id, condition: cond, closer },
           severity: effect.severity ?? 'reversible',
         });
         break;
@@ -288,6 +292,16 @@ function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: num
   }
   if (!events.length) return {};
   return { nativeNext: native, events, render: { labels: ['drift'], valence: 'cost' } };
+}
+
+/** The Hollow Dark's escalating ladder: it warns, dreads, warns explicitly, then closes the distance. */
+function hollowDarkTell(law: LawDefinition, closer: number): string {
+  if (closer <= 1) return law.failSafe.firstContact.tell;
+  if (closer === 2)
+    return 'You hold still again, and the dark takes another step in — close enough now that you can feel it deciding about you. Move. Stillness is the thing it hunts.';
+  if (closer === 3)
+    return 'A third time you stop, and the quiet presses flat against your ears, and your own pulse goes loud and wrong in the silence. Do not stop again. One more held breath in this dark and it will have closed the last of the distance.';
+  return 'You go still one time too many.';
 }
 
 /** The Mile Road's escalating warning ladder: it warns, dreads, warns explicitly, then takes you. */
