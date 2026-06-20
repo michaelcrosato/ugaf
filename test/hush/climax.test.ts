@@ -18,10 +18,15 @@ import { createGame } from '../../src/game/assemble.js';
 import { Session } from '../../src/game/session.js';
 
 const brokePack = { ...HUSH_PACK, seedVariance: { ...HUSH_PACK.seedVariance!, startKits: [{ id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} }] } };
-// a player primed at the watched gate, carrying the core (the interception is live)
+// a player primed at the watched gate AT NIGHT, carrying the core (the interception is live).
+// night because the SLIP route needs cover of dark; pry/debt work at any hour.
 const atGate = (seed: string, extra: Record<string, unknown> = {}) => {
   const s = new Session(createGame(brokePack, seed));
-  s.state = { ...s.state, facts: { ...s.state.facts, 'loc.pc': 'cordon_checkpoint', 'possession.pc.salvage_core': true, 'flag.intercepted': true, ...extra } };
+  s.state = {
+    ...s.state,
+    native: { ...s.state.native, 'time.cycle': { minutes: 1320 } }, // 22:00 — night
+    facts: { ...s.state.facts, 'loc.pc': 'cordon_checkpoint', 'phase.now': 'night', 'clock.minutes': 1320, 'possession.pc.salvage_core': true, 'flag.intercepted': true, ...extra },
+  };
   return s;
 };
 const canLeave = (s: Session) => s.obs().scene.exits.some((e) => e.to === 'waystation');
@@ -35,15 +40,25 @@ describe('the climax has teeth — the watched gate must be EARNED', () => {
     expect(r.status).not.toBe('won');
   });
 
-  it('learning the gap from Holt, then hiding, opens the slip route', () => {
+  it('learning the gap from Holt, then hiding under cover of dark, opens the slip route', () => {
     // (the full there-and-back WIN via this route is covered end-to-end in playthrough.test.ts,
     // which plays a real path so travel state is consistent; here we prove the gate opens)
     const s = atGate('climax-gap', { 'possession.pc.iron_knife.condition': 'ore' });
     expect(canLeave(s)).toBe(false); // before: no route earned
     s.act('ask holt about the gap');
-    expect(s.state.facts['flag.knows_gap']).toBe(true); // the earned knowledge
+    expect(s.state.facts['objective.knows_gap']).toBe(true); // the earned knowledge (player-visible)
     s.act('hide');
-    expect(canLeave(s)).toBe(true); // now you know where the light falls short — the gate opens
+    expect(canLeave(s)).toBe(true); // night + knowledge + hidden + calm patrol — the gate opens
+  });
+
+  it('the SLIP route is closed in BROAD DAYLIGHT — the gap is no use without the cover of dark', () => {
+    // arriving disarmed (no iron, no debt) by DAY genuinely narrows your odds (feedback/0013 #1, #3)
+    const s = atGate('climax-day', { 'possession.pc.iron_knife.condition': 'ore' });
+    s.state = { ...s.state, native: { ...s.state.native, 'time.cycle': { minutes: 600 } }, facts: { ...s.state.facts, 'phase.now': 'day', 'clock.minutes': 600 } };
+    s.act('ask holt about the gap');
+    s.act('hide');
+    expect(s.state.facts['phase.now']).toBe('day');
+    expect(canLeave(s)).toBe(false); // knowledge + hidden, but no dark to slip into — you must wait, or earn another route
   });
 
   it('the iron route still works: keep working iron, pry the wire-gap', () => {
@@ -56,6 +71,19 @@ describe('the climax has teeth — the watched gate must be EARNED', () => {
   it('the debt route still works: a Strider who owes you walks you out', () => {
     const s = atGate('climax-debt', { 'reputation.pc.striders': 1 });
     expect(canLeave(s)).toBe(true);
+  });
+
+  it('the room LOOK telegraphs the route state — the prose actually renders (masked-flag fix)', () => {
+    // stuck player: the look names the way out (regression guard for the renderer stripping flag.*)
+    const stuck = atGate('climax-look-stuck', { 'possession.pc.iron_knife.condition': 'ore' });
+    expect(stuck.act('look').text.toLowerCase()).toContain('ask him about the gap');
+    // gap-known at night: the look acknowledges the route opened (dark on your side)
+    const ready = atGate('climax-look-ready', { 'possession.pc.iron_knife.condition': 'ore', 'objective.knows_gap': true });
+    expect(ready.act('look').text.toLowerCase()).toMatch(/go low and quiet|dark is on your side/);
+    // gap-known but BY DAY: the look says you must wait for dark
+    const day = atGate('climax-look-day', { 'objective.knows_gap': true });
+    day.state = { ...day.state, facts: { ...day.state.facts, 'phase.now': 'day', 'clock.minutes': 600 }, native: { ...day.state.native, 'time.cycle': { minutes: 600 } } };
+    expect(day.act('look').text.toLowerCase()).toMatch(/broad day|wait for the light/);
   });
 
   it('dissolved iron + no debt + no gap-knowledge = stuck until you earn a route (resistance, not a wall)', () => {
