@@ -24,7 +24,7 @@ const ALLOWED: Record<Layer, Layer[]> = {
   narrator: ['sdk', 'kernel', 'world', 'narrator'],
   game: ['sdk', 'kernel', 'modules', 'world', 'narrator', 'game'],
   proctor: ['sdk', 'kernel', 'modules', 'world', 'narrator', 'game', 'proctor'],
-  cli: ['sdk', 'kernel', 'modules', 'world', 'narrator', 'game', 'proctor', 'cli', 'gates'],
+  cli: ['sdk', 'kernel', 'modules', 'world', 'narrator', 'game', 'proctor', 'cli', 'gates', 'content'],
   gates: ['sdk', 'kernel', 'modules', 'world', 'narrator', 'game', 'proctor', 'gates', 'content'],
   content: ['sdk', 'world', 'content'],
   unknown: [],
