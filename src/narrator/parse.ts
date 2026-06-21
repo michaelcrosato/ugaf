@@ -262,6 +262,12 @@ export function createParser(pack: WorldPack): Parser {
         return { id: ent.id.replace(/^(npc|item)\./, ''), raw: q, tags: [kind] };
       }
     }
+    // an examinable is LOCATION-BOUND: it exists only in the room it is authored into. The
+    // current-room check above is the only legitimate match — never fall through to the global
+    // lexicon, or a same-named prop in another room leaks in (night12a p001: `examine knife` in the
+    // dry waystation resolved to the Greywater ford's dead-man "blade" scenery, shadowing the carried
+    // iron_knife item). Stopping here lets `examine` fall to the item kind next, finding YOUR knife.
+    if (kind === 'examinable') return undefined;
     for (const l of lexicon) {
       if (l.kind !== kind) continue;
       if (l.names.some((nm) => q === nm || q.includes(nm) || nm.includes(q))) {

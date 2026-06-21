@@ -249,6 +249,27 @@ describe('the NPC information-economy', () => {
     expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // a SIGNPOST, not a free grant
   });
 
+  // night12a p003 (qa-breaker): claimed examining the Survey's own cards/law-tables flagged the
+  // Greywater law as "owned", blocking the relic trade ("she refuses even though I never paid").
+  // Passive reading must NOT count as owning the law — only buying or deducing does — and the relic
+  // trade must survive a player who reads the walls first (it is the win-relevant antenna payoff).
+  it('reading the Survey walls does not count as owning the Greywater law — the relic trade still fires (night12a p003)', () => {
+    const s = sess('relic-after-reading');
+    for (const c of ['out', 'road', 'road', 'on', 'antennas']) s.act(c);
+    s.act('take the relic');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBe(true);
+    for (const c of ['mile', 'back', 'back', 'survey']) s.act(c);
+    expect(s.state.facts['loc.pc']).toBe('survey_post');
+    s.act('examine the cards');
+    s.act('examine the law-tables');
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // reading != owning
+    expect(s.state.facts['known.law.greywater']).not.toBe('surveyed'); // reading != surveyed
+    const r = s.act('give the relic to eun');
+    expect(r.text).not.toContain('already carry that map');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBeUndefined(); // the shard was traded...
+    expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // ...for the Greywater table
+  });
+
   it('Eun gives Law Drift a voice: asking about drift explains why a bought map goes stale', () => {
     const s = sess('econ-eun-drift');
     for (const c of ['out', 'road', 'survey']) s.act(c);

@@ -108,6 +108,12 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
         boundary !== undefined && ffSafe && (intent === 'wait' || intent === 'rest')
           ? minutesUntilBoundary(cur.minutes, boundary)
           : undefined;
+      // a fast-forward the player ASKED for but the hazard gate refuses (wait_ff_unsafe): the dark
+      // can't be skipped here because something would bite a waiting player. Without a word, the
+      // +30 fallback reads as a broken verb — night12a p002 (speedrunner) lost a run to "wait until
+      // day advanced 30 minutes... non-functional." Say WHY, and point to the fix (next turn).
+      const ffBlocked =
+        wantPhase !== undefined && boundary !== undefined && (intent === 'wait' || intent === 'rest') && !ffSafe;
       const cost = ffCost ?? override ?? COST[intent] ?? 10;
       const minutes = cur.minutes + cost;
       const newPhase = phaseOf(minutes);
@@ -123,6 +129,14 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
               visibility: 'public' as const,
             }
           : undefined;
+      const ffBlockedEvent = ffBlocked
+        ? {
+            tag: 'wait_ff_blocked',
+            mutations: [],
+            summary: fastForwardBlockedLine(),
+            visibility: 'public' as const,
+          }
+        : undefined;
       const events: BeatResult['events'] = [
         {
           tag: 'clock_tick',
@@ -134,6 +148,7 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
           visibility: 'private',
         },
         ...(ffNarration ? [ffNarration] : []),
+        ...(ffBlockedEvent ? [ffBlockedEvent] : []),
       ];
       const out: BeatResult = { nativeNext: { minutes }, events };
       if (newPhase !== oldPhase) {
@@ -221,6 +236,15 @@ function fastForwardLine(intent: string, tod: string): string {
   return intent === 'rest'
     ? `You settle in to wait out the hours, resting as well as the Zone lets you. Time runs on, quiet and unhurried, until the light has turned — it is ${tod} now.`
     : `You let the hours run, watching the light turn and the Hush keep its slow, patient time, until the hour you wanted comes round — it is ${tod} now.`;
+}
+
+/**
+ * Why a requested fast-forward refused (night12a p002): you cannot let the hours simply run while a
+ * law would bite a still or laden waiter. Name the cause AND the fix, so the verb reads as a safety
+ * gate, not a glitch — and the player knows to move/shed-metal and try again from safe ground.
+ */
+function fastForwardBlockedLine(): string {
+  return 'You move to let the hours run — and cannot, not here. This is no safe place to wait out the dark: in the open deep the Hush hunts whatever stops moving, and the hungry water calls home the worked metal and altered things you carry. The night will not pass in one breath while you are exposed to it like this. Get to safe ground — up out of the water, off the open deep — or shed the metal the dark wants, and then you can let the hours run by in a single stretch.';
 }
 
 /**

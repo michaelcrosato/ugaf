@@ -46,6 +46,27 @@ describe('examine fixes', () => {
     expect(r.text).not.toContain('MISSING');
   });
 
+  // night12a p001 (parser-purist, opus): in the DRY waystation, `examine the knife` returned the
+  // Greywater ford's dead-man scenery ("the blade has slumped into a smear of red ore... Beside it,
+  // a hand. The rest of the salvager is under the water"). The carried iron_knife item was shadowed
+  // by a same-named examinable from ANOTHER room, because the examinable kind fell through to the
+  // GLOBAL (cross-room) lexicon before the item was ever tried. An examinable is location-bound.
+  it('examining your carried knife describes YOUR knife, not a dead blade from the Greywater ford', () => {
+    const brokePack = {
+      ...HUSH_PACK,
+      seedVariance: {
+        ...HUSH_PACK.seedVariance!,
+        startKits: [{ id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} }],
+      },
+    };
+    const s = new Session(createGame(brokePack, 'ex-knife-leak'));
+    expect(s.state.facts['loc.pc']).toBe('waystation');
+    expect(s.state.facts['possession.pc.iron_knife']).toBe(true);
+    const r = s.act('examine knife');
+    expect(r.text.toLowerCase()).toContain('skinning knife'); // YOUR knife's authored look
+    expect(r.text.toLowerCase()).not.toContain('the rest of the salvager is under the water'); // NOT the ford dead-blade
+  });
+
   it('every start kit deals an iron item, so the Greywater puzzle always has teeth', () => {
     for (const seed of ['k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'k7', 'k8']) {
       const f = createGame(HUSH_PACK, seed).initialState().facts;
