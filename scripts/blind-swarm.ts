@@ -27,9 +27,27 @@ import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const TSX = resolve(ROOT, 'node_modules/tsx/dist/cli.mjs');
+// Resolve tsx's CLI entry the way Node would, NOT by a ROOT-relative guess. In a git WORKTREE the
+// local node_modules is partial/absent and tsx actually lives in the MAIN checkout's node_modules
+// (module resolution walks up). The old hardcoded `ROOT/node_modules/tsx/dist/cli.mjs` therefore did
+// not exist under a worktree → the MCP server never spawned → every blind player launched with no
+// `observe`/`act` tool and "narrated then stopped" (num_turns=1, no snapshot). require.resolve finds
+// tsx wherever it really is; the ROOT-relative path stays only as a last-ditch fallback.
+const require = createRequire(import.meta.url);
+function resolveTsxCli(): string {
+  for (const spec of ['tsx/cli', 'tsx/dist/cli.mjs', 'tsx']) {
+    try {
+      return require.resolve(spec);
+    } catch {
+      /* try the next spec */
+    }
+  }
+  return resolve(ROOT, 'node_modules/tsx/dist/cli.mjs');
+}
+const TSX = resolveTsxCli();
 const SERVER = resolve(ROOT, 'scripts/proctor-mcp.ts');
 const ACTIVE_CHILDREN = new Set<ReturnType<typeof spawn>>(); // tracked so we can force a clean exit
 

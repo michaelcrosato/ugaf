@@ -79,8 +79,15 @@ newest run by `index.json` mtime, which a merge can shuffle.
 
 ## Operational notes (win32)
 
-- Launch the MCP server with `node node_modules/tsx/dist/cli.mjs …`, **not** `npx tsx` — `npx` cold-start
-  exceeds Claude's MCP startup window and the tools never register.
+- Launch the MCP server with `node <tsx-cli> …`, **not** `npx tsx` — `npx` cold-start exceeds Claude's
+  MCP startup window and the tools never register. The launcher resolves `<tsx-cli>` via
+  `require.resolve('tsx/cli')`, **not** a hardcoded `node_modules/tsx/dist/cli.mjs` path.
+  **Why this matters (the worktree trap):** in a git **worktree** the local `node_modules` is
+  partial/absent and tsx really lives in the *main* checkout's `node_modules` (Node resolution walks
+  up). The old hardcoded ROOT-relative path did not exist under a worktree, so the MCP server never
+  spawned and **every blind player launched with no `observe`/`act` tool — it "narrated then stopped"
+  (`num_turns=1`, no snapshot, counted `failed`).** If a whole cohort fails that way, check that the
+  resolved tsx path exists before suspecting the game or the model.
 - Set `MCP_TIMEOUT=60000` so the server (which imports the whole engine) has time to boot.
 - Persona prompts are passed by **file** (`--append-system-prompt-file`) and the task prompt via **stdin**,
   so the win32 shell never mangles multi-line args.
