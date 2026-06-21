@@ -153,9 +153,13 @@ describe('The Hush — Cordon’s Edge', () => {
     expect(slumped.state.facts['flag.intercept_clear']).toBeUndefined();
     expect(fail.text.toLowerCase()).toContain('warm wax');
 
-    // (c) a STRIDER debt (you bought your way in) walks you out
+    // (c) a STRIDER debt (you bought your way in) walks you out — but you must LEAN ON IT
+    // (feedback/0018 night14: the debt is an act now, not a passive fact that opened the gate)
     const debt = base();
     debt.state = { ...debt.state, facts: { ...debt.state.facts, 'reputation.pc.striders': 1 } };
+    expect(exitOpen(debt)).toBe(false); // not passively open
+    debt.act('lean on the debt');
+    expect(debt.state.facts['flag.intercept_clear']).toBe(true);
     expect(exitOpen(debt)).toBe(true);
   });
 

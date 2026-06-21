@@ -50,7 +50,7 @@ export function createTravel(pack: WorldPack): Module {
     domain: 'travel',
     priority: 10,
     intents: ['go', 'cross_threshold', 'look_back', 'flee', 'take', 'drop'],
-    writesFacts: ['loc', 'facing', 'route', 'possession', 'flag', 'world'],
+    writesFacts: ['loc', 'facing', 'route', 'possession', 'flag', 'world', 'awareness'],
     readsFacts: ['loc', 'facing', 'route', 'possession', 'flag', 'phase', 'law', 'world'],
   });
 
@@ -174,11 +174,19 @@ export function createTravel(pack: WorldPack): Module {
             summary: bespokeTake(id, it?.names[0] ?? id),
           },
         ];
-        // taking the core marks you: the Cordon will watch the gate for it on your way out
+        // taking the core marks you: the Cordon will watch the gate for it on your way out.
+        // feedback/0018 night14 — the watch is now LIVE, not a promise that never arrives: the troopers
+        // go to `searching` (a real, deducible state HIDE must beat), and any stale concealment you
+        // earned slipping IN is wiped (`flag.hidden` deleted) — you must re-earn the dark at the gate,
+        // metal-free, on the way OUT. This is what turns the hollow endgame into a gauntlet.
         if (id === 'salvage_core') {
           ev.push({
             tag: 'core_intercept',
-            mutations: [{ op: 'set', key: 'flag.intercepted', value: true }],
+            mutations: [
+              { op: 'set', key: 'flag.intercepted', value: true },
+              { op: 'set', key: 'awareness.cordon_patrol', value: 'searching' },
+              { op: 'delete', key: 'flag.hidden' },
+            ],
             summary:
               'Word of the core moves faster than you can. By the time you turn for home, the Cordon will be watching the gate for exactly what rides in your pack — and the Striders will be watching the Cordon.',
             data: { intercept: true },

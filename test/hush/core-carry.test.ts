@@ -197,11 +197,13 @@ describe('The Hush — the core across the dark Greywater (feedback/0014 #1)', (
       'back',
       'back',
       'wire',
-      'back', // the Strider debt walks the core out past the wire at any hour
+      'lean on the debt', // feedback/0018 night14: the debt is an ACT now — lean on it to be walked out
+      'back', // the Strider walks the core out past the wire at any hour
     ];
     let last = { status: 'active' as string, text: '' };
     for (const cmd of path) last = s.act(cmd);
     expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1);
+    expect(s.state.facts['flag.intercept_clear']).toBe(true); // the lean-on-debt act cleared the gate
     expect(s.state.facts['possession.pc.salvage_core.condition']).toBeUndefined(); // intact
     expect(last.status).toBe('won');
   });

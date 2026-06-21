@@ -15,6 +15,11 @@ import type { WorldPack } from '../sdk/worldpack.js';
 
 const RETURN_WORDS = new Set(['back', 'leave', 'return', 'exit', 'away', 'retreat', 'go back', 'turn back']);
 
+// verb phrases that, mapped to `use`, mean "lean on the Strider debt" at the watched gate (feedback/0018
+// night14). Tagged with topic 'debt' so the spine routes them to the debt-clear act, distinct from
+// prying the wire-gap with iron (`use`/`pry`/`lever`/`force`).
+const DEBT_VERBS = new Set(['lean on', 'lean', 'call in', 'cash in', 'invoke']);
+
 // meta queries route to `recall` (the Session renders them without committing a turn)
 const META: Record<string, string> = {
   codex: 'codex',
@@ -128,6 +133,15 @@ const VERBS: [string, IntentClass][] = [
   ['talk', 'talk'],
   ['greet', 'talk'],
   ['speak to', 'talk'],
+  // the Strider DEBT act at the watched gate (feedback/0018 night14). These map to `use` and carry a
+  // 'debt' topic (set in classify) so the spine clears the gate only on a deliberate act, never
+  // passively. 'call in' MUST precede the vocal 'call out'/'call' below, or "call in the debt" would
+  // mis-route to speak_aloud — so the debt verbs sit here, ahead of the vocal cluster.
+  ['lean on', 'use'],
+  ['lean', 'use'],
+  ['call in', 'use'],
+  ['cash in', 'use'],
+  ['invoke', 'use'],
   ['call out', 'speak_aloud'],
   ['shout', 'speak_aloud'],
   ['yell', 'speak_aloud'],
@@ -380,6 +394,12 @@ export function createParser(pack: WorldPack): Parser {
 
   function classify(cls: IntentClass, _phrase: string, rest: string, obs: RoleObservation, raw: string): ParsedIntent {
     if (!isIntentClass(cls)) return { class: 'unclassified', tags: [], confidence: 0.2, raw };
+
+    // "lean on the debt" / "call in the favour" — a deliberate act to clear the watched gate via a
+    // Strider debt. Tag the topic so the spine handles it as the debt-clear (never the iron pry).
+    if (cls === 'use' && DEBT_VERBS.has(_phrase)) {
+      return { class: 'use', topic: 'debt', tags: ['debt'], confidence: 0.85, raw };
+    }
 
     // vocal: the utterance is the remainder (a spoken name etc.)
     if (cls === 'speak_aloud') {

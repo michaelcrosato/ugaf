@@ -86,9 +86,11 @@ describe('the climax has teeth — the watched gate must be EARNED', () => {
     expect(canLeave(s)).toBe(true);
   });
 
-  it('the debt route still works: a Strider who owes you walks you out', () => {
+  it('the debt route still works — but only when you LEAN ON IT (feedback/0018 night14: an act, not passive)', () => {
     const s = atGate('climax-debt', { 'reputation.pc.striders': 1 });
-    expect(canLeave(s)).toBe(true);
+    expect(canLeave(s)).toBe(false); // the debt no longer opens the gate by merely existing
+    s.act('lean on the debt');
+    expect(canLeave(s)).toBe(true); // the act walks you out
   });
 
   it('the room LOOK telegraphs the route state — the prose actually renders (masked-flag fix)', () => {
@@ -144,8 +146,78 @@ describe('the climax has teeth — the watched gate must be EARNED', () => {
     expect(pry.state.facts['flag.intercept_clear']).toBe(true);
     expect(pry.act('look').text.toLowerCase()).toMatch(/the way is open|levered/);
 
-    // DEBT: a Strider standing — the look reads the way is open
+    // DEBT: before the act, the look OFFERS the route ("lean on it"); after leaning, it reads OPEN
     const debt = atGate('climax-open-debt', { 'reputation.pc.striders': 1 });
-    expect(debt.act('look').text.toLowerCase()).toMatch(/the way is open|keeps her debts/);
+    expect(debt.act('look').text.toLowerCase()).toMatch(/lean on it|owes you/); // available, not yet taken
+    debt.act('lean on the debt');
+    expect(debt.act('look').text.toLowerCase()).toMatch(/the way is open/); // earned by the act
+  });
+});
+
+// feedback/0018 night14 keystone — THE GATE GOES LIVE, the routes DIVERGE. The night13 verdict was
+// "the endgame is hollow": HIDE was a sticky no-op, the debt opened the gate passively, and none of
+// the earned choices diverged. Now: the watch is live (taking the core rouses the troopers), carrying
+// WORKING iron CLINKS (so silent escape demands the Greywater lesson — shed the metal), and the debt
+// is an ACT you must lean on. Each route still wins; now they cost something distinct.
+describe('the climax has TEETH — the live watch makes the routes diverge', () => {
+  it('M1: taking the core makes the gate-watch LIVE and clears any stale concealment', () => {
+    const s = new Session(createGame(brokePack, 'live-watch'));
+    s.state = {
+      ...s.state,
+      // prime BOTH the loc fact and travel's native node — `take` reads the module's native node
+      native: {
+        ...s.state.native,
+        'travel.graph': { ...(s.state.native['travel.graph'] as object), node: 'greywater_cache' },
+      },
+      facts: {
+        ...s.state.facts,
+        'loc.pc': 'greywater_cache',
+        'flag.hidden': true, // a stale hide carried over from slipping IN through the gap earlier
+      },
+    };
+    s.act('take core');
+    expect(s.state.facts['possession.pc.salvage_core']).toBe(true);
+    expect(s.state.facts['awareness.cordon_patrol']).toBe('searching'); // the troopers now actively hunt it
+    expect(s.state.facts['flag.hidden']).not.toBe(true); // stale concealment is wiped — you must re-earn it at the gate
+  });
+
+  it('M2: carrying WORKING iron, a HIDE clinks and does NOT open the slip — the watch rouses', () => {
+    // knows the gap, night, calm patrol — but a WORKING iron knife is on you (broke kit, never slumped)
+    const s = atGate('climax-clink', { 'objective.knows_gap': true });
+    const r = s.act('hide');
+    expect(s.state.facts['flag.hidden']).not.toBe(true); // the clink gave you away — no concealment earned
+    expect(canLeave(s)).toBe(false); // working iron cannot slip silently past a live watch
+    expect(r.text.toLowerCase()).toMatch(/iron|metal|rings|clink|knock/); // telegraphed: it tells you WHY
+  });
+
+  it('M2: shed the iron (the Greywater lesson), then HIDE, and the slip opens — recoverable at the gate', () => {
+    const s = atGate('climax-shed', { 'objective.knows_gap': true });
+    s.act('hide'); // clinks (working iron)
+    expect(canLeave(s)).toBe(false);
+    s.act('drop the knife'); // shed the metal — exactly the law the Greywater teaches
+    s.act('hide'); // now you move silent
+    expect(s.state.facts['flag.hidden']).toBe(true);
+    expect(canLeave(s)).toBe(true); // night + gap-knowledge + silent + calm patrol — the gate opens
+  });
+
+  it('M3: the debt no longer opens the gate passively — you must LEAN ON IT (an act)', () => {
+    // metal-free (iron slumped), debt owed, knows nothing of the gap: the ONLY route is the debt
+    const s = atGate('climax-debt-act', {
+      'reputation.pc.striders': 1,
+      'possession.pc.iron_knife.condition': 'ore',
+    });
+    expect(canLeave(s)).toBe(false); // rep alone does not walk you out anymore
+    const r = s.act('lean on the debt');
+    expect(s.state.facts['flag.intercept_clear']).toBe(true); // the act clears the gate
+    expect(canLeave(s)).toBe(true);
+    expect(r.text.toLowerCase()).toMatch(/strider|debt|walk|wire|baggage/);
+  });
+
+  it('M3: leaning on a debt you do not have is a fair near-miss, not a free pass', () => {
+    const s = atGate('climax-nodebt', { 'possession.pc.iron_knife.condition': 'ore' });
+    const r = s.act('lean on the debt');
+    expect(s.state.facts['flag.intercept_clear']).toBeUndefined(); // nothing cleared
+    expect(canLeave(s)).toBe(false);
+    expect(r.text.toLowerCase()).toMatch(/no.*debt|owe you|no strider|nobody/); // points you elsewhere, never a wall
   });
 });

@@ -54,7 +54,7 @@ export function createSpine(): Module {
     priority: 0, // the floor — lowest priority, can never be armed away
     intents: ['wait', 'rest', 'look', 'recall', 'use', 'open', 'close', 'speak_aloud', 'call_out', 'unclassified'],
     writesFacts: ['flag', 'world', 'survival'],
-    readsFacts: ['flag', 'world', 'phase', 'survival', 'possession', 'loc', 'law'],
+    readsFacts: ['flag', 'world', 'phase', 'survival', 'possession', 'loc', 'law', 'reputation'],
   });
 
   const CLAIMED = ['wait', 'rest', 'look', 'recall', 'use', 'open', 'close', 'speak_aloud', 'call_out', 'unclassified'];
@@ -69,14 +69,51 @@ export function createSpine(): Module {
       const c = intent.class;
       const facts = args.facts;
 
-      // USE iron to lever the watched wire-gap on the way out (reads the .condition
-      // the Greywater wrote — a slumped-to-ore tool fails). One of three escapes.
+      // The watched gate: an intercepted carry-out is cleared by an ACT. Two acts live here — LEAN ON
+      // THE DEBT (a Strider who owes you walks you out) and PRY (good iron levers the wire-gap). The
+      // third route, the silent SLIP, is earned in stealth (HIDE, metal-free, under dark).
       if (
         c === 'use' &&
         facts.getString('loc.pc') === 'cordon_checkpoint' &&
         facts.getBool('flag.intercepted') &&
         !facts.getBool('flag.intercept_clear')
       ) {
+        // DEBT — feedback/0018 night14: the Strider debt no longer opens the gate by merely existing.
+        // You must LEAN ON IT (an act). A debt you do not hold is a fair near-miss, never a wall.
+        const rawTarget = (intent.target?.raw ?? '').toLowerCase();
+        const invokesDebt = intent.topic === 'debt' || /\b(debt|favou?r|strider|mox|owe)\b/.test(rawTarget);
+        if (invokesDebt) {
+          const owed = (facts.getNumber('reputation.pc.striders') ?? 0) >= 1;
+          if (owed) {
+            return {
+              nativeNext: native,
+              events: [
+                {
+                  tag: 'debt_called',
+                  mutations: [{ op: 'set', key: 'flag.intercept_clear', value: true }],
+                  summary:
+                    'You lean on the debt. The Strider who owes you peels off the wire, says a low word to Warden Holt that you do not catch, and walks you through the boom gate like baggage — Mox keeps her debts, and collects them. You are past the wire, the core still warm at your spine.',
+                  severity: 'reversible',
+                },
+              ],
+              control: { kind: 'continue' },
+              render: { labels: ['intercept.debt'], valence: 'boon' },
+            };
+          }
+          return {
+            nativeNext: native,
+            events: [
+              {
+                tag: 'debt_none',
+                mutations: [],
+                summary:
+                  'You look for a Strider to lean on — but no one here owes you a thing, and a debt you never earned will not be honoured. Another way, then: slip the gate unseen (ask Holt about the gap, shed your iron, and HIDE under cover of dark), or lever the wire-gap wide with good iron.',
+              },
+            ],
+            control: { kind: 'continue' },
+            render: { labels: ['intercept.debt_none'], valence: 'cost' },
+          };
+        }
         const metalKeys = facts
           .keysUnder('possession.pc')
           .filter((k) => k.endsWith('.class') && facts.getString(k) === 'metal');

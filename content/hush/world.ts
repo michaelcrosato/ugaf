@@ -249,6 +249,10 @@ export const NODES: NodeDef[] = [
         // waystation is the finish. A `replace:true` variant supplants the stale route instructions
         // for this beat (so a player who just HID isn't told to HIDE again).
         {
+          // route-agnostic finish cue: whether you levered the gap with iron or leaned on a debt, the
+          // ACT itself narrated the flavour (spine: pry / debt_called) — here the room just confirms the
+          // gate is behind you. (feedback/0018 night14: the passive "a Strider steps up" replace variant
+          // that opened the gate with no act is gone; the debt now fires only through the lean-on act.)
           when: {
             all: [
               { fact: 'possession.pc.salvage_core', eq: true },
@@ -256,18 +260,7 @@ export const NODES: NodeDef[] = [
             ],
           },
           replace: true,
-          text: 'The wire-gap is levered wide and the core is already through it, into the dark beyond the fence. Nothing holds you at this gate now. The way is open — go BACK to the waystation, and you carry the core clear of the Hush.',
-        },
-        {
-          when: {
-            all: [
-              { fact: 'possession.pc.salvage_core', eq: true },
-              { fact: 'reputation.pc.striders', gte: 1 },
-              { not: { fact: 'flag.intercept_clear', eq: true } },
-            ],
-          },
-          replace: true,
-          text: 'The Strider who owes you steps up to the boom gate and waves you through like baggage — Mox keeps her debts. The way is open. Go BACK to the waystation and you are out past the wire with the core.',
+          text: 'The core is through the wire and into the dark beyond the fence, and nothing holds you at this gate now. The way is open — go BACK to the waystation, and you carry it clear of the Hush.',
         },
         {
           when: {
@@ -295,14 +288,15 @@ export const NODES: NodeDef[] = [
         to: 'waystation',
         label: 'back to the waystation',
         via: 'e_way_check',
-        // carrying the core, the watched gate is an EARNED branch (feedback/0013 #1): a free HIDE is
-        // not enough — slipping out needs the gate's blind spot (ask Holt about the gap), the cover of
-        // DARK, and a calm patrol; or working iron to lever the gap; or a Strider's debt.
+        // carrying the core, the watched gate is an EARNED branch, and every route now demands an ACT
+        // (feedback/0018 night14 — the hollow endgame made to bite): the silent SLIP needs the gate's
+        // blind spot (ask Holt) + the cover of DARK + a calm patrol AND you metal-free (working iron
+        // CLINKS — handled in stealth); or working iron to PRY the gap; or LEAN ON a Strider's debt
+        // (an act, no longer a passive fact). The debt and the pry both set `flag.intercept_clear`.
         when: {
           any: [
             { not: { fact: 'flag.intercepted', eq: true } },
             { fact: 'flag.intercept_clear', eq: true },
-            { fact: 'reputation.pc.striders', gte: 1 },
             {
               all: [
                 { fact: 'objective.knows_gap', eq: true },

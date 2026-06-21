@@ -2870,6 +2870,15 @@
                 "op": "set",
                 "key": "flag.intercepted",
                 "value": true
+              },
+              {
+                "op": "set",
+                "key": "awareness.cordon_patrol",
+                "value": "searching"
+              },
+              {
+                "op": "delete",
+                "key": "flag.hidden"
               }
             ],
             "summary": "Word of the core moves faster than you can. By the time you turn for home, the Cordon will be watching the gate for exactly what rides in your pack — and the Striders will be watching the Cordon.",
@@ -2946,7 +2955,7 @@
           }
         ],
         "priorHash": "096b7a5778c6c7c5e77db8cf4884605828f3fa8e8b0796fc6f3742fe71c21270",
-        "nextHash": "5ec2c1b26e31d48386114c5aec778fac41c6865c13dfac0420f5d49d331740ca"
+        "nextHash": "87f30f947421ddf114bd7301b73a6be98425062e493e5ee3f60ef5eb4e88c448"
       },
       {
         "eventIndex": 26,
@@ -3053,8 +3062,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "5ec2c1b26e31d48386114c5aec778fac41c6865c13dfac0420f5d49d331740ca",
-        "nextHash": "101680af616093a5bc630fdb500ad7d2565dd7b1ce290da72355674d2c2143c9"
+        "priorHash": "87f30f947421ddf114bd7301b73a6be98425062e493e5ee3f60ef5eb4e88c448",
+        "nextHash": "102230324f76660cce90f9bb571f1168a60fd60140ddce7f333467bd4f669b88"
       },
       {
         "eventIndex": 27,
@@ -3157,8 +3166,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "101680af616093a5bc630fdb500ad7d2565dd7b1ce290da72355674d2c2143c9",
-        "nextHash": "86155349766807e7f33b31e013ab0d5506f7a0546b2696222c18fa3c3011b8a9"
+        "priorHash": "102230324f76660cce90f9bb571f1168a60fd60140ddce7f333467bd4f669b88",
+        "nextHash": "d070f6202a43dffc6a99ed0b3717b224c8ca2c6505b74982ff1ee725047ad49d"
       },
       {
         "eventIndex": 28,
@@ -3261,8 +3270,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "86155349766807e7f33b31e013ab0d5506f7a0546b2696222c18fa3c3011b8a9",
-        "nextHash": "5effec900294d37793a956de263e0958395ff847c2ea328799eafd13af2e1bef"
+        "priorHash": "d070f6202a43dffc6a99ed0b3717b224c8ca2c6505b74982ff1ee725047ad49d",
+        "nextHash": "a20ff4daa3c88167d50acf5927e79acd8333948a2affc8b10ca1c255e113ae82"
       },
       {
         "eventIndex": 29,
@@ -3381,8 +3390,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "5effec900294d37793a956de263e0958395ff847c2ea328799eafd13af2e1bef",
-        "nextHash": "d7363bf19aefa1d3391105e57907f4d8728775d9aa7ee65bc9d68cb5b8926e4d"
+        "priorHash": "a20ff4daa3c88167d50acf5927e79acd8333948a2affc8b10ca1c255e113ae82",
+        "nextHash": "6f75dfb106f3ca90c6cbd43661be6cb255342ef70517963e32ad7a8117c94946"
       },
       {
         "eventIndex": 30,
@@ -3471,7 +3480,7 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "d7363bf19aefa1d3391105e57907f4d8728775d9aa7ee65bc9d68cb5b8926e4d",
+        "priorHash": "6f75dfb106f3ca90c6cbd43661be6cb255342ef70517963e32ad7a8117c94946",
         "nextHash": "ae1d9e0d8abdfaa1046bcb161c30e67a57f1014e327b662092859dfd7636291a"
       },
       {
