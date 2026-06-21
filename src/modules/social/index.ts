@@ -213,7 +213,23 @@ export function createSocial(pack: WorldPack): Module {
       stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) < stageRank('surveyed');
     if (unbought)
       return `${npc.name}: “That is not free talk — that is what I sell. Pay me for it (give a coin, or “pay ${npc.names[0]}”) and it is yours.”`;
+    // genuinely off-coverage: decline honestly, but POINT at what this NPC DOES cover so a dead-end
+    // reads as scope, not a parser miss (feedback/0013 #6 — smaller players hit a flat wall here).
+    const askable = (npc.dialogue ?? [])
+      .filter((l) => l.topic && !l.grantsLeadTell && (!l.when || evalPredicate(l.when, facts)))
+      .map((l) => l.topic!)
+      .filter((t) => !['price', 'law-map', 'safe-window'].includes(t)) // hide the paid/util topics
+      .filter((t, i, a) => a.indexOf(t) === i);
+    if (askable.length)
+      return `${npc.name} shakes their head. “Nothing I can tell you about that. Ask me about ${humanList(askable)}, if it's what I know you're after.”`;
     return `${npc.name} shakes their head. “Nothing I can tell you about that.”`;
+  }
+
+  /** join topic labels naturally: "a", "a and b", "a, b, or c". */
+  function humanList(xs: string[]): string {
+    if (xs.length <= 1) return xs[0] ?? '';
+    if (xs.length === 2) return `${xs[0]} or ${xs[1]}`;
+    return `${xs.slice(0, -1).join(', ')}, or ${xs.at(-1)}`;
   }
 
   function coinsLeft(facts: import('../../sdk/facts.js').FactView): number {

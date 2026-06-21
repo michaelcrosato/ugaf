@@ -24,4 +24,17 @@ describe('the Antenna Field (load-bearing for mastery)', () => {
     expect(s.state.facts['known.antenna_field.ever_surveyed']).toBe(true); // the high-water mark mastery checks
     expect(s.state.facts['survival.pc']).toBe('alive'); // observing never required speaking — fair, non-lethal
   });
+
+  it('even a SURVEYED player who still speaks a name gets the fair ladder, not an instant kill (#5)', () => {
+    const s = sess('antenna-surveyed-speak');
+    for (const c of ['out', 'road', 'road', 'on', 'antennas']) s.act(c);
+    s.act('examine the names');
+    s.act('listen');
+    s.act('deduce the antenna field');
+    expect(s.state.facts['known.law.antenna_field']).toBe('surveyed');
+    const said = s.act('say maren'); // knowing the law, they still speak — the ladder must keep its fairness
+    expect(s.state.facts['survival.pc']).toBe('alive'); // first name warns, never instakills (coming-ladder, not firstContact)
+    expect(s.state.facts['law.antenna_field.coming']).toBe(1);
+    expect(said.status).toBe('active');
+  });
 });

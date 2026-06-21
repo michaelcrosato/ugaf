@@ -24,6 +24,7 @@ export function createAnomaly(pack: WorldPack): Module {
 
   const manifest = makeManifest({
     id: 'anomaly.hush',
+    version: '0.2.0', // feedback/0013 #5: the antenna "coming" ladder (a name no longer collapses warn+death)
     content: { laws: pack.laws.map((l) => ({ id: l.id, cat: l.effectCategory })) },
     source: 'bespoke (The Hush) — original anomaly physics',
     license: {
@@ -147,29 +148,48 @@ export function createAnomaly(pack: WorldPack): Module {
         break;
       }
       case 'summon': {
-        // the law summons the Changed — delegated lethality, clamped on first contact
-        const contacts = (facts.getNumber(`law.${law.id}.contacts`) ?? 0) + 1;
-        scheduled.push({
-          fireAtTurn: turn,
-          phase: 'summon_act',
-          module: 'combat.ito',
-          kind: 'changed_strike',
-          id: `changed:${law.id}:${turn}`,
-          order: 0,
-          payload: { law: law.id, contacts, firstContact, entity: effect.entity },
-        });
-        events.push({
-          tag: 'law_summon',
-          mutations: [
-            { op: 'set', key: `law.${law.id}.summoned_turn`, value: turn },
-            { op: 'set', key: `law.${law.id}.active`, value: true }, // the Changed is now hunting
-            { op: 'set', key: `law.${law.id}.active_turn`, value: turn },
-          ],
-          summary: firstContact
-            ? law.failSafe.firstContact.tell
-            : 'The hum sharpens. Something has heard you, and it is coming.',
-          data: { law: law.id },
-        });
+        // The Changed COME toward a spoken name — they do not teleport onto it (feedback/0013 #5).
+        // A spoken name escalates a `coming` ladder, never collapsing warning and death into one
+        // beat: the FIRST name warns and the Changed begins to come (delegated-lethality clamp →
+        // a non-lethal cold brush); the SECOND name (or a lingering beat, handled in the hunt
+        // machine) is an explicit last warning that RETURNS CONTROL — one beat to break for the
+        // edge of the field; only the THIRD name (or lingering past that warning) is lethal.
+        // Leaving the field escapes at any rung. The same fair, telegraphed ladder as the Mile
+        // Road and the Hollow Dark — honouring the law the field itself teaches.
+        const coming = (facts.getNumber(`law.${law.id}.coming`) ?? 0) + 1;
+        const muts: FactMutation[] = [
+          { op: 'set', key: `law.${law.id}.coming`, value: coming },
+          { op: 'set', key: `law.${law.id}.active`, value: true }, // the Changed is now hunting
+          { op: 'set', key: `law.${law.id}.active_turn`, value: turn },
+        ];
+        if (coming <= 1) {
+          // first name: the fail-safe warning + the clamped, non-lethal brush
+          muts.push({ op: 'set', key: `law.${law.id}.summoned_turn`, value: turn });
+          scheduled.push(changedStrike(law.id, turn, effect.entity, true));
+          events.push({
+            tag: 'law_summon',
+            mutations: muts,
+            summary: law.failSafe.firstContact.tell,
+            data: { law: law.id, coming },
+          });
+        } else if (coming === 2) {
+          // second name: an explicit last warning that returns control — one beat to flee
+          events.push({
+            tag: 'law_summon',
+            mutations: muts,
+            summary: antennaComingTell(2, false),
+            data: { law: law.id, coming },
+          });
+        } else {
+          // third name (or beyond): the field gives you to what answered it
+          scheduled.push(changedStrike(law.id, turn, effect.entity, false));
+          events.push({
+            tag: 'law_summon',
+            mutations: muts,
+            summary: antennaComingTell(coming, false),
+            data: { law: law.id, coming },
+          });
+        }
         break;
       }
       case 'impose_condition': {
@@ -242,32 +262,48 @@ export function createAnomaly(pack: WorldPack): Module {
         const spokeThisTurn =
           facts.getString('flag.last_intent') === 'speak_aloud' && facts.getNumber('flag.last_turn') === ctx.turn;
         if (node !== 'antenna_field') {
+          // leaving the field is the fair escape at ANY rung — the Changed loses the thread.
           huntEvents.push({
             tag: 'antenna_escape',
-            mutations: [{ op: 'set', key: 'law.antenna_field.active', value: false }],
+            mutations: [
+              { op: 'set', key: 'law.antenna_field.active', value: false },
+              { op: 'set', key: 'law.antenna_field.coming', value: 0 },
+            ],
             summary:
               'You put the antenna field behind you. Out in the dark, the thing that heard you loses the thread of you — and turns away, slow and reluctant, to listen for someone else.',
             data: { law: 'antenna_field' },
           });
           huntRender = { labels: ['antenna.escape'], valence: 'boon' };
         } else if (!spokeThisTurn && activeTurn !== undefined && activeTurn < ctx.turn) {
-          huntScheduled.push({
-            fireAtTurn: ctx.turn,
-            phase: 'summon_act',
-            module: 'combat.ito',
-            kind: 'changed_strike',
-            id: `changed:antenna_field:${ctx.turn}`,
-            order: 0,
-            payload: { law: 'antenna_field', firstContact: false, entity: 'the_changed' },
-          });
-          huntEvents.push({
-            tag: 'antenna_close',
-            mutations: [{ op: 'set', key: 'law.antenna_field.active', value: false }],
-            summary:
-              'You stayed in the field a beat too long. The Changed has closed the distance, and the hum is the sound of it arriving.',
-            data: { law: 'antenna_field' },
-          });
-          huntRender = { labels: ['antenna.close'], valence: 'cost' };
+          // standing still lets the Changed keep COMING — it advances one rung a beat, it does not
+          // pounce out of nowhere (feedback/0013 #5). The second rung is an explicit last warning
+          // that returns control; only lingering PAST it closes the distance for good.
+          const coming = (facts.getNumber('law.antenna_field.coming') ?? 1) + 1;
+          if (coming === 2) {
+            huntEvents.push({
+              tag: 'antenna_coming',
+              mutations: [
+                { op: 'set', key: 'law.antenna_field.coming', value: coming },
+                { op: 'set', key: 'law.antenna_field.active_turn', value: ctx.turn },
+              ],
+              summary: antennaComingTell(2, true),
+              data: { law: 'antenna_field' },
+            });
+            huntRender = { labels: ['antenna.coming'], valence: 'cost' };
+          } else {
+            huntScheduled.push(changedStrike('antenna_field', ctx.turn, 'the_changed', false));
+            huntEvents.push({
+              tag: 'antenna_close',
+              mutations: [
+                { op: 'set', key: 'law.antenna_field.active', value: false },
+                { op: 'set', key: 'law.antenna_field.coming', value: coming },
+              ],
+              summary:
+                'You stayed in the field a beat too long. The Changed has closed the distance, and the hum is the sound of it arriving.',
+              data: { law: 'antenna_field' },
+            });
+            huntRender = { labels: ['antenna.close'], valence: 'cost' };
+          }
         }
       }
 
@@ -373,6 +409,32 @@ function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: num
   }
   if (!events.length) return {};
   return { nativeNext: native, events, render: { labels: ['drift'], valence: 'cost' } };
+}
+
+/** Build the delegated changed_strike (combat.ito enforces the first-contact lethality clamp). */
+function changedStrike(lawId: string, turn: number, entity: string, firstContact: boolean): ScheduledEvent {
+  return {
+    fireAtTurn: turn,
+    phase: 'summon_act',
+    module: 'combat.ito',
+    kind: 'changed_strike',
+    id: `changed:${lawId}:${turn}`,
+    order: 0,
+    payload: { law: lawId, firstContact, entity },
+  };
+}
+
+/**
+ * The Antenna Field's escalating ladder (feedback/0013 #5): warn (the Changed begins to come),
+ * then an explicit last warning that RETURNS CONTROL — one beat to flee — then, only on a third
+ * name or lingering past that warning, the close. Mirrors mileRoadTell / hollowDarkTell.
+ */
+function antennaComingTell(coming: number, lingered: boolean): string {
+  if (coming === 2)
+    return lingered
+      ? 'You hold still, and the hum gropes the dark for you — and finds the thread again. Out past the light something wrong-jointed is moving toward you, closer than it was. This is the one beat you get: break for the edge of the field, NOW.'
+      : 'Your voice goes out a second time and the field hurls it back, and far off something that was already coming toward you comes faster — you can hear it now, hurrying, wrong. Get out of the field, this beat, before it has your range.';
+  return 'A third name leaves your mouth, and the field gives you to what answered it. There is no distance left now for it to cross.';
 }
 
 /** The Hollow Dark's escalating ladder: it warns, dreads, warns explicitly, then closes the distance. */

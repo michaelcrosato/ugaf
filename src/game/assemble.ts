@@ -138,6 +138,11 @@ export function createGame(pack: WorldPack, seed: string, opts: GameOptions = {}
       else if (ns === 'law' && (k.endsWith('.witnessed') || k.endsWith('.contacts') || k.endsWith('.drift_warned')))
         out[k] = v;
       else if (ns === 'awareness' && !k.endsWith('.turn')) out[k] = v;
+      // the player's OWN escape state is knowable to them — it is narrated as it happens ("you melt
+      // into the dark"; "you lever the wire-gap wide"). Expose just those two so the climax prose can
+      // say the way is OPEN and stop re-offering a spent HIDE (feedback/0013 #4). NOT a law leak: the
+      // blind player sees only rendered prose, never raw facts (proctor/transcript.ts).
+      else if (k === 'flag.hidden' || k === 'flag.intercept_clear') out[k] = v;
     }
     return out;
   }
