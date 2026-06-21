@@ -116,10 +116,16 @@ function digestSnapshot(id: string): string {
   if (has('the way is open', 'the way is yours', 'slip back to the waystation')) tags.push('saw-way-open');
   // #6: the off-coverage deflect POINTED at coverable topics instead of a flat dead end.
   if (has('ask me about')) tags.push('shop-pointer-deflect');
+  // ---- night12 mechanics in the wild (feedback/0016 #4/#5) ----
+  // #4: the Hollow Dark's safe pocket spoke — the drowned bottoms read as shelter, not a bluff.
+  if (has('drowned walls', 'no open reach', 'sheltered pocket', 'lee of the drowned')) tags.push('saw-hollow-shelter');
+  // #5: Mox named the concrete safe-hour window at purchase (midday open, dusk/six deadline).
+  if (has('deadest at midday', 'call it six', 'bought luck runs out')) tags.push('saw-mox-window');
   return `${outcome} · surveyed=${surveyed} · bought=${bought}${tags.length ? ' · ' + tags.join(', ') : ''}`;
 }
 
 const gathered: Gathered[] = [];
+let skipped = 0; // players in the manifest with NO usable interview — surfaced, never silently dropped
 for (const pl of index.players as {
   id: string;
   persona: string;
@@ -129,15 +135,22 @@ for (const pl of index.players as {
   real: boolean;
 }[]) {
   const ipath = resolve(RUN, 'players', `${pl.id}.interview.json`);
-  if (!existsSync(ipath)) continue;
+  if (!existsSync(ipath)) {
+    skipped++;
+    continue;
+  }
   let interview = '';
   try {
     const j = JSON.parse(readFileSync(ipath, 'utf8'));
     interview = typeof j.result === 'string' ? j.result : '';
   } catch {
+    skipped++;
     continue;
   }
-  if (!interview.trim()) continue;
+  if (!interview.trim()) {
+    skipped++;
+    continue;
+  }
   gathered.push({
     id: pl.id,
     persona: pl.persona,
@@ -172,8 +185,21 @@ const aggregate = [
   `outcomes: WON·mastery=${tally(/WON·mastery/)} · WON·bought=${tally(/WON·bought/)} · WON·basic=${tally(/WON·basic/)} · LOST·mile=${tally(/LOST·mile/)} · LOST·dark=${tally(/LOST·hollow/)} · LOST·antenna-or-dead=${tally(/LOST·antenna/)} · timed-out=${tally(/timed-out/)}`,
   `night9 mechanics reached (0013 #3/#4/#5/#6): antenna-ladder=${tally(/antenna-ladder/)} · dusk-telegraph=${tally(/saw-dusk-telegraph/)} · way-open(clear-finish)=${tally(/saw-way-open/)} · shop-pointer-deflect=${tally(/shop-pointer-deflect/)}`,
   `prior-batch mechanics reached: decay-bit(predawn)=${tally(/DECAY-BIT/)} · saw-decay-warning=${tally(/saw-decay-warning/)} · topic-bound-refusal=${tally(/topic-bound-refusal/)} · deduce-legibility=${tally(/saw-deduce-legibility/)}`,
+  `night12 mechanics reached (0016 #4/#5): hollow-shelter(safe-pocket)=${tally(/saw-hollow-shelter/)} · mox-window(concrete-hours)=${tally(/saw-mox-window/)}`,
   `traps tripped: mile-lookback=${tally(/mile-lookback/)} · greywater-iron=${tally(/greywater-ate-iron/)} · antenna-summon=${tally(/antenna-summoned/)} · hollow-dark=${tally(/hollow-dark-bit/)}`,
 ].join('\n');
+
+// marker-rot sanity guard (the audit's fragility C): the behaviour digest is exact-substring matches
+// against authored prose — if a phrase changes, a marker silently stops matching and the digest
+// mis-classifies with no error. If the cohort recorded real wins/losses yet ZERO mechanic/trap
+// markers fired across everyone, the markers have almost certainly rotted against the current content.
+const decisiveOutcomes = gathered.filter((g) => /WON|LOST/.test(g.digest)).length;
+const markerRotWarning =
+  decisiveOutcomes >= 3 &&
+  tally(/mile-lookback|greywater-ate-iron|antenna-summoned|hollow-dark-bit|WON·(mastery|bought)/) === 0
+    ? `⚠ MARKER-ROT SUSPECTED: ${decisiveOutcomes} decisive outcomes but no mechanic/trap markers fired — the digest's authored-string matchers may no longer match the current prose. Re-check digestSnapshot() against content before trusting the behavioural aggregate.`
+    : '';
+if (markerRotWarning) console.error(markerRotWarning);
 
 const prompt = `You are compiling BLIND play-test feedback for THE HUSH (demo: "The Cordon's Edge"). ${N} cynical, high-expectations players played BLIND (saw only what the game showed them, never code/content) and wrote exit interviews. Synthesize a ranked, actionable report, applying the MASTER-BLUEPRINT §4.3/§4.5 synthesis discipline below. The persona AND model tier are shown for each player so you can apply the capability filter.
 
@@ -245,7 +271,8 @@ if (!report.trim()) {
   console.error('compile failed; stderr tail:', (res.stderr || '').slice(-1500));
   process.exit(1);
 }
-const header = `# Compiled blind-swarm feedback — ${index.runId}\n\n> ${N} blind cynical players · ${index.summary?.realnessVerified ?? '?'} realness-verified · won=${index.summary?.won} lost=${index.summary?.lost} active=${index.summary?.active}\n> Compiled ${new Date().toISOString()} via ${MODEL}.\n>\n> **Behavioural ground truth (verified turn logs):**\n> ${aggregate.replace(/\n/g, '\n> ')}\n\n`;
+const dropLine = `> ${N} interview(s) synthesized · ${skipped} skipped (no usable interview) · manifest failed=${index.summary?.failed ?? 0} · ~$${index.summary?.costUsd ?? '?'}\n`;
+const header = `# Compiled blind-swarm feedback — ${index.runId}\n\n> ${N} blind cynical players · ${index.summary?.realnessVerified ?? '?'} realness-verified · won=${index.summary?.won} lost=${index.summary?.lost} active=${index.summary?.active}\n${dropLine}> Compiled ${new Date().toISOString()} via ${MODEL}.\n${markerRotWarning ? `>\n> ${markerRotWarning}\n` : ''}>\n> **Behavioural ground truth (verified turn logs):**\n> ${aggregate.replace(/\n/g, '\n> ')}\n\n`;
 const outPath = resolve(RUN, 'compiled-feedback.md');
 writeFileSync(outPath, header + report);
 console.log(`\n${header}${report}\n`);
