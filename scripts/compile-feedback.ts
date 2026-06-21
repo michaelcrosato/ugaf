@@ -89,8 +89,33 @@ function digestSnapshot(id: string): string {
   if (has('the dark leans in', 'go still one time too many', 'dark is one step closer')) tags.push('hollow-dark-bit');
   if (has('certainty is decaying')) tags.push('saw-decay-warning');
   if (has('crept wider', 'grey hour before dawn', 'hungry hours')) tags.push('DECAY-BIT(predawn)'); // the new #5 mechanic in the wild
-  if (has('not on my confirmed shelf', 'not my patch to sell')) tags.push('hit-topic-bound-refusal'); // the new #6
-  if (has('signs you need to be sure', 'right here', 'look for it toward')) tags.push('saw-deduce-legibility'); // the new #3
+  if (has('not on my confirmed shelf', 'not my patch to sell')) tags.push('hit-topic-bound-refusal'); // 0012 #6
+  if (has('signs you need to be sure', 'right here', 'look for it toward')) tags.push('saw-deduce-legibility'); // 0012 #3
+  // ---- night9 mechanics in the wild (feedback/0013 #3/#4/#5/#6) ----
+  // #5: the antenna "coming" ladder fired — a spoken name WARNED instead of instakilling (the fairness fix).
+  if (
+    has(
+      'break for the edge of the field',
+      'get out of the field, this beat',
+      'gropes the dark for you',
+      'a third name leaves your mouth',
+    )
+  )
+    tags.push('antenna-ladder(2nd-name-warned)');
+  // #3: the day->dusk threshold was made legible BEFORE the flip, naming the consequence.
+  if (
+    has(
+      'afternoon light runs long',
+      'sun is on the horizon now',
+      'after dusk the greywater wakes',
+      'deep places grow hungry',
+    )
+  )
+    tags.push('saw-dusk-telegraph');
+  // #4: the climax said the way was OPEN (clear finish), not a re-offer of the spent escape.
+  if (has('the way is open', 'the way is yours', 'slip back to the waystation')) tags.push('saw-way-open');
+  // #6: the off-coverage deflect POINTED at coverable topics instead of a flat dead end.
+  if (has('ask me about')) tags.push('shop-pointer-deflect');
   return `${outcome} · surveyed=${surveyed} · bought=${bought}${tags.length ? ' · ' + tags.join(', ') : ''}`;
 }
 
@@ -145,7 +170,8 @@ const corpus = gathered
 const tally = (re: RegExp) => gathered.filter((g) => re.test(g.digest)).length;
 const aggregate = [
   `outcomes: WON·mastery=${tally(/WON·mastery/)} · WON·bought=${tally(/WON·bought/)} · WON·basic=${tally(/WON·basic/)} · LOST·mile=${tally(/LOST·mile/)} · LOST·dark=${tally(/LOST·hollow/)} · LOST·antenna-or-dead=${tally(/LOST·antenna/)} · timed-out=${tally(/timed-out/)}`,
-  `this-batch mechanics reached: decay-bit(predawn)=${tally(/DECAY-BIT/)} · saw-decay-warning=${tally(/saw-decay-warning/)} · topic-bound-refusal=${tally(/topic-bound-refusal/)} · deduce-legibility=${tally(/saw-deduce-legibility/)}`,
+  `night9 mechanics reached (0013 #3/#4/#5/#6): antenna-ladder=${tally(/antenna-ladder/)} · dusk-telegraph=${tally(/saw-dusk-telegraph/)} · way-open(clear-finish)=${tally(/saw-way-open/)} · shop-pointer-deflect=${tally(/shop-pointer-deflect/)}`,
+  `prior-batch mechanics reached: decay-bit(predawn)=${tally(/DECAY-BIT/)} · saw-decay-warning=${tally(/saw-decay-warning/)} · topic-bound-refusal=${tally(/topic-bound-refusal/)} · deduce-legibility=${tally(/saw-deduce-legibility/)}`,
   `traps tripped: mile-lookback=${tally(/mile-lookback/)} · greywater-iron=${tally(/greywater-ate-iron/)} · antenna-summon=${tally(/antenna-summoned/)} · hollow-dark=${tally(/hollow-dark-bit/)}`,
 ].join('\n');
 
@@ -153,7 +179,7 @@ const prompt = `You are compiling BLIND play-test feedback for THE HUSH (demo: "
 
 BEHAVIOURAL GROUND TRUTH (from the realness-verified turn logs — what the cohort ACTUALLY did, which OUTRANKS self-report where they conflict; §4.3):
 ${aggregate}
-Each player below carries a one-line BEHAVIOUR digest from their own verified log. When a player's interview claims something their behaviour contradicts (e.g. "the laws never bite" but their log shows greywater-ate-iron), trust the behaviour and say so. When NO player's behaviour reached a feature this batch shipped (decay-bit, topic-bound-refusal, deduce-legibility), note it as "shipped but unexercised — widen the next swarm to reach it" rather than as a win or a flaw.
+Each player below carries a one-line BEHAVIOUR digest from their own verified log. When a player's interview claims something their behaviour contradicts (e.g. "the laws never bite" but their log shows greywater-ate-iron), trust the behaviour and say so. When NO player's behaviour reached a feature a recent batch shipped — the night9 fixes (antenna-ladder, dusk-telegraph, way-open clear-finish, shop-pointer-deflect) or the prior batch (decay-bit, topic-bound-refusal, deduce-legibility) — note it as "shipped but unexercised — widen the next swarm to reach it" rather than as a win or a flaw. For the night9 antenna-ladder specifically (the #5 fairness fix): if an antenna-breaker reached the field and spoke a name, check whether their log shows the second-name WARNING (antenna-ladder tag) and whether they then survived/fled — that is the evidence the "warning and death collapsed into one beat" bug is fixed; if they still report an instant unwarned death, that is a P0 regression.
 
 QUARANTINE FIRST (before any ranking):
 - TEST-HARNESS ARTIFACTS: complaints about a hidden turn limit / running out of turns / the observe-act tools / being forced to stop are RIG artifacts, NOT game flaws — list under "Harness / methodology notes", never rank as game fixes.
