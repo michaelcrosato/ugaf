@@ -41,6 +41,7 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
   const start = config.startMinutes ?? 16 * 60; // 16:00 by default
   const manifest = makeManifest({
     id: 'time.cycle',
+    version: '0.2.0', // feedback/0013 #3: escalating dusk-approach telegraphs (the timed decision was made blind)
     content: { start, cost: COST },
     source: 'clean-room day/night scheduler (uncopyrightable mechanic)',
     license: {
@@ -98,7 +99,11 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
             ...events,
             {
               tag: 'phase_change',
-              mutations: [{ op: 'set', key: 'phase.now', value: newPhase }],
+              mutations: [
+                { op: 'set', key: 'phase.now', value: newPhase },
+                // entering a fresh day re-arms the dusk-approach telegraph for the new daylight window
+                ...(newPhase === 'day' ? ([{ op: 'set' as const, key: 'clock.dusk_warned', value: 0 }] as const) : []),
+              ],
               summary: phaseLine(newPhase, minutes),
               data: { phase: newPhase },
             },
@@ -109,6 +114,32 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
             valence: newPhase === 'night' ? 'cost' : 'neutral',
           },
         };
+      }
+      // dusk-approach telegraph (feedback/0013 #3): the whole demo turns on one timed decision —
+      // cross the iron-hungry Greywater by day, drop your metal, or buy the safe hour — and the
+      // day->dusk threshold was invisible, so the player made it blind. As day wanes, warn in
+      // escalating, concrete beats that NAME the consequence of the flip (the status clock shows
+      // the time; it never told you what the time MEANT). Fires once per rung, re-armed each dawn.
+      if (newPhase === 'day') {
+        const m = ((minutes % 1440) + 1440) % 1440;
+        const untilDusk = 1080 - m; // dusk begins at 18:00
+        const warned = facts.getNumber('clock.dusk_warned') ?? 0;
+        const level = untilDusk <= 25 ? 2 : untilDusk <= 60 ? 1 : 0;
+        if (level > warned) {
+          return {
+            nativeNext: { minutes },
+            events: [
+              ...events,
+              {
+                tag: 'dusk_approach',
+                mutations: [{ op: 'set', key: 'clock.dusk_warned', value: level }],
+                summary: duskApproachLine(level),
+                data: { untilDusk, level },
+              },
+            ],
+            render: { labels: [`phase.dusk_approach.${level}`], hints: { untilDusk }, valence: 'cost' },
+          };
+        }
       }
       return out;
     },
@@ -139,4 +170,16 @@ const PHASE_LINES: Record<Phase, string[]> = {
 function phaseLine(p: Phase, minutes: number): string {
   const lines = PHASE_LINES[p];
   return lines[(((minutes % (lines.length * 7)) / 7) | 0) % lines.length]!;
+}
+
+/**
+ * The escalating day->dusk telegraph (feedback/0013 #3). Level 1: an hour of day left, mind the
+ * dark. Level 2: the light is going NOW — act in daylight or act in the dark. Both name the
+ * concrete consequence (the Greywater wakes to iron, the deep to stillness) so the central timed
+ * decision is made with eyes open.
+ */
+function duskApproachLine(level: number): string {
+  if (level >= 2)
+    return 'The sun is on the horizon now and the light is going fast — minutes of true day left, no more. Whatever you mean to do by daylight, do it now: cross the Greywater, or reach the deep, before the dark wakes them. After dusk the bottoms hunger for worked iron, and the deep places for anyone who stops moving.';
+  return 'The afternoon light runs long and amber; an hour or so of honest day still in hand. But the dark is coming, and it changes the rules — after dusk the Greywater wakes to the iron you carry, and the deep places grow hungry. If your road runs through them, time it before the light fails.';
 }

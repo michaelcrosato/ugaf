@@ -141,6 +141,14 @@ export const NPCS: NpcDef[] = [
         text: "The core's real, out in the drowned pump-house. Getting to it's the easy part. Getting to it without the Greywater taking your iron, that's the trick — go by day, or go without metal, or pay a Strider who knows the safe hour.",
         grantsRumor: 'r_cache_paths',
       },
+      // a signature topic smaller players reached for and hit the flat deflect (feedback/0013 #6).
+      // Hedged folk wisdom — points at the iron danger without granting a law key (the false
+      // gold-rumour stands; a careful ear catches that Lyle contradicts himself, which is the tell).
+      {
+        id: 'lyle_iron',
+        topic: 'iron',
+        text: "Iron? Worked iron's a liability past the wire — the common word is the Greywater hungers for it after dark, slumps a good blade to red mud. Me, I've kept to gold and stayed out of that water both, thirty years, so take it as a thing an old man's been told, not a thing he's tested with his own hands. If you're going down there: leave your metal, or go by daylight.",
+      },
       // the diegetic reliability tell: Lyle himself names that he is a contestable source. A careful
       // player who asks learns to verify him; the contradiction in his lore is then fair, not a bug.
       {
@@ -249,10 +257,19 @@ export const NPCS: NpcDef[] = [
         topic: 'safe',
         text: "The safe hour? Course it's real — I've walked it more times than you've eaten hot dinners. The bottoms sleep a good stretch around midday and wake hungry at dusk; that much I'll tell anyone for nothing. The EXACT line through, dry and timed to the minute so you're never caught with iron in the dark — that's the part you pay me for. Or carry no metal at all, and you'll not need me.",
       },
+      // a signature topic that smaller players reached for and hit the flat deflect (feedback/0013 #6):
+      // "the way in" is the route shape — free rough, paid exact — not a dead end.
+      {
+        id: 'mox_wayin',
+        topic: 'way in',
+        text: "The way in? Same road as the core, friend — the bottoms only bite after dark, and only at worked iron. Go in by daylight, or stripped of metal, and they're just cold standing water. Time it wrong with iron on you and they'll have it off you. The rough of that's free; the safe hour and the dry line timed to the minute, that's what you pay me for.",
+      },
       {
         id: 'mox_window',
         topic: 'safe-window',
-        text: "Here's the safe hour and the dry line through the bottoms. Don't carry iron and you won't even need the hour. Don't say I never did you a kindness — and don't forget who sold it to you.",
+        // perishable-at-point-of-sale (feedback/0013 #3): a bought hour decays like any read law —
+        // flag it AS she sells it, so the player knows the timed line can drift and isn't owed forever.
+        text: "Here's the safe hour and the dry line through the bottoms. Don't carry iron and you won't even need the hour. And mind — an hour I sell is true today and no longer: the Hush re-Settles, the water keeps its hungry stretch longer some weeks than others, and a line timed to the minute can creep. Sit on it too long and you'll want it read again. Don't say I never did you a kindness — and don't forget who sold it to you.",
         grantsLeadTell: 'grey_low_hum',
         setsFacts: {
           'known.tell.grey_low_hum': true,

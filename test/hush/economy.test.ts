@@ -183,4 +183,31 @@ describe('the NPC information-economy', () => {
     expect(r.text.toLowerCase()).toMatch(/holt|warden|contested|voice/);
     expect(r.text).not.toContain('Nothing I can tell you about that');
   });
+
+  // ---- feedback/0013 #6: signature-topic coverage + a deflect that POINTS, not a flat wall -----
+  it('Mox covers "the way in" — a signature topic that used to hit the flat deflect', () => {
+    const s = sess('econ-mox-wayin');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    const r = s.act('ask mox about the way in');
+    expect(r.text).not.toContain('Nothing I can tell you about that'); // covered now
+    expect(r.text.toLowerCase()).toMatch(/way in|core|daylight|iron/);
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // discussed free, not sold
+  });
+
+  it('Lyle covers "iron" — hedged folk wisdom, no law key granted (the false gold-rumour stands)', () => {
+    const s = sess('econ-lyle-iron');
+    for (const c of ['out', 'road']) s.act(c);
+    const r = s.act('ask lyle about iron');
+    expect(r.text).not.toContain('Nothing I can tell you about that');
+    expect(r.text.toLowerCase()).toMatch(/iron|greywater|metal/);
+    expect(s.state.facts['known.rumor.r_grey_true']).toBeFalsy(); // not a free survey of the true law
+  });
+
+  it('an off-coverage deflect POINTS at what the NPC does cover — not a flat dead end (#6)', () => {
+    const s = sess('econ-deflect-points');
+    s.act('out'); // Warden Holt at the checkpoint
+    const r = s.act('ask holt about the weather');
+    expect(r.text).toContain('Nothing I can tell you about that'); // still the honest decline...
+    expect(r.text.toLowerCase()).toContain('ask me about'); // ...but it now points somewhere real
+  });
 });

@@ -178,6 +178,7 @@ export const NODES: NodeDef[] = [
               { fact: 'objective.knows_gap', eq: true },
               { phase: ['dusk', 'night', 'predawn'] },
               { fact: 'awareness.cordon_patrol', neq: 'alert' },
+              { not: { fact: 'flag.hidden', eq: true } }, // once you HAVE hidden, the way-open variant takes over (#4)
             ],
           },
           text: 'You know this gate now, the way Holt told it: the wedge of dark by the north post where the floodlight throws crooked. The dark is on your side for it. Go low and quiet there (HIDE) while the troopers are not roused, and you can be through it before they think to look.',
@@ -221,9 +222,48 @@ export const NODES: NodeDef[] = [
             all: [
               { fact: 'possession.pc.salvage_core', eq: true },
               { fact: 'reputation.pc.striders', gte: 1 },
+              { not: { fact: 'flag.intercept_clear', eq: true } },
             ],
           },
           text: 'A Strider owes you a way through, and Mox keeps her debts. Lean on it, and you will be walked out past the wire like baggage.',
+        },
+        // feedback/0013 #4 — once a route out is EARNED, stop re-offering the spent escape and the
+        // road no longer "silently un-blocks": say plainly the way is open and that BACK to the
+        // waystation is the finish. A `replace:true` variant supplants the stale route instructions
+        // for this beat (so a player who just HID isn't told to HIDE again).
+        {
+          when: {
+            all: [
+              { fact: 'possession.pc.salvage_core', eq: true },
+              { fact: 'flag.intercept_clear', eq: true },
+            ],
+          },
+          replace: true,
+          text: 'The wire-gap is levered wide and the core is already through it, into the dark beyond the fence. Nothing holds you at this gate now. The way is open — go BACK to the waystation, and you carry the core clear of the Hush.',
+        },
+        {
+          when: {
+            all: [
+              { fact: 'possession.pc.salvage_core', eq: true },
+              { fact: 'reputation.pc.striders', gte: 1 },
+              { not: { fact: 'flag.intercept_clear', eq: true } },
+            ],
+          },
+          replace: true,
+          text: 'The Strider who owes you steps up to the boom gate and waves you through like baggage — Mox keeps her debts. The way is open. Go BACK to the waystation and you are out past the wire with the core.',
+        },
+        {
+          when: {
+            all: [
+              { fact: 'possession.pc.salvage_core', eq: true },
+              { fact: 'objective.knows_gap', eq: true },
+              { fact: 'flag.hidden', eq: true },
+              { fact: 'awareness.cordon_patrol', neq: 'alert' },
+              { phase: ['dusk', 'night', 'predawn'] },
+            ],
+          },
+          replace: true,
+          text: "You are low in the wedge of dark by the north post, where the floodlight throws crooked, and the troopers' eyes are anywhere but here. This is the gap Holt told you of, and it is open. The way is yours — slip BACK to the waystation now, quiet and unhurried, and you carry the core clear of the wire.",
         },
       ],
       ambient: [

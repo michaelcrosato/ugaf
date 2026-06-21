@@ -127,4 +127,25 @@ describe('the climax has teeth — the watched gate must be EARNED', () => {
     s.act('hide');
     expect(canLeave(s)).toBe(true); // recoverable at the gate
   });
+
+  it('once a route is EARNED, the room says the way is OPEN and stops re-offering the spent escape (#4)', () => {
+    // SLIP: learn the gap, hide — the look now reads "the way is open / slip back", not "HIDE again"
+    const slip = atGate('climax-open-slip', { 'possession.pc.iron_knife.condition': 'ore' });
+    slip.act('ask holt about the gap');
+    slip.act('hide');
+    expect(canLeave(slip)).toBe(true);
+    const look = slip.act('look').text.toLowerCase();
+    expect(look).toMatch(/the way is open|the way is yours|slip back/); // clear finish cue
+    expect(look).not.toContain('ask him about the gap'); // the spent instruction is gone
+
+    // PRY: lever the gate with working iron — the look reads the way is open
+    const pry = atGate('climax-open-pry'); // broke kit -> a working iron knife
+    pry.act('use the knife');
+    expect(pry.state.facts['flag.intercept_clear']).toBe(true);
+    expect(pry.act('look').text.toLowerCase()).toMatch(/the way is open|levered/);
+
+    // DEBT: a Strider standing — the look reads the way is open
+    const debt = atGate('climax-open-debt', { 'reputation.pc.striders': 1 });
+    expect(debt.act('look').text.toLowerCase()).toMatch(/the way is open|keeps her debts/);
+  });
 });

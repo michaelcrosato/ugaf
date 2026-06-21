@@ -199,13 +199,42 @@ describe('The Hush — Cordon’s Edge', () => {
     expect(fled.text.toLowerCase()).toMatch(/loses the thread|behind you|turns away/);
   });
 
-  it('Antenna Field: speaking the name twice is lethal — but you were warned and given a way out', () => {
+  it('Antenna Field: a spoken name never collapses warning and death — the Changed COME (feedback/0013 #5)', () => {
     const s = freshSession('antenna-2');
     for (const cmd of ['out', 'road', 'road', 'on', 'antennas']) s.act(cmd);
-    s.act('say maren'); // warning
-    const dead = s.act('say maren'); // ignore the warning, speak again -> lethal
+    s.act('say maren'); // name 1 — warning, the Changed begins to come
+    expect(s.state.facts['law.antenna_field.coming']).toBe(1);
+    const second = s.act('say maren'); // name 2 — an explicit last warning that RETURNS CONTROL
+    expect(s.state.facts['survival.pc']).toBe('alive'); // NOT dead on the second name (the bug it fixes)
+    expect(s.state.facts['law.antenna_field.coming']).toBe(2);
+    expect(second.status).toBe('active');
+    expect(second.text.toLowerCase()).toMatch(/break for the edge|get out of the field|coming|moving toward/);
+    const dead = s.act('say maren'); // name 3 — only now is it lethal
     expect(s.state.facts['survival.pc']).toBe('dead');
     expect(dead.status).toBe('lost');
+  });
+
+  it('Antenna Field: after the second name you can still FLEE — leaving escapes (feedback/0013 #5)', () => {
+    const s = freshSession('antenna-flee');
+    for (const cmd of ['out', 'road', 'road', 'on', 'antennas']) s.act(cmd);
+    s.act('say maren'); // name 1
+    s.act('say maren'); // name 2 — the last warning
+    expect(s.state.facts['survival.pc']).toBe('alive');
+    const fled = s.act('mile'); // take the beat you were given and leave
+    expect(s.state.facts['survival.pc']).toBe('alive'); // the flee is honoured — not a death sentence
+    expect(s.state.facts['law.antenna_field.active']).toBe(false);
+    expect(fled.text.toLowerCase()).toMatch(/loses the thread|behind you|turns away/);
+  });
+
+  it('Antenna Field: standing still after the name also COMES on a ladder, never an instant pounce', () => {
+    const s = freshSession('antenna-linger');
+    for (const cmd of ['out', 'road', 'road', 'on', 'antennas']) s.act(cmd);
+    s.act('say maren'); // name 1 — the Changed begins to come
+    const wait1 = s.act('wait'); // lingering: rung 2, an explicit last warning, control returned
+    expect(s.state.facts['survival.pc']).toBe('alive'); // not killed by a single lingering beat
+    expect(wait1.text.toLowerCase()).toMatch(/break for the edge|moving toward|gropes the dark/);
+    s.act('wait'); // lingering past the warning — now it closes
+    expect(s.state.facts['survival.pc']).toBe('dead');
   });
 
   it('the non-metal path: drop your iron, and the Greywater has nothing to take', () => {
