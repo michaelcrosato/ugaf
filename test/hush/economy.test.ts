@@ -225,6 +225,29 @@ describe('the NPC information-economy', () => {
     expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1);
   });
 
+  // ---- B13 (night12b rule-breaker): the deflect paywall must be TOPIC-BOUND, not a bait-and-switch ----
+  // "ask Mox about the antenna field" -> "That is not free talk — that is what I sell. Pay me for it"
+  // -> pay -> she handed over the GREYWATER safe-hour. She implied she sells antenna info (she doesn't)
+  // and sold the wrong product. A merchant must only paywall the law she ACTUALLY sells; a different
+  // named law gets an honest refusal (the purchase path already binds this way — the deflect didn't).
+  it('Mox does not bait-and-switch: asking about a law she does NOT sell refuses honestly, never "pay me" then the wrong map (B13)', () => {
+    const s = sess('econ-mox-baitswitch');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    const r = s.act('ask mox about the antenna field');
+    expect(r.text.toLowerCase()).not.toMatch(/that is what i sell|pay me for it/); // NOT the paywall for a law she doesn't sell
+    expect(s.state.facts['meta.coins']).toBe(3); // asking costs nothing
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // and did NOT sell the Greywater instead
+    expect(r.text.toLowerCase()).toMatch(/antenna|not my|don't deal|do not deal|nothing i can tell/); // honest about not selling it
+  });
+
+  it('Mox still paywalls the law she DOES sell — asking about the Greywater points you to pay (no regression)', () => {
+    const s = sess('econ-mox-ownlaw');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    const r = s.act('ask mox about the greywater');
+    expect(r.text.toLowerCase()).toMatch(/sell|pay/); // her own product is still a paywall hint, not a free grant
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // hint, never a free grant
+  });
+
   it('Mox discusses her signature topic (the safe hour) for free — no longer a pure paywall', () => {
     const s = sess('econ-mox-talk');
     for (const c of ['out', 'road', 'salvage']) s.act(c);
