@@ -76,7 +76,8 @@ export function renderTranscript(r: PlayResult): string {
   out.push(`# Transcript — The Hush (seed ${r.seed})`, '', r.opening, '');
   for (const t of r.turns) {
     out.push(`> ${t.command}`);
-    if (!t.ok) out.push(`  [${t.rejection}] ${t.text}`);
+    // a NOT_UNDERSTOOD carries an in-world line; don't label it with the protocol enum (feedback/0015 #2)
+    if (!t.ok) out.push(t.rejection === 'NOT_UNDERSTOOD' ? `  ${t.text}` : `  [${t.rejection}] ${t.text}`);
     else
       out.push(
         t.text

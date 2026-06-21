@@ -34,23 +34,26 @@ export const TELL_LIBRARY: TellProse[] = [
   {
     id: 'grey_rust_bloom',
     channel: 'sight',
-    cue: 'Rust blooms across every worked rivet and blade like frost across a window — fast enough to watch it spread.',
-    note: 'Worked iron is rotting here, and quickly. Something in the dark un-makes it.',
-    conclusion: 'In the Greywater after dark, worked metal slumps back toward ore. Iron tools and blades fail.',
+    cue: 'Rust blooms across every worked rivet and blade like frost across a window — fast enough to watch it spread. It is not only the iron: a strange-made thing on a dead salvager nearby, no metal at all, is sloughing the same way.',
+    note: 'Worked iron is rotting here, and quickly — but so is the changed, anomalous thing beside it. Something in the dark un-makes whatever has been worked or altered, not iron alone.',
+    conclusion:
+      'In the Greywater after dark, worked metal slumps back toward ore — and not iron alone: the drowned water un-makes anything worked or altered, any anomalous thing, the same hungry way. Iron tools, blades, and the salvage core all fail if you carry them through by night.',
   },
   {
     id: 'grey_low_hum',
     channel: 'sound',
-    cue: 'A low hum comes up through the soles of your boots — and you feel it answer, faintly, in the iron you carry.',
-    note: 'The hum is in the metal. It is calling your worked iron back to the ground it came from.',
-    conclusion: 'In the Greywater after dark, worked metal slumps back toward ore. Iron tools and blades fail.',
+    cue: 'A low hum comes up through the soles of your boots — and you feel it answer, faintly, in the iron you carry, and stranger still in anything worked or changed you have on you.',
+    note: 'The hum is in the worked stuff. It is calling your iron — and any altered, anomalous thing — back to the ground it came from.',
+    conclusion:
+      'In the Greywater after dark, worked metal slumps back toward ore — and not iron alone: anything worked, changed, or anomalous answers the same call. Iron tools and the salvage core alike fail if carried through by night.',
   },
   {
     id: 'grey_slumped_blade',
     channel: 'sight',
-    cue: 'A good knife lies half-sunk in the mud — except the blade has slumped into a smear of red ore, as if it had always been melting and only just remembered to.',
-    note: "Someone's steel gave out down here, all at once, after dark.",
-    conclusion: 'In the Greywater after dark, worked metal slumps back toward ore — carry no iron in by night.',
+    cue: 'A good knife lies half-sunk in the mud — except the blade has slumped into a smear of red ore, as if it had always been melting and only just remembered to. Beside it, something that was never metal at all has gone the same soft, sloughing way.',
+    note: "Someone's steel gave out down here, all at once, after dark — and so did the worked, changed thing they were carrying.",
+    conclusion:
+      'In the Greywater after dark, worked metal slumps back toward ore — and so does any worked or anomalous thing, the salvage core included. Carry no iron AND nothing altered in by night.',
   },
   // ---- The Antenna Field (summon / perception) --------------------------
   {

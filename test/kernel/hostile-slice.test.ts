@@ -376,10 +376,11 @@ class Harness {
     this.state = freshState(extra);
     this.log = new EventLog('c1', this.state.seed, engineFingerprint(REGISTRY), hashState(this.state));
   }
-  do(i: ParsedIntent) {
+  do(i: ParsedIntent, opts: { clarifyAllowed?: boolean } = {}) {
     const outcome = step(this.state, REGISTRY, i, {
       armed: armedAt(),
       observation: obs(this.state, 'player'),
+      ...(opts.clarifyAllowed !== undefined ? { clarifyAllowed: opts.clarifyAllowed } : {}),
     });
     if (outcome.kind === 'committed') {
       const rec: EventRecord = {
@@ -435,20 +436,46 @@ describe('hostile kernel vertical slice', () => {
     // primed: this is the SECOND contact (the law has already warned once)
     const primed = { 'law.ward.contacts': 1 };
 
-    // HIGH confidence -> the lethal outcome commits (the warning was already given)
+    // HIGH confidence -> the lethal outcome commits (the warning was already given). The loss is
+    // NOT softened: a sure command still spends it in full.
     const high = new Harness(primed);
     const lethal = high.do(intent('cross_threshold', 0.95));
     expect(lethal.kind).toBe('committed');
     expect(high.state.facts['survival.pc']).toBe('dead');
     expect(high.state.status).toBe('lost');
 
-    // SAME action, LOW confidence -> K8 forbids committing the lethal event
+    // SAME action, LOW confidence -> K8 still BLOCKS the lethal commit (it is never softened); but
+    // instead of throwing an engine-token debug string it asks the player to CONFIRM, diegetically.
     const low = new Harness(primed);
     const priorHash = hashState(low.state);
     const guarded = low.do(intent('cross_threshold', 0.5));
-    expect(guarded.kind).toBe('rejected');
-    expect((guarded as Extract<typeof guarded, { kind: 'rejected' }>).code).toBe('K8_SEVERITY');
-    // failed-invariant ROLLBACK: prior state unchanged (atomicity by construction)
+    expect(guarded.kind).toBe('clarify'); // ask, don't dump a debug string
+    // the lethal event did NOT commit, and the prior state is unchanged (atomicity by construction)
+    expect(low.state.facts['survival.pc']).not.toBe('dead');
+    expect(low.state.status).toBe('active');
+    expect(hashState(low.state)).toBe(priorHash);
+    // and the player-facing question carries NO engine token
+    const q = (guarded as Extract<typeof guarded, { kind: 'clarify' }>).request.question;
+    for (const token of ['K8', 'cap=', 'severity', 'lethal', 'irreversible', 'NOT_UNDERSTOOD', 'StepReject']) {
+      expect(q).not.toContain(token);
+    }
+  });
+
+  it('K8: with the clarify budget spent, the lethal command is REFUSED in-world (no engine tokens, still atomic)', () => {
+    const primed = { 'law.ward.contacts': 1 };
+    const low = new Harness(primed);
+    const priorHash = hashState(low.state);
+    // clarifyAllowed:false -> the circuit breaker is exhausted; the gate falls back to a diegetic refuse.
+    const refused = low.do(intent('cross_threshold', 0.5), { clarifyAllowed: false });
+    expect(refused.kind).toBe('rejected');
+    const r = refused as Extract<typeof refused, { kind: 'rejected' }>;
+    expect(r.code).toBe('K8_SEVERITY'); // still tagged K8 for the machine layer...
+    // ...but the player-facing reason is in-world prose with NO engine token
+    for (const token of ['K8', 'cap=', 'severity', 'lethal', 'irreversible', 'NOT_UNDERSTOOD', 'StepReject']) {
+      expect(r.reason).not.toContain(token);
+    }
+    // the lethal event did NOT commit; the prior state is unchanged
+    expect(low.state.facts['survival.pc']).not.toBe('dead');
     expect(hashState(low.state)).toBe(priorHash);
   });
 

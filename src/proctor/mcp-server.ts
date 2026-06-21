@@ -138,8 +138,12 @@ export class ProctorMcpBridge {
     }
     const detail = plain(r.detail ?? r.rejection);
     this.turns.push({ n: this.n, command, ok: false, text: detail });
-    // re-show where they are so a rejected command never leaves them blind
-    return `[${r.rejection}] ${detail}\n\n` + this.tail(o);
+    // re-show where they are so a rejected command never leaves them blind.
+    // NOT_UNDERSTOOD carries an in-WORLD line (a diegetic refusal/hesitation) — never tag it with
+    // the engine's protocol enum, or the player reads "[NOT_UNDERSTOOD]" at the climax (feedback/0015
+    // #2). The purely mechanical rejections (wrong nonce, delay, session over) keep a system tag.
+    const prefix = r.rejection === 'NOT_UNDERSTOOD' ? '' : `[${r.rejection}] `;
+    return `${prefix}${detail}\n\n` + this.tail(o);
   }
 
   /** Status line + condition + the "you can…" affordances, without re-rendering the scene. */

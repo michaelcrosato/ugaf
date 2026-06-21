@@ -16,6 +16,7 @@ import { describe, it, expect } from 'vitest';
 import { HUSH_PACK } from '../../content/hush/index.js';
 import { createGame } from '../../src/game/assemble.js';
 import { Session } from '../../src/game/session.js';
+import type { ParsedIntent } from '../../src/sdk/intents.js';
 
 function freshSession(seed = 'core-seed') {
   // force the 'broke' kit (iron_knife + lantern + coin) for deterministic tests
@@ -48,6 +49,36 @@ describe('The Hush — the core across the dark Greywater (feedback/0014 #1)', (
     expect(s.state.facts['possession.pc.salvage_core.condition']).toBe('ore'); // slumped to ore (the lose-state)
     expect(last.text).toContain('The Water Remembered'); // the bespoke lose epilogue, not a win
     expect(last.text.toLowerCase()).toMatch(/red, rotten ore|slumps in your hands/);
+  });
+
+  it('FIX 1 (feedback/0015 #2): an UNCERTAIN intent at the core-loss beat asks the player diegetically — it never dumps an engine debug string', () => {
+    const s = freshSession('uncertain-climax');
+    // reach rung 2 carrying the core in the dark, hungry bottoms (the next acting beat is the loss)
+    for (const cmd of ['out', 'road', 'road', 'on', 'fork', 'water', 'in', 'cache', 'take core', 'out']) s.act(cmd);
+    expect(s.state.facts['possession.pc.salvage_core.condition']).toBe('unstable');
+    expect(s.state.facts['law.greywater.core_warned']).toBe(2); // rung 2 — one more beat is the loss
+
+    // a HEDGED, low-confidence acting intent (a fuzzy synonym, the way blind players phrased it) —
+    // the kind K8 must not let spend the irreversible loss on the strength of a guess.
+    const uncertain: ParsedIntent = { class: 'wait', tags: [], confidence: 0.5, raw: 'just sort of linger here' };
+    const r = s.applyIntent(uncertain, 'just sort of linger here');
+
+    // the irreversible loss did NOT silently commit on a guess (the gate held)...
+    expect(s.state.facts['possession.pc.salvage_core.condition']).not.toBe('ore');
+    expect(s.state.status).toBe('active');
+    // ...and the player sees a readable, IN-WORLD confirm/refusal — NO engine token, ever.
+    for (const token of ['K8', 'cap=', 'core_lost', 'NOT_UNDERSTOOD', 'irreversible', 'StepReject', 'severity']) {
+      expect(r.text).not.toContain(token);
+    }
+    // it is a diegetic line the player can act on (a confirm question, or a hesitation)
+    expect(r.text.trim().length).toBeGreaterThan(0);
+    expect(r.text.toLowerCase()).toMatch(/sure|anyway|certain|step|hold|water|dark/);
+
+    // and a CONFIDENT re-issue of the same move still spends the loss in full — the loss is NOT softened
+    const sure: ParsedIntent = { class: 'wait', tags: [], confidence: 0.95, raw: 'wait' };
+    s.applyIntent(sure, 'wait');
+    expect(s.state.facts['possession.pc.salvage_core.condition']).toBe('ore'); // earned loss, uncapped
+    expect(s.outcome()).toBe('lost');
   });
 
   it('first contact on the carry-out WARNS non-lethally — rung 1 sets `unstable`, survival still possible', () => {
