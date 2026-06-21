@@ -683,11 +683,16 @@ export const NODES: NodeDef[] = [
     regionId: 'antenna',
     kind: 'event-site',
     look: {
-      base: 'A field of dead broadcast antennas, rust-red, leaning, humming on channels that closed with the Settling. Names are scratched into their concrete bases — dozens of names. The hum changes shape when you breathe, as if it were waiting to be given a word to carry.',
+      // night13 keystone (feedback/0017 #1): the name-taboo punished speaking, but nothing ever made
+      // speaking TEMPTING ("no situation where speaking was even tempting"). The field now LURES: a
+      // voice in the dead static calls you by a name, baiting a verbal answer. Resisting is the
+      // tension; the telegraph (the name-stones, the man who answered) keeps it fair. Silence is
+      // always safe — only speaking trips the (clamped, telegraphed) summon.
+      base: 'A field of dead broadcast antennas, rust-red, leaning, humming on channels that closed with the Settling. Names are scratched into their concrete bases — dozens of names. The hum changes shape when you breathe, as if it were waiting to be given a word to carry — and then, faintly, it gives you one: out past the nearest masts a voice is calling. Low, frayed, almost familiar, it calls a name that might be yours and says the way out is over here, this way, come on. Every animal part of you wants to call back. The name-stones — and the three-days-dead man face-down beneath the freshest of them — say do not: the field only wants your voice so it has something to carry you off on. Give it nothing.',
       variants: [
         {
           when: { fact: 'phase.now', eq: 'night' },
-          text: 'At night the field is worse. The hum is hungry. You can feel how badly it wants you to say something — anything — aloud.',
+          text: 'At night the field is worse, and the voice is bolder — nearer, surer it knows you, wheedling now: just a word, just a name, and it will see you safely out of the dark. It is the last kindness the man under the name-stones believed he was being promised. Keep your mouth shut and keep moving.',
         },
         {
           when: { fact: 'law.antenna_field.active', eq: true },
@@ -702,9 +707,11 @@ export const NODES: NodeDef[] = [
       ambient: [
         'An antenna sways with no wind, slow, like a head turning to listen.',
         'The hum briefly takes the shape of a word you did not say, and lets it go.',
+        'The voice calls again, closer this time — your name, or a name, said gently, like it has all the time in the world and means to spend it on you.',
+        'For a moment the calling stops, leaving a silence that is somehow worse — an indrawn, listening quiet, waiting to hear whether you will answer.',
       ],
       firstReveal:
-        'Beneath the freshest name scratched into the concrete lies a body not three days cold, mouth still open on a last syllable it never got to finish. Whatever he said here, the field answered him — and what answered is still nearby. The lesson is not subtle: do not give your voice to this place.',
+        'Beneath the freshest name scratched into the concrete lies a body not three days cold, mouth still open on a last syllable it never got to finish. Whatever he said here, the field answered him — and what answered is still nearby. The lesson is not subtle: do not give your voice to this place, however kindly it calls for it.',
     },
     tells: ['antenna_field_hum', 'antenna_name_stones'],
     items: ['antenna_relic'],

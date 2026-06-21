@@ -97,7 +97,7 @@ export function createSocial(pack: WorldPack): Module {
       if (c === 'talk' || c === 'ask_about' || c === 'say') {
         if (c === 'ask_about' && topic) {
           const hit = pickTopicLine(npc, topic, facts);
-          if (!hit) return beat(args.native, deflect(npc, facts), ['social.no_topic']);
+          if (!hit) return beat(args.native, deflect(npc, facts, topic), ['social.no_topic']);
           return dialogue(npc, hit, args.native);
         }
         const line = pickLine(npc, undefined, facts); // greeting (state-aware via `when`)
@@ -200,7 +200,7 @@ export function createSocial(pack: WorldPack): Module {
 
   // an unmatched ask: a merchant with an unbought law-map points you at PAYING (so a paywall
   // never reads as a parser miss); anyone else honestly admits they have nothing to say.
-  function deflect(npc: NpcDef, facts: import('../../sdk/facts.js').FactView): string {
+  function deflect(npc: NpcDef, facts: import('../../sdk/facts.js').FactView, topic?: string): string {
     const sells = (npc.dialogue ?? []).find((l) => l.grantsLeadTell && (!l.when || evalPredicate(l.when, facts)));
     const lawId = sells
       ? Object.keys(sells.setsFacts ?? {})
@@ -211,17 +211,26 @@ export function createSocial(pack: WorldPack): Module {
       lawId !== undefined &&
       !facts.getBool(`known.purchased.${lawId}`) &&
       stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) < stageRank('surveyed');
-    if (unbought)
-      return `${npc.name}: “That is not free talk — that is what I sell. Pay me for it (give a coin, or “pay ${npc.names[0]}”) and it is yours.”`;
-    // genuinely off-coverage: decline honestly, but POINT at what this NPC DOES cover so a dead-end
-    // reads as scope, not a parser miss (feedback/0013 #6 — smaller players hit a flat wall here).
+    // which law (if any) the player actually ASKED about — the paywall must bind to the merchant's
+    // REAL product. Asking about a DIFFERENT named law must never be answered "pay me for it" and
+    // then sold the wrong map (B13 bait-and-switch: "ask Mox about the antenna" -> pay -> Greywater).
+    const askedLaw = topic ? lawFromPhrase(topic.toLowerCase()) : undefined;
+    // the topics this NPC DOES cover, for a pointed, honest decline (feedback/0013 #6).
     const askable = (npc.dialogue ?? [])
       .filter((l) => l.topic && !l.grantsLeadTell && (!l.when || evalPredicate(l.when, facts)))
       .map((l) => l.topic!)
       .filter((t) => !['price', 'law-map', 'safe-window'].includes(t)) // hide the paid/util topics
       .filter((t, i, a) => a.indexOf(t) === i);
-    if (askable.length)
-      return `${npc.name} shakes their head. “Nothing I can tell you about that. Ask me about ${humanList(askable)}, if it's what I know you're after.”`;
+    const pointer = askable.length ? ` Ask me about ${humanList(askable)}, if it's what I know you're after.` : '';
+    // paywall ONLY for the law this merchant sells (or a generic, lawless ask) — never for a different law.
+    if (unbought && (askedLaw === undefined || askedLaw === lawId))
+      return `${npc.name}: “That is not free talk — that is what I sell. Pay me for it (give a coin, or “pay ${npc.names[0]}”) and it is yours.”`;
+    // asked about a SPECIFIC law this merchant does not deal in -> refuse honestly, naming her real
+    // trade (mirrors the trade-path refusal); never imply she sells what she does not.
+    if (askedLaw !== undefined && askedLaw !== lawId)
+      return `${npc.name} shakes their head. “${lawTitle(askedLaw)} isn't my trade${lawId ? `; I deal in ${lawTitle(lawId)}, not that` : ''}.${pointer}”`;
+    // genuinely off-coverage: decline honestly, but POINT at what this NPC DOES cover.
+    if (pointer) return `${npc.name} shakes their head. “Nothing I can tell you about that.${pointer}”`;
     return `${npc.name} shakes their head. “Nothing I can tell you about that.”`;
   }
 
