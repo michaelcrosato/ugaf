@@ -235,6 +235,20 @@ describe('the NPC information-economy', () => {
     expect(r.text).not.toContain('Nothing I can tell you about that'); // not a deflect
   });
 
+  // ---- feedback/0016 #3B: make the win-relevant antenna detour SALIENT (not just reachable) ----
+  // The relic->Greywater-table trade already works, but a player has no prompt to brave the antenna
+  // field for it — so a third of the rule-system reads as decorative. Eun (the knowledge merchant)
+  // now signposts the antenna-glass shard as a coin-free path to the Greywater law when you ask about
+  // the water — threading the field into the economic decision WITHOUT forcing the route or bypassing
+  // the Greywater keystone (the shard buys the table; you still must time the crossing).
+  it('Eun signposts the antenna-glass trade as a coin-free path to the Greywater law (0016 #3B)', () => {
+    const s = sess('econ-relic-signpost');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    const r = s.act('ask eun about the greywater');
+    expect(r.text.toLowerCase()).toMatch(/antenna-glass|shard/); // points at the win-relevant antenna detour
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // a SIGNPOST, not a free grant
+  });
+
   it('Eun gives Law Drift a voice: asking about drift explains why a bought map goes stale', () => {
     const s = sess('econ-eun-drift');
     for (const c of ['out', 'road', 'survey']) s.act(c);
