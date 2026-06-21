@@ -20,8 +20,14 @@ const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const FIXTURE = resolve(ROOT, 'test/golden/hush-canonical.json');
 
 const SEED = 'golden-hush';
+// The canonical winning session — and it now TIMES the unavoidable Greywater ford (feedback/0014 #1):
+// the salvage core is anomalous worked matter the dark water hungers for, so carrying it out across
+// the ford after dark would slump it to ore (a lost run). The deduced player reads the law, then waits
+// out the night at the ford and crosses the bottoms in the SAFE predawn window — core intact — before
+// slipping the watched gate while it is still dark. Learn the iron-hungry water; time the crossing; win.
 const COMMANDS = [
   'out',
+  'ask holt about the gap', // learn the gate's blind spot on the way in (used on the dark return)
   'road',
   'talk to lyle',
   'ask lyle about the mile road',
@@ -39,19 +45,19 @@ const COMMANDS = [
   'water',
   'examine the rust',
   'listen',
-  'deduce the greywater',
-  'in',
+  'deduce the greywater', // now you KNOW the water wakes at dusk and sleeps by the grey predawn hour
+  'rest', // wait out the hungry dark at the ford (the ford is safe to wait — not the Hollow Dark's scope)
+  'rest',
+  'rest',
+  'rest',
+  'in', // cross into the bottoms in the SAFE predawn window — the core rides out intact
   'cache',
   'take core',
   'out',
   'back',
-  'back',
-  'mile',
-  'back',
-  'back',
-  'gate',
-  'ask holt about the gap',
-  'hide',
+  'back', // up to the fork, clear of the water, the core whole
+  'wire', // the cut in the wire, straight to the watched checkpoint, still dark
+  'hide', // slip the gate's blind spot under cover of the predawn dark
   'back',
 ];
 

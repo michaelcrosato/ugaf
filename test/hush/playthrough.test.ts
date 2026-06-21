@@ -27,32 +27,35 @@ function freshSession(seed = 'test-seed') {
 }
 
 describe('The Hush — Cordon’s Edge', () => {
-  it('a march to the cache wins — but the core is watched-for, so you must slip the gate to carry it out', () => {
+  it('a TIMED march wins — the core is watched-for AND the dark Greywater hungers for it, so you must time the ford and slip the gate', () => {
     const s = freshSession('win-1');
     const path = [
       'out',
+      'ask holt about the gap', // learn the gate's blind spot on the way in
       'road',
       'road',
       'on',
       'fork',
       'water',
-      'in',
+      'rest', // wait out the hungry dark at the ford (safe to wait here)
+      'rest',
+      'rest',
+      'rest',
+      'rest',
+      'in', // cross the bottoms in the SAFE predawn window — the core survives
       'cache',
       'take core', // the Cordon now watches the gate for it
       'out',
       'back',
-      'back',
-      'mile',
-      'back',
-      'back',
-      'gate',
-      'ask holt about the gap',
+      'back', // up to the fork, clear of the water
+      'wire', // the cut in the wire, straight to the watched checkpoint (still dark)
       'hide',
-      'back', // slip the watched gate: learn its blind spot, then go low (iron's gone to the Greywater)
+      'back', // slip the watched gate under cover of the predawn dark
     ];
     let last = { status: 'active' as string };
     for (const cmd of path) last = s.act(cmd);
     expect(s.state.facts['possession.pc.salvage_core']).toBe(true);
+    expect(s.state.facts['possession.pc.salvage_core.condition']).toBeUndefined(); // timed the ford — core intact, never slumped
     expect(s.state.facts['flag.intercepted']).toBe(true); // taking the core marked you
     expect(last.status).toBe('won');
   });
@@ -61,6 +64,7 @@ describe('The Hush — Cordon’s Edge', () => {
     const s = freshSession('mastery-1');
     const path = [
       'out',
+      'ask holt about the gap', // learn the gate's blind spot on the way in
       'road',
       'road',
       'examine the milepost',
@@ -75,18 +79,18 @@ describe('The Hush — Cordon’s Edge', () => {
       'water',
       'examine the rust',
       'listen',
-      'deduce the greywater',
-      'in',
+      'deduce the greywater', // you now KNOW the iron-hungry water sleeps by the grey predawn hour
+      'rest', // wait out the hungry dark at the ford
+      'rest',
+      'rest',
+      'rest',
+      'in', // cross the bottoms in the SAFE predawn window — the core rides out intact
       'cache',
       'take core',
       'out',
       'back',
-      'back',
-      'mile',
-      'back',
-      'back',
-      'gate',
-      'ask holt about the gap',
+      'back', // up to the fork, clear of the water
+      'wire', // the cut in the wire to the watched checkpoint (still dark)
       'hide',
       'back',
     ];
@@ -96,6 +100,7 @@ describe('The Hush — Cordon’s Edge', () => {
     expect(s.state.facts['known.mile_road.ever_surveyed']).toBe(true);
     expect(s.state.facts['known.greywater.ever_surveyed']).toBe(true);
     expect(s.state.facts['known.antenna_field.ever_surveyed']).toBe(true);
+    expect(s.state.facts['possession.pc.salvage_core.condition']).toBeUndefined(); // timed the ford — the core was never lost to the water
     expect(last.status).toBe('won');
     expect(last.text).toContain('Read True'); // the flagship mastery epilogue, not the nerve-not-knowing fallback
   });

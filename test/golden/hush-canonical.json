@@ -2,6 +2,7 @@
   "seed": "golden-hush",
   "commands": [
     "out",
+    "ask holt about the gap",
     "road",
     "talk to lyle",
     "ask lyle about the mile road",
@@ -20,26 +21,26 @@
     "examine the rust",
     "listen",
     "deduce the greywater",
+    "rest",
+    "rest",
+    "rest",
+    "rest",
     "in",
     "cache",
     "take core",
     "out",
     "back",
     "back",
-    "mile",
-    "back",
-    "back",
-    "gate",
-    "ask holt about the gap",
+    "wire",
     "hide",
     "back"
   ],
-  "fingerprintId": "5afb818fa422",
+  "fingerprintId": "45b01fe1cbb3",
   "finalStatus": "won",
   "golden": {
     "campaignId": "play",
     "seed": "golden-hush",
-    "fingerprintId": "5afb818fa422",
+    "fingerprintId": "45b01fe1cbb3",
     "fingerprint": {
       "version": "0.1.0",
       "rngAlgo": "splitmix64",
@@ -84,7 +85,7 @@
         },
         {
           "module": "anomaly.hush",
-          "version": "0.2.0",
+          "version": "0.3.0",
           "contentHash": "4bd8995bda4672880d15234574a0813c8379d955e4dab9927c65289f31fa5647"
         }
       ]
@@ -202,6 +203,101 @@
       {
         "eventIndex": 2,
         "intent": {
+          "class": "ask_about",
+          "topic": "the gap",
+          "target": {
+            "id": "warden_holt",
+            "raw": "holt",
+            "tags": [
+              "npc"
+            ]
+          },
+          "tags": [
+            "social"
+          ],
+          "confidence": 0.8,
+          "raw": "ask holt about the gap"
+        },
+        "owner": "social.fate",
+        "tape": [],
+        "events": [
+          {
+            "tag": "dialogue",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "objective.knows_gap",
+                "value": true
+              }
+            ],
+            "summary": "Warden Holt: “The gap in the wire? Officially there's no such thing. Unofficially, I find I study my own boots a great deal this hour of the night. A careful soul could slip toward the fork that way — or back out of it, carrying something I'd rather not have to see. The floodlight throws long, but it throws crooked; there's a wedge of dark by the north post where a low, quiet figure simply isn't, as far as I'm concerned — but only after dark. In daylight the open ground is open ground, and I can't help you there. Mind you stay low, stay quiet, and don't make me look.”",
+            "data": {
+              "npc": "warden_holt",
+              "line": "holt_gap"
+            },
+            "source": "social.fate"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "ask_about"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 2
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "warden_holt"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 978
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "16:18"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 2
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "ecbef4785882ef1c75ff2ce79cddf245b1b95f69aaf1ac4624d8ac733b864123",
+        "nextHash": "ce33fb8aa168236be88e376d077712b645bb9a4513a7099bc11a6465d95d80fe"
+      },
+      {
+        "eventIndex": 3,
+        "intent": {
           "class": "go",
           "tags": [],
           "confidence": 0.9,
@@ -239,7 +335,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 2
+                "value": 3
               }
             ],
             "summary": "You set off.",
@@ -260,7 +356,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 2
+                "value": 3
               },
               {
                 "op": "set",
@@ -287,28 +383,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 986
+                "value": 996
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "16:26"
+                "value": "16:36"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 2
+                "value": 3
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "ecbef4785882ef1c75ff2ce79cddf245b1b95f69aaf1ac4624d8ac733b864123",
-        "nextHash": "2627423ae36a6a2a16b27c077e862b8fcd4eda08c6e233264af66293a997eabf"
+        "priorHash": "ce33fb8aa168236be88e376d077712b645bb9a4513a7099bc11a6465d95d80fe",
+        "nextHash": "2d2a58b870785959e16b18bad1ea084ab0f24103e7374e77be3761f49470b9da"
       },
       {
-        "eventIndex": 3,
+        "eventIndex": 4,
         "intent": {
           "class": "talk",
           "target": {
@@ -342,101 +438,6 @@
                 "op": "set",
                 "key": "flag.last_intent",
                 "value": "talk"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
-                "value": 3
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": "holdout_lyle"
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 996
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "16:36"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 3
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          }
-        ],
-        "priorHash": "2627423ae36a6a2a16b27c077e862b8fcd4eda08c6e233264af66293a997eabf",
-        "nextHash": "b63442df550e8ffddb967097ac9e58cb3aef5d098562a81034e9c90c16557167"
-      },
-      {
-        "eventIndex": 4,
-        "intent": {
-          "class": "ask_about",
-          "topic": "the mile road",
-          "target": {
-            "id": "holdout_lyle",
-            "raw": "lyle",
-            "tags": [
-              "npc"
-            ]
-          },
-          "tags": [
-            "social"
-          ],
-          "confidence": 0.8,
-          "raw": "ask lyle about the mile road"
-        },
-        "owner": "social.fate",
-        "tape": [],
-        "events": [
-          {
-            "tag": "dialogue",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "known.rumor.r_mile_true",
-                "value": true
-              }
-            ],
-            "summary": "Old Lyle: “The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. I've seen the bootprints loop a dead woman a thousand times round one milepost. That one I'd stake my life on.”",
-            "data": {
-              "npc": "holdout_lyle",
-              "line": "lyle_mile"
-            },
-            "source": "social.fate"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "ask_about"
               },
               {
                 "op": "set",
@@ -485,14 +486,14 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b63442df550e8ffddb967097ac9e58cb3aef5d098562a81034e9c90c16557167",
-        "nextHash": "c8a6bb3fc68a612b61e2d5c99c8b1c117ab54c64b28f871de5972dd3ec12f8b7"
+        "priorHash": "2d2a58b870785959e16b18bad1ea084ab0f24103e7374e77be3761f49470b9da",
+        "nextHash": "dab49e96a6f2896856be8df6b92fd70e25edc1fe07ed5b182e0cbc0370f660e8"
       },
       {
         "eventIndex": 5,
         "intent": {
           "class": "ask_about",
-          "topic": "the greywater",
+          "topic": "the mile road",
           "target": {
             "id": "holdout_lyle",
             "raw": "lyle",
@@ -504,7 +505,7 @@
             "social"
           ],
           "confidence": 0.8,
-          "raw": "ask lyle about the greywater"
+          "raw": "ask lyle about the mile road"
         },
         "owner": "social.fate",
         "tape": [],
@@ -514,14 +515,14 @@
             "mutations": [
               {
                 "op": "set",
-                "key": "known.rumor.r_grey_false",
+                "key": "known.rumor.r_mile_true",
                 "value": true
               }
             ],
-            "summary": "Old Lyle: “The bottoms? They eat gold — that's the old wisdom, anyhow. Keep your coin deep and you'll come through fine. Though mind, I'll be straight with you: I'm a Holdout, I've not carried worked iron down into that dark in thirty years. I'm telling you what I was told, not what I've tested with my own hands. Cross-check me if your life's on it.”",
+            "summary": "Old Lyle: “The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. I've seen the bootprints loop a dead woman a thousand times round one milepost. That one I'd stake my life on.”",
             "data": {
               "npc": "holdout_lyle",
-              "line": "lyle_grey"
+              "line": "lyle_mile"
             },
             "source": "social.fate"
           },
@@ -580,11 +581,122 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "c8a6bb3fc68a612b61e2d5c99c8b1c117ab54c64b28f871de5972dd3ec12f8b7",
-        "nextHash": "2f165bd3b32a37c8aa40bc89f1ed5160a96f2cb00ce15ba16cd3ee503ba42936"
+        "priorHash": "dab49e96a6f2896856be8df6b92fd70e25edc1fe07ed5b182e0cbc0370f660e8",
+        "nextHash": "50929dec967f0021ba298861da67e96ccf83c967e9a1141b888430ec7eed38a9"
       },
       {
         "eventIndex": 6,
+        "intent": {
+          "class": "ask_about",
+          "topic": "the greywater",
+          "target": {
+            "id": "holdout_lyle",
+            "raw": "lyle",
+            "tags": [
+              "npc"
+            ]
+          },
+          "tags": [
+            "social"
+          ],
+          "confidence": 0.8,
+          "raw": "ask lyle about the greywater"
+        },
+        "owner": "social.fate",
+        "tape": [],
+        "events": [
+          {
+            "tag": "dialogue",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.rumor.r_grey_false",
+                "value": true
+              }
+            ],
+            "summary": "Old Lyle: “The bottoms? They eat gold — that's the old wisdom, anyhow. Keep your coin deep and you'll come through fine. Though mind, I'll be straight with you: I'm a Holdout, I've not carried worked iron down into that dark in thirty years. I'm telling you what I was told, not what I've tested with my own hands. Cross-check me if your life's on it.”",
+            "data": {
+              "npc": "holdout_lyle",
+              "line": "lyle_grey"
+            },
+            "source": "social.fate"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "ask_about"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 6
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "holdout_lyle"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1026
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "17:06"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 6
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "dusk_approach",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.dusk_warned",
+                "value": 1
+              }
+            ],
+            "summary": "The afternoon light runs long and amber; an hour or so of honest day still in hand. But the dark is coming, and it changes the rules — after dusk the Greywater wakes to the iron you carry, and the deep places grow hungry. If your road runs through them, time it before the light fails.",
+            "data": {
+              "untilDusk": 54,
+              "level": 1
+            },
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "50929dec967f0021ba298861da67e96ccf83c967e9a1141b888430ec7eed38a9",
+        "nextHash": "b2e5fa8aa675008ee8dc0f459e25e7672621f084e6c1ac5254bf93c841237548"
+      },
+      {
+        "eventIndex": 7,
         "intent": {
           "class": "go",
           "tags": [],
@@ -623,7 +735,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 6
+                "value": 7
               }
             ],
             "summary": "You set off.",
@@ -644,7 +756,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 6
+                "value": 7
               },
               {
                 "op": "set",
@@ -671,44 +783,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1021
+                "value": 1031
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "17:01"
+                "value": "17:11"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 6
+                "value": 7
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
-          },
-          {
-            "tag": "dusk_approach",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.dusk_warned",
-                "value": 1
-              }
-            ],
-            "summary": "The afternoon light runs long and amber; an hour or so of honest day still in hand. But the dark is coming, and it changes the rules — after dusk the Greywater wakes to the iron you carry, and the deep places grow hungry. If your road runs through them, time it before the light fails.",
-            "data": {
-              "untilDusk": 59,
-              "level": 1
-            },
-            "source": "time.cycle"
           }
         ],
-        "priorHash": "2f165bd3b32a37c8aa40bc89f1ed5160a96f2cb00ce15ba16cd3ee503ba42936",
-        "nextHash": "3eab94cb96f3288f387f3df5f88c62ac561e7bbe19a4e010c83f5c331c70cd75"
+        "priorHash": "b2e5fa8aa675008ee8dc0f459e25e7672621f084e6c1ac5254bf93c841237548",
+        "nextHash": "d66d174369a02b31851376c89fd607fed0370571571c98ee298c77420a88ef93"
       },
       {
-        "eventIndex": 7,
+        "eventIndex": 8,
         "intent": {
           "class": "talk",
           "target": {
@@ -746,7 +842,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 7
+                "value": 8
               },
               {
                 "op": "set",
@@ -773,28 +869,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1031
+                "value": 1041
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "17:11"
+                "value": "17:21"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 7
+                "value": 8
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "3eab94cb96f3288f387f3df5f88c62ac561e7bbe19a4e010c83f5c331c70cd75",
-        "nextHash": "9903d3b2a44d36854153eaad3df40d9ff90e35c49b626bc0d73547d036239572"
+        "priorHash": "d66d174369a02b31851376c89fd607fed0370571571c98ee298c77420a88ef93",
+        "nextHash": "8265d085c277d11c2e9c4daaf6579dbfd1fbc643aa192db509985d166104778b"
       },
       {
-        "eventIndex": 8,
+        "eventIndex": 9,
         "intent": {
           "class": "go",
           "tags": [],
@@ -833,7 +929,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 8
+                "value": 9
               }
             ],
             "summary": "You set off.",
@@ -854,7 +950,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 8
+                "value": 9
               },
               {
                 "op": "set",
@@ -881,28 +977,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1036
+                "value": 1046
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "17:16"
+                "value": "17:26"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 8
+                "value": 9
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "9903d3b2a44d36854153eaad3df40d9ff90e35c49b626bc0d73547d036239572",
-        "nextHash": "1baed33a1632f013cc82ce986c87278aff8c9396542511563e8f09c1d3ea9ea2"
+        "priorHash": "8265d085c277d11c2e9c4daaf6579dbfd1fbc643aa192db509985d166104778b",
+        "nextHash": "431567b7e278a8464deb713339511e6ed0259486c28ee41a6764fd9ba47eb058"
       },
       {
-        "eventIndex": 9,
+        "eventIndex": 10,
         "intent": {
           "class": "go",
           "tags": [],
@@ -941,7 +1037,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 9
+                "value": 10
               }
             ],
             "summary": "You set off.",
@@ -962,7 +1058,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 9
+                "value": 10
               },
               {
                 "op": "set",
@@ -989,17 +1085,17 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1058
+                "value": 1068
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "17:38"
+                "value": "17:48"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 9
+                "value": 10
               }
             ],
             "visibility": "private",
@@ -1016,17 +1112,17 @@
             ],
             "summary": "The sun is on the horizon now and the light is going fast — minutes of true day left, no more. Whatever you mean to do by daylight, do it now: cross the Greywater, or reach the deep, before the dark wakes them. After dusk the bottoms hunger for worked iron, and the deep places for anyone who stops moving.",
             "data": {
-              "untilDusk": 22,
+              "untilDusk": 12,
               "level": 2
             },
             "source": "time.cycle"
           }
         ],
-        "priorHash": "1baed33a1632f013cc82ce986c87278aff8c9396542511563e8f09c1d3ea9ea2",
-        "nextHash": "7f1791ad57e08a9ba694da223e571559fd814e8019285f400854da462e2209d7"
+        "priorHash": "431567b7e278a8464deb713339511e6ed0259486c28ee41a6764fd9ba47eb058",
+        "nextHash": "785b8297ced56e3cb28c9cfc55357136e3236aa8dca12e43f491cbde5d902a84"
       },
       {
-        "eventIndex": 10,
+        "eventIndex": 11,
         "intent": {
           "class": "examine",
           "target": {
@@ -1092,7 +1188,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 10
+                "value": 11
               },
               {
                 "op": "set",
@@ -1119,28 +1215,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1068
+                "value": 1078
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "17:48"
+                "value": "17:58"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 10
+                "value": 11
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "7f1791ad57e08a9ba694da223e571559fd814e8019285f400854da462e2209d7",
-        "nextHash": "5b6f17121ca7d940953e7b1b24c06502487a944730c5b4ad5e15040f929ef13e"
+        "priorHash": "785b8297ced56e3cb28c9cfc55357136e3236aa8dca12e43f491cbde5d902a84",
+        "nextHash": "1101023a7b760876eb47174c2d617af9b9f41d1abc7caf05aa618257e91f2f3c"
       },
       {
-        "eventIndex": 11,
+        "eventIndex": 12,
         "intent": {
           "class": "look_back",
           "tags": [],
@@ -1173,7 +1269,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 11
+                "value": 12
               },
               {
                 "op": "set",
@@ -1200,20 +1296,35 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1073
+                "value": 1083
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "17:53"
+                "value": "18:03"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 11
+                "value": 12
               }
             ],
             "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "phase_change",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "phase.now",
+                "value": "dusk"
+              }
+            ],
+            "summary": "The sun gives up without ceremony. In the long shadows the wrong-angled things look almost right, which is worse.",
+            "data": {
+              "phase": "dusk"
+            },
             "source": "time.cycle"
           },
           {
@@ -1227,7 +1338,7 @@
               {
                 "op": "set",
                 "key": "law.mile_road.fired_turn",
-                "value": 11
+                "value": 12
               },
               {
                 "op": "set",
@@ -1275,11 +1386,11 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "5b6f17121ca7d940953e7b1b24c06502487a944730c5b4ad5e15040f929ef13e",
-        "nextHash": "28d77fba132de2c242cca947ac34b914bf6d3fbd40b103af718827abf797aa1d"
+        "priorHash": "1101023a7b760876eb47174c2d617af9b9f41d1abc7caf05aa618257e91f2f3c",
+        "nextHash": "a5c68004fdf5c33c043fa9095bcdec5f2facab4d6320f46de016140520345826"
       },
       {
-        "eventIndex": 12,
+        "eventIndex": 13,
         "intent": {
           "class": "go",
           "tags": [],
@@ -1318,7 +1429,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 12
+                "value": 13
               }
             ],
             "summary": "You set off.",
@@ -1339,7 +1450,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 12
+                "value": 13
               },
               {
                 "op": "set",
@@ -1366,43 +1477,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1098
+                "value": 1108
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "18:18"
+                "value": "18:28"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 12
+                "value": 13
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
-          },
-          {
-            "tag": "phase_change",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "phase.now",
-                "value": "dusk"
-              }
-            ],
-            "summary": "The light goes thin and orange, then grey. Dusk settles over the Hush, and the Zone begins, very quietly, to pay attention.",
-            "data": {
-              "phase": "dusk"
-            },
-            "source": "time.cycle"
           }
         ],
-        "priorHash": "28d77fba132de2c242cca947ac34b914bf6d3fbd40b103af718827abf797aa1d",
-        "nextHash": "d60e68c3b7ec025b39de87fe7497457110b5490df761a912db4d85d43b0e2e2c"
+        "priorHash": "a5c68004fdf5c33c043fa9095bcdec5f2facab4d6320f46de016140520345826",
+        "nextHash": "4dcf12b369fa14533feb206bd6fc3d2ab9531a0d8b7332abb6d113b7ff3ee26f"
       },
       {
-        "eventIndex": 13,
+        "eventIndex": 14,
         "intent": {
           "class": "examine",
           "target": {
@@ -1446,7 +1542,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 13
+                "value": 14
               },
               {
                 "op": "set",
@@ -1462,103 +1558,6 @@
                 "op": "set",
                 "key": "flag.last_target",
                 "value": "dead_walker"
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 1108
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "18:28"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 13
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          }
-        ],
-        "priorHash": "d60e68c3b7ec025b39de87fe7497457110b5490df761a912db4d85d43b0e2e2c",
-        "nextHash": "81caf8e7fac761db83c63fbeab679ca2de304280bc139d37e24c5c31a397ed75"
-      },
-      {
-        "eventIndex": 14,
-        "intent": {
-          "class": "deduce",
-          "topic": "mile road",
-          "tags": [
-            "investigation"
-          ],
-          "confidence": 0.85,
-          "raw": "deduce the mile road"
-        },
-        "owner": "invest.gumshoe",
-        "tape": [],
-        "events": [
-          {
-            "tag": "law_surveyed",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "known.law.mile_road",
-                "value": "surveyed"
-              },
-              {
-                "op": "set",
-                "key": "known.mile_road.surveyed_turn",
-                "value": 14
-              },
-              {
-                "op": "set",
-                "key": "known.mile_road.ever_surveyed",
-                "value": true
-              }
-            ],
-            "summary": "You are certain now. The Mile Road: On the Mile Road, to look back is to double the distance behind you.",
-            "data": {
-              "law": "mile_road"
-            },
-            "source": "invest.gumshoe"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "deduce"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
-                "value": 14
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": null
               }
             ],
             "visibility": "private",
@@ -1587,11 +1586,108 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "81caf8e7fac761db83c63fbeab679ca2de304280bc139d37e24c5c31a397ed75",
-        "nextHash": "807005ac18fa323fa5ba902601b8190c33f308f0da0c56dd8788deafa6e708ea"
+        "priorHash": "4dcf12b369fa14533feb206bd6fc3d2ab9531a0d8b7332abb6d113b7ff3ee26f",
+        "nextHash": "1589a941b9b81c7e278c0a7e5ea79d0d61729d05bad7a1c73cafb3ba602163ec"
       },
       {
         "eventIndex": 15,
+        "intent": {
+          "class": "deduce",
+          "topic": "mile road",
+          "tags": [
+            "investigation"
+          ],
+          "confidence": 0.85,
+          "raw": "deduce the mile road"
+        },
+        "owner": "invest.gumshoe",
+        "tape": [],
+        "events": [
+          {
+            "tag": "law_surveyed",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.law.mile_road",
+                "value": "surveyed"
+              },
+              {
+                "op": "set",
+                "key": "known.mile_road.surveyed_turn",
+                "value": 15
+              },
+              {
+                "op": "set",
+                "key": "known.mile_road.ever_surveyed",
+                "value": true
+              }
+            ],
+            "summary": "You are certain now. The Mile Road: On the Mile Road, to look back is to double the distance behind you.",
+            "data": {
+              "law": "mile_road"
+            },
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "deduce"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 15
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1128
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "18:48"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 15
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "1589a941b9b81c7e278c0a7e5ea79d0d61729d05bad7a1c73cafb3ba602163ec",
+        "nextHash": "65b18c1df7c317216ecee209f51e3deb345d1b9d491f9e0f3730d75dcbc9079d"
+      },
+      {
+        "eventIndex": 16,
         "intent": {
           "class": "go",
           "tags": [],
@@ -1630,7 +1726,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 15
+                "value": 16
               }
             ],
             "summary": "You set off.",
@@ -1651,7 +1747,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 15
+                "value": 16
               },
               {
                 "op": "set",
@@ -1678,28 +1774,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1133
+                "value": 1143
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "18:53"
+                "value": "19:03"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 15
+                "value": 16
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "807005ac18fa323fa5ba902601b8190c33f308f0da0c56dd8788deafa6e708ea",
-        "nextHash": "928efcacf85c3e114c0f3c8a789cf3de963e8312c815f497c38846f13b5689ad"
+        "priorHash": "65b18c1df7c317216ecee209f51e3deb345d1b9d491f9e0f3730d75dcbc9079d",
+        "nextHash": "69edbf2a604a7aaeaf390dae126eb2101b548b7c19bed2830376c26432db2bb6"
       },
       {
-        "eventIndex": 16,
+        "eventIndex": 17,
         "intent": {
           "class": "go",
           "tags": [],
@@ -1738,7 +1834,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 16
+                "value": 17
               }
             ],
             "summary": "You set off.",
@@ -1759,7 +1855,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 16
+                "value": 17
               },
               {
                 "op": "set",
@@ -1786,17 +1882,17 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1151
+                "value": 1161
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "19:11"
+                "value": "19:21"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 16
+                "value": 17
               }
             ],
             "visibility": "private",
@@ -1813,7 +1909,7 @@
               {
                 "op": "set",
                 "key": "law.greywater.fired_turn",
-                "value": 16
+                "value": 17
               },
               {
                 "op": "set",
@@ -1847,11 +1943,11 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "928efcacf85c3e114c0f3c8a789cf3de963e8312c815f497c38846f13b5689ad",
-        "nextHash": "0888479fa269bc2170fd3f8fd4c9db27b0f3b4415d2aa2bc1d08c0e295c04798"
+        "priorHash": "69edbf2a604a7aaeaf390dae126eb2101b548b7c19bed2830376c26432db2bb6",
+        "nextHash": "3241b74ab33d644b592cc0ed40758e7fa84118577574f289b50b8df70ef51e84"
       },
       {
-        "eventIndex": 17,
+        "eventIndex": 18,
         "intent": {
           "class": "examine",
           "target": {
@@ -1917,118 +2013,6 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 17
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": "rust_bloom"
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 1161
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "19:21"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 17
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          },
-          {
-            "tag": "law_triggered",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 2
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 17
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
-              }
-            ],
-            "summary": "[The Greywater]",
-            "data": {
-              "law": "greywater",
-              "contacts": 2,
-              "firstContact": false
-            },
-            "source": "anomaly.hush"
-          }
-        ],
-        "priorHash": "0888479fa269bc2170fd3f8fd4c9db27b0f3b4415d2aa2bc1d08c0e295c04798",
-        "nextHash": "4d36bdaedffc14928b7a400b9dde78e119db829fdad7dd2c19f4ed7f130223df"
-      },
-      {
-        "eventIndex": 18,
-        "intent": {
-          "class": "listen",
-          "tags": [],
-          "confidence": 0.9,
-          "raw": "listen"
-        },
-        "owner": "invest.gumshoe",
-        "tape": [],
-        "events": [
-          {
-            "tag": "tell_observed",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "known.tell.grey_low_hum",
-                "value": true
-              }
-            ],
-            "summary": "A low hum comes up through the soles of your boots — and you feel it answer, faintly, in the iron you carry. The hum is in the metal. It is calling your worked iron back to the ground it came from.",
-            "data": {
-              "tell": "grey_low_hum",
-              "law": "greywater"
-            },
-            "source": "invest.gumshoe"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "listen"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
                 "value": 18
               },
               {
@@ -2044,7 +2028,7 @@
               {
                 "op": "set",
                 "key": "flag.last_target",
-                "value": null
+                "value": "rust_bloom"
               }
             ],
             "visibility": "private",
@@ -2078,7 +2062,7 @@
               {
                 "op": "set",
                 "key": "law.greywater.contacts",
-                "value": 3
+                "value": 2
               },
               {
                 "op": "set",
@@ -2094,50 +2078,38 @@
             "summary": "[The Greywater]",
             "data": {
               "law": "greywater",
-              "contacts": 3,
+              "contacts": 2,
               "firstContact": false
             },
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "4d36bdaedffc14928b7a400b9dde78e119db829fdad7dd2c19f4ed7f130223df",
-        "nextHash": "e8022688863d943b2a4954637c74e7fcd9c66469b127d7d648d94bf4872a9f0c"
+        "priorHash": "3241b74ab33d644b592cc0ed40758e7fa84118577574f289b50b8df70ef51e84",
+        "nextHash": "7973307ec49a457b0f096f8f844ee189d4be1e0f70ad9d9ada7c4af9215a55e9"
       },
       {
         "eventIndex": 19,
         "intent": {
-          "class": "deduce",
-          "topic": "greywater",
-          "tags": [
-            "investigation"
-          ],
-          "confidence": 0.85,
-          "raw": "deduce the greywater"
+          "class": "listen",
+          "tags": [],
+          "confidence": 0.9,
+          "raw": "listen"
         },
         "owner": "invest.gumshoe",
         "tape": [],
         "events": [
           {
-            "tag": "law_surveyed",
+            "tag": "tell_observed",
             "mutations": [
               {
                 "op": "set",
-                "key": "known.law.greywater",
-                "value": "surveyed"
-              },
-              {
-                "op": "set",
-                "key": "known.greywater.surveyed_turn",
-                "value": 19
-              },
-              {
-                "op": "set",
-                "key": "known.greywater.ever_surveyed",
+                "key": "known.tell.grey_low_hum",
                 "value": true
               }
             ],
-            "summary": "You are certain now. The Greywater: In the Greywater after dark, worked metal slumps back toward ore. Iron tools and blades fail.",
+            "summary": "A low hum comes up through the soles of your boots — and you feel it answer, faintly, in the iron you carry. The hum is in the metal. It is calling your worked iron back to the ground it came from.",
             "data": {
+              "tell": "grey_low_hum",
               "law": "greywater"
             },
             "source": "invest.gumshoe"
@@ -2148,7 +2120,7 @@
               {
                 "op": "set",
                 "key": "flag.last_intent",
-                "value": "deduce"
+                "value": "listen"
               },
               {
                 "op": "set",
@@ -2202,12 +2174,136 @@
               {
                 "op": "set",
                 "key": "law.greywater.contacts",
-                "value": 4
+                "value": 3
               },
               {
                 "op": "set",
                 "key": "law.greywater.fired_turn",
                 "value": 19
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.witnessed",
+                "value": true
+              }
+            ],
+            "summary": "[The Greywater]",
+            "data": {
+              "law": "greywater",
+              "contacts": 3,
+              "firstContact": false
+            },
+            "source": "anomaly.hush"
+          }
+        ],
+        "priorHash": "7973307ec49a457b0f096f8f844ee189d4be1e0f70ad9d9ada7c4af9215a55e9",
+        "nextHash": "6d5768a390c1fbbedd4381aec37821972e2f40be123fecf5b275ff1371b40a12"
+      },
+      {
+        "eventIndex": 20,
+        "intent": {
+          "class": "deduce",
+          "topic": "greywater",
+          "tags": [
+            "investigation"
+          ],
+          "confidence": 0.85,
+          "raw": "deduce the greywater"
+        },
+        "owner": "invest.gumshoe",
+        "tape": [],
+        "events": [
+          {
+            "tag": "law_surveyed",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "known.law.greywater",
+                "value": "surveyed"
+              },
+              {
+                "op": "set",
+                "key": "known.greywater.surveyed_turn",
+                "value": 20
+              },
+              {
+                "op": "set",
+                "key": "known.greywater.ever_surveyed",
+                "value": true
+              }
+            ],
+            "summary": "You are certain now. The Greywater: In the Greywater after dark, worked metal slumps back toward ore. Iron tools and blades fail.",
+            "data": {
+              "law": "greywater"
+            },
+            "source": "invest.gumshoe"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "deduce"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 20
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1191
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "19:51"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 20
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "law_triggered",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.greywater.contacts",
+                "value": 4
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.fired_turn",
+                "value": 20
               },
               {
                 "op": "set",
@@ -2224,11 +2320,576 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "e8022688863d943b2a4954637c74e7fcd9c66469b127d7d648d94bf4872a9f0c",
-        "nextHash": "cc044a1d357cb782c0d4b1297760357a8b5643d3c3329490eec014908019d7af"
+        "priorHash": "6d5768a390c1fbbedd4381aec37821972e2f40be123fecf5b275ff1371b40a12",
+        "nextHash": "f4241a93f7863ef9824f8c59122026244d3e4b1812c1b2ac42e8dbf9745f4f47"
       },
       {
-        "eventIndex": 20,
+        "eventIndex": 21,
+        "intent": {
+          "class": "rest",
+          "tags": [],
+          "confidence": 0.9,
+          "raw": "rest"
+        },
+        "owner": "spine.fu-pbta",
+        "tape": [
+          {
+            "stream": "spine",
+            "counter": 0,
+            "kind": "rng",
+            "value": 3,
+            "label": "fu-d6"
+          }
+        ],
+        "events": [
+          {
+            "tag": "spine_beat",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_band",
+                "value": "no"
+              }
+            ],
+            "visibility": "private",
+            "source": "spine.fu-pbta"
+          },
+          {
+            "tag": "spine_rest",
+            "mutations": [
+              {
+                "op": "adjust",
+                "key": "survival.pc.unsettled",
+                "by": -1,
+                "min": 0,
+                "max": 5
+              }
+            ],
+            "summary": "You rest as well as the Zone allows. Hours pass.",
+            "visibility": "public",
+            "source": "spine.fu-pbta"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "rest"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 21
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1311
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "21:51"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 21
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "phase_change",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "phase.now",
+                "value": "night"
+              }
+            ],
+            "summary": "Full dark, and no honest dark at all. The Hush comes awake around you, lawful and patient and hungry.",
+            "data": {
+              "phase": "night"
+            },
+            "source": "time.cycle"
+          },
+          {
+            "tag": "law_triggered",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.greywater.contacts",
+                "value": 5
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.fired_turn",
+                "value": 21
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.witnessed",
+                "value": true
+              }
+            ],
+            "summary": "[The Greywater]",
+            "data": {
+              "law": "greywater",
+              "contacts": 5,
+              "firstContact": false
+            },
+            "source": "anomaly.hush"
+          }
+        ],
+        "priorHash": "f4241a93f7863ef9824f8c59122026244d3e4b1812c1b2ac42e8dbf9745f4f47",
+        "nextHash": "1f91f284aec2d9b71b3d5ab4f03297f7c01efd7f820460e367cd7c374b187e91"
+      },
+      {
+        "eventIndex": 22,
+        "intent": {
+          "class": "rest",
+          "tags": [],
+          "confidence": 0.9,
+          "raw": "rest"
+        },
+        "owner": "spine.fu-pbta",
+        "tape": [
+          {
+            "stream": "spine",
+            "counter": 1,
+            "kind": "rng",
+            "value": 4,
+            "label": "fu-d6"
+          }
+        ],
+        "events": [
+          {
+            "tag": "spine_beat",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_band",
+                "value": "yes"
+              }
+            ],
+            "visibility": "private",
+            "source": "spine.fu-pbta"
+          },
+          {
+            "tag": "spine_rest",
+            "mutations": [
+              {
+                "op": "adjust",
+                "key": "survival.pc.unsettled",
+                "by": -1,
+                "min": 0,
+                "max": 5
+              }
+            ],
+            "summary": "You rest as well as the Zone allows. Hours pass.",
+            "visibility": "public",
+            "source": "spine.fu-pbta"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "rest"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 22
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1431
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "23:51"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 22
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "law_triggered",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.greywater.contacts",
+                "value": 6
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.fired_turn",
+                "value": 22
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.witnessed",
+                "value": true
+              }
+            ],
+            "summary": "[The Greywater]",
+            "data": {
+              "law": "greywater",
+              "contacts": 6,
+              "firstContact": false
+            },
+            "source": "anomaly.hush"
+          }
+        ],
+        "priorHash": "1f91f284aec2d9b71b3d5ab4f03297f7c01efd7f820460e367cd7c374b187e91",
+        "nextHash": "08a2723d5d85dfa8cfd52884e1379491a496cdf1d7f0126e470905d82679eeb1"
+      },
+      {
+        "eventIndex": 23,
+        "intent": {
+          "class": "rest",
+          "tags": [],
+          "confidence": 0.9,
+          "raw": "rest"
+        },
+        "owner": "spine.fu-pbta",
+        "tape": [
+          {
+            "stream": "spine",
+            "counter": 2,
+            "kind": "rng",
+            "value": 4,
+            "label": "fu-d6"
+          }
+        ],
+        "events": [
+          {
+            "tag": "spine_beat",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_band",
+                "value": "yes"
+              }
+            ],
+            "visibility": "private",
+            "source": "spine.fu-pbta"
+          },
+          {
+            "tag": "spine_rest",
+            "mutations": [
+              {
+                "op": "adjust",
+                "key": "survival.pc.unsettled",
+                "by": -1,
+                "min": 0,
+                "max": 5
+              }
+            ],
+            "summary": "You rest as well as the Zone allows. Hours pass.",
+            "visibility": "public",
+            "source": "spine.fu-pbta"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "rest"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 23
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1551
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "01:51"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 23
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "law_triggered",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.greywater.contacts",
+                "value": 7
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.fired_turn",
+                "value": 23
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.witnessed",
+                "value": true
+              }
+            ],
+            "summary": "[The Greywater]",
+            "data": {
+              "law": "greywater",
+              "contacts": 7,
+              "firstContact": false
+            },
+            "source": "anomaly.hush"
+          },
+          {
+            "tag": "drift_warn",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_warned",
+                "value": true
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_warn_turn",
+                "value": 23
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_check_turn",
+                "value": 23
+              }
+            ],
+            "summary": "Your reading of The Mile Road has aged a little — the fine detail going soft at the edges, the way an old memory does. The shape of it you still hold; only the particulars are worth confirming again, when you can.",
+            "data": {
+              "law": "mile_road",
+              "widened": false
+            },
+            "source": "anomaly.hush"
+          }
+        ],
+        "priorHash": "08a2723d5d85dfa8cfd52884e1379491a496cdf1d7f0126e470905d82679eeb1",
+        "nextHash": "1b448e2846e11e91000b7390e97b7ecbbb50cb5a543fdbfcfa26cb66121c4b1f"
+      },
+      {
+        "eventIndex": 24,
+        "intent": {
+          "class": "rest",
+          "tags": [],
+          "confidence": 0.9,
+          "raw": "rest"
+        },
+        "owner": "spine.fu-pbta",
+        "tape": [
+          {
+            "stream": "spine",
+            "counter": 3,
+            "kind": "rng",
+            "value": 2,
+            "label": "fu-d6"
+          }
+        ],
+        "events": [
+          {
+            "tag": "spine_beat",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_band",
+                "value": "yes-but"
+              }
+            ],
+            "visibility": "private",
+            "source": "spine.fu-pbta"
+          },
+          {
+            "tag": "spine_rest",
+            "mutations": [
+              {
+                "op": "adjust",
+                "key": "survival.pc.unsettled",
+                "by": -1,
+                "min": 0,
+                "max": 5
+              }
+            ],
+            "summary": "You rest as well as the Zone allows. Hours pass.",
+            "visibility": "public",
+            "source": "spine.fu-pbta"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "rest"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 24
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": null
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1671
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "03:51"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 24
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "law_triggered",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.greywater.contacts",
+                "value": 8
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.fired_turn",
+                "value": 24
+              },
+              {
+                "op": "set",
+                "key": "law.greywater.witnessed",
+                "value": true
+              }
+            ],
+            "summary": "[The Greywater]",
+            "data": {
+              "law": "greywater",
+              "contacts": 8,
+              "firstContact": false
+            },
+            "source": "anomaly.hush"
+          }
+        ],
+        "priorHash": "1b448e2846e11e91000b7390e97b7ecbbb50cb5a543fdbfcfa26cb66121c4b1f",
+        "nextHash": "ea4806ac57064caa7346d6ef194eec6757ed2314ccf93d74a40800c04e9387da"
+      },
+      {
+        "eventIndex": 25,
         "intent": {
           "class": "go",
           "tags": [],
@@ -2267,7 +2928,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 20
+                "value": 25
               }
             ],
             "summary": "You set off.",
@@ -2288,7 +2949,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 20
+                "value": 25
               },
               {
                 "op": "set",
@@ -2315,55 +2976,43 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1191
+                "value": 1681
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "19:51"
+                "value": "04:01"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 20
+                "value": 25
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           },
           {
-            "tag": "law_triggered",
+            "tag": "phase_change",
             "mutations": [
               {
                 "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 5
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 20
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
+                "key": "phase.now",
+                "value": "predawn"
               }
             ],
-            "summary": "[The Greywater]",
+            "summary": "A grey, grudging not-yet-light gathers at the edges of things. Predawn, the hour the Zone holds its breath.",
             "data": {
-              "law": "greywater",
-              "contacts": 5,
-              "firstContact": false
+              "phase": "predawn"
             },
-            "source": "anomaly.hush"
+            "source": "time.cycle"
           }
         ],
-        "priorHash": "cc044a1d357cb782c0d4b1297760357a8b5643d3c3329490eec014908019d7af",
-        "nextHash": "569b8aef73f4fb7c2d0ce5cf06f2ecc167c2c61902557cda3ca0da6beca4900b"
+        "priorHash": "ea4806ac57064caa7346d6ef194eec6757ed2314ccf93d74a40800c04e9387da",
+        "nextHash": "d6fed2541aa4daebc204b509ee7765ec362d2e54fb97e15c864fb2ef392dd311"
       },
       {
-        "eventIndex": 21,
+        "eventIndex": 26,
         "intent": {
           "class": "go",
           "tags": [],
@@ -2402,7 +3051,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 21
+                "value": 26
               }
             ],
             "summary": "You set off.",
@@ -2423,7 +3072,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 21
+                "value": 26
               },
               {
                 "op": "set",
@@ -2450,55 +3099,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1199
+                "value": 1689
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "19:59"
+                "value": "04:09"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 21
+                "value": 26
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
-          },
-          {
-            "tag": "law_triggered",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 6
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 21
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
-              }
-            ],
-            "summary": "[The Greywater]",
-            "data": {
-              "law": "greywater",
-              "contacts": 6,
-              "firstContact": false
-            },
-            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "569b8aef73f4fb7c2d0ce5cf06f2ecc167c2c61902557cda3ca0da6beca4900b",
-        "nextHash": "728df8777746bc820d717fefe0799c46f9f1318aec82e79236837f70629d173c"
+        "priorHash": "d6fed2541aa4daebc204b509ee7765ec362d2e54fb97e15c864fb2ef392dd311",
+        "nextHash": "4e0e2e65533b3c6af1a9ea02d4143665c459c570374ff585b7752e3dd0ecdc25"
       },
       {
-        "eventIndex": 22,
+        "eventIndex": 27,
         "intent": {
           "class": "take",
           "target": {
@@ -2526,7 +3148,7 @@
               {
                 "op": "set",
                 "key": "possession.pc.salvage_core.class",
-                "value": "salvage"
+                "value": "anomalous"
               }
             ],
             "summary": "You close your hand around the core. It is warmer than it should be, and it settles into your pack like it has decided to come with you.",
@@ -2558,7 +3180,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 22
+                "value": 27
               },
               {
                 "op": "set",
@@ -2585,55 +3207,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1209
+                "value": 1699
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "20:09"
+                "value": "04:19"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 22
+                "value": 27
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
-          },
-          {
-            "tag": "law_triggered",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 7
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 22
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
-              }
-            ],
-            "summary": "[The Greywater]",
-            "data": {
-              "law": "greywater",
-              "contacts": 7,
-              "firstContact": false
-            },
-            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "728df8777746bc820d717fefe0799c46f9f1318aec82e79236837f70629d173c",
-        "nextHash": "d3799182795d90154a87b9bf6e45e30fe1940b41b9c7d4692ad3ebb6d0526f5a"
+        "priorHash": "4e0e2e65533b3c6af1a9ea02d4143665c459c570374ff585b7752e3dd0ecdc25",
+        "nextHash": "4f396ed89eedc2c37c855f7e732eafd1cb3a451aac1ead279506a07c167a0024"
       },
       {
-        "eventIndex": 23,
+        "eventIndex": 28,
         "intent": {
           "class": "go",
           "tags": [],
@@ -2672,7 +3267,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 23
+                "value": 28
               }
             ],
             "summary": "You set off.",
@@ -2693,7 +3288,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 23
+                "value": 28
               },
               {
                 "op": "set",
@@ -2720,55 +3315,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1225
+                "value": 1715
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "20:25"
+                "value": "04:35"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 23
+                "value": 28
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
-          },
-          {
-            "tag": "law_triggered",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 8
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 23
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
-              }
-            ],
-            "summary": "[The Greywater]",
-            "data": {
-              "law": "greywater",
-              "contacts": 8,
-              "firstContact": false
-            },
-            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "d3799182795d90154a87b9bf6e45e30fe1940b41b9c7d4692ad3ebb6d0526f5a",
-        "nextHash": "3653fd70bf7a98fa060b61c5cd1f3cb56b4f2d7b408260bcc4e82ca9dff2ce57"
+        "priorHash": "4f396ed89eedc2c37c855f7e732eafd1cb3a451aac1ead279506a07c167a0024",
+        "nextHash": "39852dc8961d002bcf3c678b537ed8de372d70c36c2d7d44b42a778909478f92"
       },
       {
-        "eventIndex": 24,
+        "eventIndex": 29,
         "intent": {
           "class": "go",
           "tags": [
@@ -2803,7 +3371,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 24
+                "value": 29
               }
             ],
             "summary": "You set off.",
@@ -2824,7 +3392,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 24
+                "value": 29
               },
               {
                 "op": "set",
@@ -2851,55 +3419,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1235
+                "value": 1725
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "20:35"
+                "value": "04:45"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 24
+                "value": 29
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
-          },
-          {
-            "tag": "law_triggered",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 9
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 24
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
-              }
-            ],
-            "summary": "[The Greywater]",
-            "data": {
-              "law": "greywater",
-              "contacts": 9,
-              "firstContact": false
-            },
-            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "3653fd70bf7a98fa060b61c5cd1f3cb56b4f2d7b408260bcc4e82ca9dff2ce57",
-        "nextHash": "c8e4c527027a3ee7c77eecf6bca2ae95b3a914b30261bdf7b145d8ae3f9ac791"
+        "priorHash": "39852dc8961d002bcf3c678b537ed8de372d70c36c2d7d44b42a778909478f92",
+        "nextHash": "8e17b8604888616677da7991264d1d49deb25f154c94b32a04e9f6e64887d559"
       },
       {
-        "eventIndex": 25,
+        "eventIndex": 30,
         "intent": {
           "class": "go",
           "tags": [
@@ -2934,7 +3475,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 25
+                "value": 30
               }
             ],
             "summary": "You set off.",
@@ -2955,7 +3496,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 25
+                "value": 30
               },
               {
                 "op": "set",
@@ -2982,368 +3523,37 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1253
+                "value": 1743
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "20:53"
+                "value": "05:03"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 25
+                "value": 30
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "c8e4c527027a3ee7c77eecf6bca2ae95b3a914b30261bdf7b145d8ae3f9ac791",
-        "nextHash": "c5ce0aa90583b0be9da7bf83c298cd510da07f94971cd69ead4a60ef29e5248d"
+        "priorHash": "8e17b8604888616677da7991264d1d49deb25f154c94b32a04e9f6e64887d559",
+        "nextHash": "ff763e78da3c749140f4f5ea27dc90cf1e72280f1649e9ffe8ef59e0c4fe0527"
       },
       {
-        "eventIndex": 26,
+        "eventIndex": 31,
         "intent": {
           "class": "go",
           "tags": [],
           "confidence": 0.9,
-          "raw": "mile",
-          "direction": "mile",
-          "target": {
-            "id": "mile_road_high",
-            "raw": "mile",
-            "tags": [
-              "exit"
-            ]
-          }
-        },
-        "owner": "travel.graph",
-        "tape": [],
-        "events": [
-          {
-            "tag": "moved",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "loc.pc",
-                "value": "mile_road_high"
-              },
-              {
-                "op": "set",
-                "key": "route.last_from",
-                "value": "the_fork"
-              },
-              {
-                "op": "set",
-                "key": "flag.time_cost",
-                "value": 15
-              },
-              {
-                "op": "set",
-                "key": "flag.time_cost_turn",
-                "value": 26
-              }
-            ],
-            "summary": "You set off.",
-            "data": {
-              "from": "the_fork",
-              "to": "mile_road_high"
-            },
-            "source": "travel.graph"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "go"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
-                "value": 26
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": "mile_road_high"
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 1268
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "21:08"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 26
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          },
-          {
-            "tag": "phase_change",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "phase.now",
-                "value": "night"
-              }
-            ],
-            "summary": "Full dark, and no honest dark at all. The Hush comes awake around you, lawful and patient and hungry.",
-            "data": {
-              "phase": "night"
-            },
-            "source": "time.cycle"
-          }
-        ],
-        "priorHash": "c5ce0aa90583b0be9da7bf83c298cd510da07f94971cd69ead4a60ef29e5248d",
-        "nextHash": "35ea0f134d0edeb6ead7883c33b69bb481d25c76d6260797855efe3e97597ff1"
-      },
-      {
-        "eventIndex": 27,
-        "intent": {
-          "class": "go",
-          "tags": [
-            "movement",
-            "return"
-          ],
-          "confidence": 0.9,
-          "raw": "back",
-          "direction": "back"
-        },
-        "owner": "travel.graph",
-        "tape": [],
-        "events": [
-          {
-            "tag": "moved",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "loc.pc",
-                "value": "mile_road_low"
-              },
-              {
-                "op": "set",
-                "key": "route.last_from",
-                "value": "mile_road_high"
-              },
-              {
-                "op": "set",
-                "key": "flag.time_cost",
-                "value": 25
-              },
-              {
-                "op": "set",
-                "key": "flag.time_cost_turn",
-                "value": 27
-              }
-            ],
-            "summary": "You set off.",
-            "data": {
-              "from": "mile_road_high",
-              "to": "mile_road_low"
-            },
-            "source": "travel.graph"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "go"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
-                "value": 27
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": null
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 1293
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "21:33"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 27
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          }
-        ],
-        "priorHash": "35ea0f134d0edeb6ead7883c33b69bb481d25c76d6260797855efe3e97597ff1",
-        "nextHash": "9c71366d191d15e92ab28fa168c065924cecdf11d35d199ff7eb95233bebf30e"
-      },
-      {
-        "eventIndex": 28,
-        "intent": {
-          "class": "go",
-          "tags": [
-            "movement",
-            "return"
-          ],
-          "confidence": 0.9,
-          "raw": "back",
-          "direction": "back"
-        },
-        "owner": "travel.graph",
-        "tape": [],
-        "events": [
-          {
-            "tag": "moved",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "loc.pc",
-                "value": "lyles_rest"
-              },
-              {
-                "op": "set",
-                "key": "route.last_from",
-                "value": "mile_road_low"
-              },
-              {
-                "op": "set",
-                "key": "flag.time_cost",
-                "value": 22
-              },
-              {
-                "op": "set",
-                "key": "flag.time_cost_turn",
-                "value": 28
-              }
-            ],
-            "summary": "You set off.",
-            "data": {
-              "from": "mile_road_low",
-              "to": "lyles_rest"
-            },
-            "source": "travel.graph"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "go"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
-                "value": 28
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": null
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 1315
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "21:55"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 28
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          }
-        ],
-        "priorHash": "9c71366d191d15e92ab28fa168c065924cecdf11d35d199ff7eb95233bebf30e",
-        "nextHash": "a0e1292d9015e999e39f944d8fba752f4988c21dc9cb1f3d2bdd9743ebef20d3"
-      },
-      {
-        "eventIndex": 29,
-        "intent": {
-          "class": "go",
-          "tags": [],
-          "confidence": 0.9,
-          "raw": "gate",
-          "direction": "gate",
+          "raw": "wire",
+          "direction": "wire",
           "target": {
             "id": "cordon_checkpoint",
-            "raw": "gate",
+            "raw": "wire",
             "tags": [
               "exit"
             ]
@@ -3363,22 +3573,22 @@
               {
                 "op": "set",
                 "key": "route.last_from",
-                "value": "lyles_rest"
+                "value": "the_fork"
               },
               {
                 "op": "set",
                 "key": "flag.time_cost",
-                "value": 18
+                "value": 14
               },
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 29
+                "value": 31
               }
             ],
             "summary": "You set off.",
             "data": {
-              "from": "lyles_rest",
+              "from": "the_fork",
               "to": "cordon_checkpoint"
             },
             "source": "travel.graph"
@@ -3394,7 +3604,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 29
+                "value": 31
               },
               {
                 "op": "set",
@@ -3421,123 +3631,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1333
+                "value": 1757
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "22:13"
+                "value": "05:17"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 29
+                "value": 31
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "a0e1292d9015e999e39f944d8fba752f4988c21dc9cb1f3d2bdd9743ebef20d3",
-        "nextHash": "69713a0ea73ad6f589c86cfdffc773f9347bbb1897952b8bce664265182e0816"
+        "priorHash": "ff763e78da3c749140f4f5ea27dc90cf1e72280f1649e9ffe8ef59e0c4fe0527",
+        "nextHash": "395047cc6eeb156e442f49d97e1dd0b0c5013fb54c2b219f7db3af531e84c9fb"
       },
       {
-        "eventIndex": 30,
-        "intent": {
-          "class": "ask_about",
-          "topic": "the gap",
-          "target": {
-            "id": "warden_holt",
-            "raw": "holt",
-            "tags": [
-              "npc"
-            ]
-          },
-          "tags": [
-            "social"
-          ],
-          "confidence": 0.8,
-          "raw": "ask holt about the gap"
-        },
-        "owner": "social.fate",
-        "tape": [],
-        "events": [
-          {
-            "tag": "dialogue",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "objective.knows_gap",
-                "value": true
-              }
-            ],
-            "summary": "Warden Holt: “The gap in the wire? Officially there's no such thing. Unofficially, I find I study my own boots a great deal this hour of the night. A careful soul could slip toward the fork that way — or back out of it, carrying something I'd rather not have to see. The floodlight throws long, but it throws crooked; there's a wedge of dark by the north post where a low, quiet figure simply isn't, as far as I'm concerned — but only after dark. In daylight the open ground is open ground, and I can't help you there. Mind you stay low, stay quiet, and don't make me look.”",
-            "data": {
-              "npc": "warden_holt",
-              "line": "holt_gap"
-            },
-            "source": "social.fate"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "ask_about"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
-                "value": 30
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": "warden_holt"
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 1343
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "22:23"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 30
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          }
-        ],
-        "priorHash": "69713a0ea73ad6f589c86cfdffc773f9347bbb1897952b8bce664265182e0816",
-        "nextHash": "b31ad1a69c0319bb953bae1732702f089c5b10921997f701d33417ed6d2a5147"
-      },
-      {
-        "eventIndex": 31,
+        "eventIndex": 32,
         "intent": {
           "class": "hide",
           "tags": [],
@@ -3579,7 +3694,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 31
+                "value": 32
               },
               {
                 "op": "set",
@@ -3606,28 +3721,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1348
+                "value": 1762
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "22:28"
+                "value": "05:22"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 31
+                "value": 32
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b31ad1a69c0319bb953bae1732702f089c5b10921997f701d33417ed6d2a5147",
-        "nextHash": "fa8379b296674e7cd21c4ada54502b1123048cd7f1ca6ceb67aaeb9666a690d7"
+        "priorHash": "395047cc6eeb156e442f49d97e1dd0b0c5013fb54c2b219f7db3af531e84c9fb",
+        "nextHash": "8ff783175ec8fcc42af0dd25efe179ef3a92572dbd0f3a51045ea0836da70fcf"
       },
       {
-        "eventIndex": 32,
+        "eventIndex": 33,
         "intent": {
           "class": "go",
           "tags": [
@@ -3662,7 +3777,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 32
+                "value": 33
               }
             ],
             "summary": "You set off.",
@@ -3683,7 +3798,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 32
+                "value": 33
               },
               {
                 "op": "set",
@@ -3710,25 +3825,25 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1356
+                "value": 1770
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "22:36"
+                "value": "05:30"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 32
+                "value": 33
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "fa8379b296674e7cd21c4ada54502b1123048cd7f1ca6ceb67aaeb9666a690d7",
-        "nextHash": "96dd82906496c16315dfdf17934cd4d363e9c36974a9272b02910e6f88207bc2"
+        "priorHash": "8ff783175ec8fcc42af0dd25efe179ef3a92572dbd0f3a51045ea0836da70fcf",
+        "nextHash": "cccb9973f255df06e7477731478b464d290f47d03bb1d9d8e1a487e2ba1606fb"
       }
     ]
   }

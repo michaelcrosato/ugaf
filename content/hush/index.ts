@@ -15,7 +15,7 @@ export const HUSH_PACK: WorldPack = {
   meta: {
     id: 'hush.cordons-edge',
     title: "The Hush — The Cordon's Edge",
-    version: '0.1.0',
+    version: '0.2.0', // feedback/0014 #1: the core can be lost to the dark Greywater ford on the carry-out
     schemaVersion: 1,
     licenseTier: 'green',
   },
@@ -42,6 +42,20 @@ export const HUSH_PACK: WorldPack = {
       "You came in on the last cordon truck with three coins, what iron you could borrow, and a rumour: that something the Survey calls only 'the core' lies out in the drowned bottoms, and that everyone who matters on this Edge wants it. The waystation door bangs shut behind you. The Hush is waiting, and it is very, very quiet.",
   },
   goals: [
+    {
+      // feedback/0014 #1 — the core is anomalous WORKED matter, and the Greywater hungers for
+      // worked matter after dark. Carry it out across the (unavoidable) dark Greywater ford and
+      // it slumps to dead ore in your hands. This is checked BEFORE the win goals, so a naive
+      // after-dark carry-out LOSES — the deduced Greywater law is now ON the win path, not
+      // bypassable. Telegraphed by two escalating warnings (the carry-out ladder); leaving the
+      // water or waiting out the dark recovers the core fully. No unwarned loss, ever.
+      id: 'lost_core_to_greywater',
+      when: { fact: 'possession.pc.salvage_core.condition', eq: 'ore' },
+      outcome: 'lost',
+      title: 'The Water Remembered',
+      epilogue:
+        'The core slumps in your hands to a fist of red, rotten ore — the wrong weight gone out of it, the warmth gone cold, ordinary and ruined. You carried worked anomaly into iron-hungry water after dark, and the Greywater did to it what it does to every worked thing the dark can reach: it called it home, and remembered what it was for. You were warned, twice, and the prize itself told you it was failing in your hands. Somewhere out past the wire the Survey is still waiting for a core that will never come, and you are standing in the dark holding the proof that the Hush keeps its laws whether or not you have learned them.',
+    },
     {
       id: 'recover_core_mastery',
       when: {

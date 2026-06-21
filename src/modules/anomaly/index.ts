@@ -24,7 +24,7 @@ export function createAnomaly(pack: WorldPack): Module {
 
   const manifest = makeManifest({
     id: 'anomaly.hush',
-    version: '0.2.0', // feedback/0013 #5: the antenna "coming" ladder (a name no longer collapses warn+death)
+    version: '0.3.0', // feedback/0014 #1: the core is anomalous worked matter — carrying it across the dark Greywater ford threatens it (a deduced, failable law made UNAVOIDABLE on the win path)
     content: { laws: pack.laws.map((l) => ({ id: l.id, cat: l.effectCategory })) },
     source: 'bespoke (The Hush) — original anomaly physics',
     license: {
@@ -91,6 +91,18 @@ export function createAnomaly(pack: WorldPack): Module {
     if (law.effect.kind === 'degrade_item_class' && !carryingClass(facts, law.effect.itemClass)) return false;
     if (law.effect.kind === 'summon' && law.effect.via === 'metal' && !carryingClass(facts, 'metal')) return false;
     return true;
+  }
+
+  /**
+   * Is the Greywater law in its HUNGRY phase right now? Reuses the exact gate the iron-degrade
+   * uses — its `ambientGate` (dusk/night), evaluated through the same `widenedPhaseView` so a
+   * DRIFTED window (the predawn the decay crept into, feedback/0014 #4) also reads as hungry.
+   * This is the phase-window the bespoke "core in the water" handler shares with the iron.
+   */
+  function greywaterHungry(law: LawDefinition, facts: FactView): boolean {
+    if (facts.getBool(`law.${law.id}.live`) === false) return false;
+    const ev = widenedPhaseView(law, facts) ?? facts;
+    return law.ambientGate ? evalPredicate(law.ambientGate, ev) : true;
   }
 
   function applyEffect(
@@ -307,13 +319,97 @@ export function createAnomaly(pack: WorldPack): Module {
         }
       }
 
+      // The bespoke "core in the Greywater" machine (feedback/0014 #1): the salvage core is
+      // anomalous WORKED MATTER, and after dark the Greywater wants all worked matter home in
+      // the mud — so carrying it across the (unavoidable) Greywater nodes in the hungry phase
+      // threatens the prize itself. A FAIR escalating ladder (mirrors the antenna `coming` and
+      // the Mile-Road lookback ladders): warn, last-warn, then slump it to ore (the lose-state).
+      // Leaving the Greywater scope OR the phase going safe CLEARS the ladder and knits the core
+      // whole again — no unwarned loss, ever. This is the one deduced, failable law made
+      // UNAVOIDABLE on the win path (the linear cache->bottoms->ford route re-crosses it).
+      const coreEvents: WorldEvent[] = [];
+      let coreRender: BeatResult['render'] | undefined;
+      // idempotent per turn: the engine polls standing beat-triggers to convergence, so the ladder
+      // must advance AT MOST ONE rung per acting beat (mirrors the law `fired_turn` guard). Once we
+      // have acted on the core this turn, no further core mutation fires.
+      if (facts.getNumber('law.greywater.core_acted_turn') !== ctx.turn) {
+        const grey = laws.get('greywater');
+        const carryingCore = facts.getBool('possession.pc.salvage_core') === true;
+        const inGrey = grey ? inScope(grey, node) : false;
+        const hungry = grey ? greywaterHungry(grey, facts) : false;
+        const actingBeat = facts.getNumber('flag.last_turn') === ctx.turn;
+        const warned = facts.getNumber('law.greywater.core_warned') ?? 0;
+        const condition = facts.getString('possession.pc.salvage_core.condition');
+        const alreadyOre = condition === 'ore';
+        const actedMut = { op: 'set' as const, key: 'law.greywater.core_acted_turn', value: ctx.turn };
+
+        if (carryingCore && grey && inGrey && hungry && actingBeat && !alreadyOre) {
+          // one rung per acting beat: escalate the ladder.
+          const rung = warned + 1;
+          if (rung <= 1) {
+            coreEvents.push({
+              tag: 'core_hunger',
+              mutations: [
+                actedMut,
+                { op: 'set', key: 'law.greywater.core_warned', value: rung },
+                { op: 'set', key: 'possession.pc.salvage_core.condition', value: 'unstable' },
+              ],
+              summary: coreHungerTell(1),
+              data: { law: 'greywater', rung },
+              severity: 'reversible',
+            });
+            coreRender = { labels: ['law.greywater', 'core.hunger'], valence: 'cost' };
+          } else if (rung === 2) {
+            coreEvents.push({
+              tag: 'core_hunger',
+              mutations: [actedMut, { op: 'set', key: 'law.greywater.core_warned', value: rung }],
+              summary: coreHungerTell(2),
+              data: { law: 'greywater', rung },
+              severity: 'reversible',
+            });
+            coreRender = { labels: ['law.greywater', 'core.hunger'], valence: 'cost' };
+          } else {
+            // rung 3: the Greywater remembers what worked matter was for. The core slumps to ore
+            // (the lost_core_to_greywater goal fires on this condition).
+            coreEvents.push({
+              tag: 'core_lost',
+              mutations: [
+                actedMut,
+                { op: 'set', key: 'law.greywater.core_warned', value: rung },
+                { op: 'set', key: 'possession.pc.salvage_core.condition', value: 'ore' },
+              ],
+              summary: coreHungerTell(3),
+              data: { law: 'greywater', rung },
+              severity: 'irreversible',
+            });
+            coreRender = { labels: ['law.greywater', 'core.lost'], valence: 'cost' };
+          }
+        } else if (carryingCore && !alreadyOre && (warned > 0 || condition === 'unstable') && (!inGrey || !hungry)) {
+          // FULL RECOVERY: the moment you are out of the water OR the dark has passed (the phase is
+          // safe), the core knits back whole — clear the ladder and delete the `unstable` mark.
+          // (Only when the core has NOT already slumped to ore — that loss is permanent.)
+          coreEvents.push({
+            tag: 'core_recovered',
+            mutations: [
+              actedMut,
+              { op: 'set', key: 'law.greywater.core_warned', value: 0 },
+              { op: 'delete', key: 'possession.pc.salvage_core.condition' },
+            ],
+            summary: coreRecoverTell(!inGrey),
+            data: { law: 'greywater' },
+            severity: 'reversible',
+          });
+          coreRender = { labels: ['core.recovered'], valence: 'boon' };
+        }
+      }
+
       // law_trigger: fold all firing laws in canonical order (K6)
       const firing = foldOrder([...laws.values()].filter((l) => inScope(l, node) && triggers(l, facts, ctx.turn)));
-      if (firing.length === 0 && huntEvents.length === 0) return {};
+      if (firing.length === 0 && huntEvents.length === 0 && coreEvents.length === 0) return {};
 
-      const events: WorldEvent[] = [...huntEvents];
+      const events: WorldEvent[] = [...huntEvents, ...coreEvents];
       const scheduled: ScheduledEvent[] = [...huntScheduled];
-      let render: BeatResult['render'] | undefined = huntRender;
+      let render: BeatResult['render'] | undefined = coreRender ?? huntRender;
       for (const law of firing) {
         const contacts = (facts.getNumber(`law.${law.id}.contacts`) ?? 0) + 1;
         const surveyed = facts.getString(`known.law.${law.id}`) === 'surveyed';
@@ -445,6 +541,30 @@ function hollowDarkTell(law: LawDefinition, closer: number): string {
   if (closer === 3)
     return 'A third time you stop, and the quiet presses flat against your ears, and your own pulse goes loud and wrong in the silence. Do not stop again. One more held breath in this dark and it will have closed the last of the distance.';
   return 'You go still one time too many.';
+}
+
+/**
+ * The "core in the Greywater" ladder (feedback/0014 #1): the carry-out adds its OWN escalating
+ * warnings before any loss — rung 1 names the danger and the ONE truthful recovery while you carry
+ * it (get OUT of the water, up to the fork), rung 2 is a sharper last warning, rung 3 is the slump
+ * to ore. Mirrors the Mile Road / Antenna / Hollow Dark ladders: telegraphed, deducible, never an
+ * unwarned loss. (Note: "wait it out" is the PRE-retrieval strategy — you wait the dark out at the
+ * ford WITHOUT the core, then cross in the safe hour. Once the core is in hand, waiting in the water
+ * only feeds the loss, so the carry-out warning points solely at getting clear of the water.)
+ */
+function coreHungerTell(rung: number): string {
+  if (rung <= 1)
+    return 'The core goes soft in your hands — its wrong-heavy weight sloughing, the surface of it crawling like wet clay. The Greywater has caught the worked-matter scent of it and started to call it apart, the way it calls the iron. Get it out of the water NOW — up to the fork, to dry ground — before it is lost. There is no waiting the dark out while you carry it; the hungry water only takes it faster. (You should have crossed in the safe hour. The core is going to ore.)';
+  if (rung === 2)
+    return 'The core sags further, a knot of not-quite-stone trying to remember it was ever worked at all. This is the last of your margin: one more beat of the hungry water and it slumps to dead red ore in your pack. OUT of the Greywater this instant — up to the fork, to dry ground — and do not carry it another step into the hum.';
+  return 'You carried worked anomaly one step too far into the iron-hungry dark, and the Greywater took the last of it: the core slumps in your hands to a fist of red, rotten ore, its wrong weight gone, ordinary and ruined. The water remembered what it was for.';
+}
+
+/** Full recovery: out of the water, or the dark passed — the core knits back whole. */
+function coreRecoverTell(leftWater: boolean): string {
+  return leftWater
+    ? 'You carry the core up out of the Greywater, and the moment the water is behind you its wrong weight settles and firms — the sloughing stops, the worked-matter knot of it whole again in your hands. Dry ground; the dark cannot call it from here.'
+    : 'The hungry hour passes, and with the light the core firms back whole in your hands — its wrong weight steadying, the sloughing stilled. The Greywater has gone back to sleep, and let go of what you carry.';
 }
 
 /** The Mile Road's escalating warning ladder: it warns, dreads, warns explicitly, then takes you. */

@@ -60,26 +60,31 @@ describe('the NPC information-economy', () => {
     const s = sess('golden-hush'); // the daylight route is non-lethal on this seed
     s.act('out');
     expect(s.act('talk to holt').text).toContain('Going in, are you'); // default greeting
-    // fetch the core and return to the gate (carrying it), all through real play
+    // fetch the core and return to the gate (carrying it), all through real play — TIMING the
+    // now-hungry Greywater ford (wait out the dark, cross the bottoms in the safe predawn window)
+    // so the core rides out intact (feedback/0014 #1) instead of slumping to ore mid-carry.
     for (const c of [
       'road',
       'road',
       'on',
       'fork',
       'water',
+      'rest',
+      'rest',
+      'rest',
+      'rest',
+      'rest',
       'in',
       'cache',
       'take core',
       'out',
       'back',
       'back',
-      'mile',
-      'back',
-      'back',
-      'gate',
+      'wire', // the cut in the wire, straight up to the watched checkpoint (still carrying the core)
     ])
       s.act(c);
     expect(s.state.facts['possession.pc.salvage_core']).toBe(true);
+    expect(s.state.facts['possession.pc.salvage_core.condition']).toBeUndefined(); // intact — timed the ford
     expect(s.state.facts['loc.pc']).toBe('cordon_checkpoint');
     const after = s.act('talk to holt').text;
     expect(after).not.toContain('Going in, are you'); // greeting changed
