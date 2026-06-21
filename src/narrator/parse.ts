@@ -356,7 +356,16 @@ export function createParser(pack: WorldPack): Parser {
 
     // no verb: if the whole thing resolves to an exit, treat as go; else unclassified
     const asExit = resolveNoun(lower, obs);
-    if (asExit?.tags?.includes('exit')) return mk('go', { target: asExit, confidence: 0.7 });
+    if (asExit?.tags?.includes('exit')) {
+      // an input that names an OFFERED way EXACTLY (its dir or its listed label, the way the scene
+      // prints them under "ways from here") is an unambiguous move — make it CONFIDENT (>= 0.75) so it
+      // COMMITS, instead of stalling at 0.7 and tripping the K8 clarify near an irreversible beat,
+      // where re-issuing the very command the game offered loops forever (B7: the ford-escape betrayal —
+      // a player typing exactly what they were shown was made to rephrase or lose the core). A fuzzy
+      // or partial exit match stays tentative (0.7), so the K8 guard still covers genuinely uncertain moves.
+      const exact = obs.scene.exits.some((e) => e.dir.toLowerCase() === lower || e.label.toLowerCase() === lower);
+      return mk('go', { target: asExit, confidence: exact ? 0.85 : 0.7 });
+    }
     return mk('unclassified', { confidence: 0.2 });
 
     function mk(cls: IntentClass, extra: Partial<ParsedIntent>): ParsedIntent {
