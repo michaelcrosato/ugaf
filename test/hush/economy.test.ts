@@ -207,6 +207,24 @@ describe('the NPC information-economy', () => {
     });
   }
 
+  // ---- feedback/0016 #5: Mox states the CONCRETE safe-hour window at purchase ----------------
+  // The keystone made the bought safe-hour load-bearing, but "the safe hour's deadline is invisible"
+  // (p005): she sold "an hour" without ever naming WHICH hour. At purchase she must state the window
+  // in concrete, in-fiction hours consistent with the engine (safe through daylight, wakes at dusk),
+  // and frame it as luck BOUGHT, not learned (move part of the win-screen "bought luck" theme here).
+  it('Mox names the concrete safe-hour window at purchase, not just "an hour"', () => {
+    const s = sess('econ-mox-window');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    const r = s.act('pay mox');
+    expect(r.rejected).toBeFalsy();
+    const t = r.text.toLowerCase();
+    expect(t).toContain('midday'); // names the heart of the safe window (PHASE_BOUNDARY.midday = 12:00)
+    expect(t).toMatch(/\bsix\b|dusk/); // and names when it closes (dusk = 18:00)
+    expect(t).toMatch(/luck|bought|sold/); // framed as bought luck, not learned mastery
+    expect(s.state.facts['objective.cache_route']).toBe('known'); // and still transacts
+    expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1);
+  });
+
   it('Mox discusses her signature topic (the safe hour) for free — no longer a pure paywall', () => {
     const s = sess('econ-mox-talk');
     for (const c of ['out', 'road', 'salvage']) s.act(c);
@@ -215,6 +233,41 @@ describe('the NPC information-economy', () => {
     expect(s.state.facts['known.purchased.greywater']).toBeFalsy();
     expect(r.text.toLowerCase()).toMatch(/safe hour|midday|dusk/); // she actually talks about it
     expect(r.text).not.toContain('Nothing I can tell you about that'); // not a deflect
+  });
+
+  // ---- feedback/0016 #3B: make the win-relevant antenna detour SALIENT (not just reachable) ----
+  // The relic->Greywater-table trade already works, but a player has no prompt to brave the antenna
+  // field for it — so a third of the rule-system reads as decorative. Eun (the knowledge merchant)
+  // now signposts the antenna-glass shard as a coin-free path to the Greywater law when you ask about
+  // the water — threading the field into the economic decision WITHOUT forcing the route or bypassing
+  // the Greywater keystone (the shard buys the table; you still must time the crossing).
+  it('Eun signposts the antenna-glass trade as a coin-free path to the Greywater law (0016 #3B)', () => {
+    const s = sess('econ-relic-signpost');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    const r = s.act('ask eun about the greywater');
+    expect(r.text.toLowerCase()).toMatch(/antenna-glass|shard/); // points at the win-relevant antenna detour
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // a SIGNPOST, not a free grant
+  });
+
+  // night12a p003 (qa-breaker): claimed examining the Survey's own cards/law-tables flagged the
+  // Greywater law as "owned", blocking the relic trade ("she refuses even though I never paid").
+  // Passive reading must NOT count as owning the law — only buying or deducing does — and the relic
+  // trade must survive a player who reads the walls first (it is the win-relevant antenna payoff).
+  it('reading the Survey walls does not count as owning the Greywater law — the relic trade still fires (night12a p003)', () => {
+    const s = sess('relic-after-reading');
+    for (const c of ['out', 'road', 'road', 'on', 'antennas']) s.act(c);
+    s.act('take the relic');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBe(true);
+    for (const c of ['mile', 'back', 'back', 'survey']) s.act(c);
+    expect(s.state.facts['loc.pc']).toBe('survey_post');
+    s.act('examine the cards');
+    s.act('examine the law-tables');
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // reading != owning
+    expect(s.state.facts['known.law.greywater']).not.toBe('surveyed'); // reading != surveyed
+    const r = s.act('give the relic to eun');
+    expect(r.text).not.toContain('already carry that map');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBeUndefined(); // the shard was traded...
+    expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // ...for the Greywater table
   });
 
   it('Eun gives Law Drift a voice: asking about drift explains why a bought map goes stale', () => {

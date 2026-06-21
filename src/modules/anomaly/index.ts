@@ -469,13 +469,51 @@ export function createAnomaly(pack: WorldPack): Module {
         });
       }
 
+      // Hollow Dark legibility (feedback/0016 #4): the law hunts STILLNESS in the OPEN deep (the fork,
+      // the deep mile, the antenna field). The drowned hamlet's walls break that open dark, so the
+      // Greywater bottoms are a sheltered pocket OUT of its scope — but a player who held still in the
+      // pump-house and felt nothing read the law as a bluff (p006). When the Hollow Dark is LIVE and
+      // you wait/rest at night in one of those sheltered greywater pockets, say so ONCE — so the safe
+      // pocket reads as a learned rule (shelter is safe; the open deep is the danger), not a toothless
+      // threat. It costs nothing and teaches the contrast; the convergence poll terminates on the
+      // `shelter_seen` high-water mark, like the core ladder's per-turn guard.
+      const shelterEvents: WorldEvent[] = [];
+      const lastIntent = facts.getString('flag.last_intent');
+      const SHELTERED_DEEP = node === 'greywater_ford' || node === 'greywater_bottoms' || node === 'greywater_cache';
+      if (
+        SHELTERED_DEEP &&
+        facts.getString('phase.now') === 'night' &&
+        facts.getBool('law.hollow_dark.live') === true &&
+        facts.getNumber('flag.last_turn') === ctx.turn &&
+        (lastIntent === 'wait' || lastIntent === 'rest') &&
+        !facts.getBool('known.hollow_dark.shelter_seen')
+      ) {
+        shelterEvents.push({
+          tag: 'hollow_shelter',
+          mutations: [{ op: 'set', key: 'known.hollow_dark.shelter_seen', value: true }],
+          summary:
+            'You hold still — and nothing leans in. Out in the open deep the Hush hunts the stillness; but here, in the lee of the drowned walls, the dark has no open reach. The hollow places keep to the bare ground above, and cannot get at you behind stone and standing water. A sheltered pocket — you could wait out the worst of the dark down here, were the water itself not the other danger.',
+          data: { law: 'hollow_dark' },
+        });
+      }
+
       // law_trigger: fold all firing laws in canonical order (K6)
       const firing = foldOrder([...laws.values()].filter((l) => inScope(l, node) && triggers(l, facts, ctx.turn)));
-      if (firing.length === 0 && huntEvents.length === 0 && coreEvents.length === 0 && ffEvents.length === 0) return {};
+      if (
+        firing.length === 0 &&
+        huntEvents.length === 0 &&
+        coreEvents.length === 0 &&
+        ffEvents.length === 0 &&
+        shelterEvents.length === 0
+      )
+        return {};
 
-      const events: WorldEvent[] = [...huntEvents, ...coreEvents, ...ffEvents];
+      const events: WorldEvent[] = [...huntEvents, ...coreEvents, ...ffEvents, ...shelterEvents];
       const scheduled: ScheduledEvent[] = [...huntScheduled];
-      let render: BeatResult['render'] | undefined = coreRender ?? huntRender;
+      let render: BeatResult['render'] | undefined =
+        coreRender ??
+        huntRender ??
+        (shelterEvents.length ? { labels: ['hollow_dark.shelter'], valence: 'boon' } : undefined);
       for (const law of firing) {
         const contacts = (facts.getNumber(`law.${law.id}.contacts`) ?? 0) + 1;
         const surveyed = facts.getString(`known.law.${law.id}`) === 'surveyed';

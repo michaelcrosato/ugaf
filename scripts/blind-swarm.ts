@@ -16,8 +16,12 @@
  *   --out <dir>        output dir (default playtest-runs/swarm/<runId>)
  *   --personas a,b     restrict to a subset of persona ids
  *   --models m,n       override the model rotation (e.g. opus,sonnet,haiku)
+ *   --retries <R>      transient-failure (overload/429/network) retries per player (default 2)
+ *   --launch-gap <ms>  min ms between consecutive claude launches — 429 defense (default 1500)
+ *   --retry-base <ms>  backoff base; retry n waits base*2^n + jitter (default 20000)
  *
  * Writes playtest-runs/swarm/<runId>/index.json (the swarm manifest the compiler reads).
+ * The manifest's `summary` now surfaces `failed` (silent-drop count), `retried`, and `costUsd`.
  */
 import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
@@ -132,6 +136,26 @@ const personaFilter = (arg('personas') ?? '').split(/[\s,]+/).filter(Boolean);
 // space-joined token, which the old comma-only split collapsed to a single bogus model that the
 // shell-joined spawn then mangled (night8: --models opus,sonnet,haiku silently ran ALL-opus).
 const modelOverride = (arg('models') ?? '').split(/[\s,]+/).filter(Boolean) as Persona['model'][];
+// 429-resilience (the loop on trial — the orchestration had NO rate-limit handling, so a throttled
+// player silently produced no interview and the compiler dropped it with no warning). Stagger the
+// LAUNCHES so N players never cold-start into the API at once, and retry a player that died to a
+// transient (overload/429/network) error with exponential backoff. Both are tunable.
+const RETRIES = Number(arg('retries', '2')); // transient-failure retries per player (0 = off)
+const LAUNCH_GAP_MS = Number(arg('launch-gap', '1500')); // min ms between consecutive claude launches
+const RETRY_BASE_MS = Number(arg('retry-base', '20000')); // backoff base; attempt n waits base*2^n + jitter
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+// a transient/retryable failure signature (rate-limit, overload, network) vs a real fatal error
+const TRANSIENT =
+  /rate.?limit|overloaded|too many requests|quota|usage limit|\b(429|529|503|502)\b|econnreset|etimedout|enotfound|socket hang up|temporar/i;
+// serialize the moment-of-launch across the whole pool so concurrent workers don't fire claude
+// processes simultaneously (the thundering-herd that draws 429s); the GAP throttles starts only,
+// not the runs themselves (they still overlap up to --concurrency).
+let lastLaunchAt = 0;
+async function launchGate(): Promise<void> {
+  const wait = lastLaunchAt + LAUNCH_GAP_MS - Date.now();
+  if (wait > 0) await sleep(wait);
+  lastLaunchAt = Date.now();
+}
 
 const roster = personaFilter.length ? PERSONAS.filter((p) => personaFilter.includes(p.id)) : PERSONAS;
 
@@ -166,7 +190,14 @@ for (let i = 0; i < N; i++) {
 const TASK_PROMPT =
   'Begin now by calling the observe tool, then play THE HUSH to the end using only observe and act. When it ends or you have had enough, stop and write your exit interview.';
 
-function spawnPlayer(pl: PlayerSpec): Promise<{ ok: boolean; result?: string; meta?: Record<string, unknown> }> {
+interface PlayerOutcome {
+  ok: boolean;
+  result?: string;
+  meta?: Record<string, unknown>;
+  transient: boolean; // failed to a retryable (overload/429/network) error
+  errorText?: string; // short reason, surfaced in index.json when !ok
+}
+async function spawnPlayer(pl: PlayerSpec): Promise<PlayerOutcome> {
   const snapPath = resolve(OUT, 'players', `${pl.id}.snapshot.json`);
   const mcpPath = resolve(OUT, 'cfg', `${pl.id}.mcp.json`);
   const personaPath = resolve(OUT, 'cfg', `${pl.persona}.persona.txt`);
@@ -201,6 +232,7 @@ function spawnPlayer(pl: PlayerSpec): Promise<{ ok: boolean; result?: string; me
   ];
   const env = { ...process.env, MCP_TIMEOUT: '60000', MCP_TOOL_TIMEOUT: '180000' };
   const useShell = process.platform === 'win32';
+  await launchGate(); // throttle the moment-of-launch (429 defense), not the run
   return new Promise((resolveP) => {
     const child = useShell
       ? spawn(['claude', ...args].join(' '), { shell: true, env })
@@ -214,9 +246,11 @@ function spawnPlayer(pl: PlayerSpec): Promise<{ ok: boolean; result?: string; me
       ACTIVE_CHILDREN.delete(child);
       let result: string | undefined;
       let meta: Record<string, unknown> | undefined;
+      let isError = false;
       try {
         const j = JSON.parse(out);
         result = typeof j.result === 'string' ? j.result : undefined;
+        isError = j.is_error === true;
         meta = {
           is_error: j.is_error,
           num_turns: j.num_turns,
@@ -224,18 +258,53 @@ function spawnPlayer(pl: PlayerSpec): Promise<{ ok: boolean; result?: string; me
           duration_ms: j.duration_ms,
         };
       } catch {
-        /* keep raw */
+        /* non-JSON output (a hard error / crash) — keep raw for the interview file */
       }
       writeFileSync(
         resolve(OUT, 'players', `${pl.id}.interview.json`),
         out || JSON.stringify({ error: err.slice(0, 2000) }),
       );
       const okPlay = existsSync(snapPath);
-      resolveP({ ok: !!result && okPlay, result, meta });
+      // a clean run produced a real interview string, a verified snapshot, AND did not end in an
+      // error state — an is_error run that merely wrote a partial snapshot must NOT count as a clean
+      // interview (that was the silent-pollution path the audit flagged).
+      const ok = !!result && okPlay && !isError;
+      const errBlob = `${err}\n${isError ? (result ?? '') : ''}`.trim();
+      const transient = !ok && (TRANSIENT.test(errBlob) || (!okPlay && TRANSIENT.test(out)));
+      resolveP({
+        ok,
+        result,
+        meta,
+        transient,
+        errorText: ok ? undefined : (errBlob || `no-interview${okPlay ? '' : '/no-snapshot'}`).slice(0, 300),
+      });
     });
     child.stdin.write(TASK_PROMPT);
     child.stdin.end();
   });
+}
+
+/**
+ * Run one player to a clean result, retrying transient (overload/429/network) failures with
+ * exponential backoff. A genuine fatal error (or exhausted retries) returns the last outcome so the
+ * player is COUNTED as failed in the manifest — never silently dropped (the audit's "rate-limited
+ * player vanishes from feedback with no warning"). Returns the attempt count alongside the outcome.
+ */
+async function runPlayer(
+  pl: PlayerSpec,
+  onRetry: (attempt: number, waitMs: number, why: string) => void,
+): Promise<PlayerOutcome & { attempts: number }> {
+  let last: PlayerOutcome = { ok: false, transient: false };
+  let attempts = 0;
+  for (let attempt = 0; attempt <= RETRIES; attempt++) {
+    attempts++;
+    last = await spawnPlayer(pl);
+    if (last.ok || !last.transient || attempt === RETRIES) break;
+    const waitMs = RETRY_BASE_MS * 2 ** attempt + Math.floor(Math.random() * 5000);
+    onRetry(attempt + 1, waitMs, last.errorText ?? 'transient');
+    await sleep(waitMs);
+  }
+  return { ...last, attempts };
 }
 
 async function pool<T, R>(items: T[], worker: (t: T) => Promise<R>, concurrency: number): Promise<R[]> {
@@ -262,7 +331,11 @@ async function main() {
   const results = await pool(
     players,
     async (pl) => {
-      const r = await spawnPlayer(pl);
+      const r = await runPlayer(pl, (attempt, waitMs, why) =>
+        console.log(
+          `    ↻ ${pl.id} transient failure (${why.slice(0, 60)}) — retry ${attempt}/${RETRIES} in ${Math.round(waitMs / 1000)}s`,
+        ),
+      );
       done++;
       const snap = existsSync(resolve(OUT, 'players', `${pl.id}.snapshot.json`))
         ? JSON.parse(readFileSync(resolve(OUT, 'players', `${pl.id}.snapshot.json`), 'utf8'))
@@ -270,13 +343,24 @@ async function main() {
       const turns = snap?.turns?.length ?? 0;
       const real = snap?.verdict?.real ? 'VERIFIED' : 'FAILED';
       const fin = snap?.finalStatus ?? '?';
+      const flag = r.ok ? '' : r.transient ? `(FAILED: transient ×${r.attempts})` : '(FAILED: no interview)';
       console.log(
-        `  [${String(done).padStart(3)}/${N}] ${pl.id.padEnd(26)} ${pl.model.padEnd(7)} turns=${String(turns).padStart(2)} final=${String(fin).padEnd(6)} realness=${real} ${r.ok ? '' : '(no interview)'}`,
+        `  [${String(done).padStart(3)}/${N}] ${pl.id.padEnd(26)} ${pl.model.padEnd(7)} turns=${String(turns).padStart(2)} final=${String(fin).padEnd(6)} realness=${real} ${flag}`,
       );
-      return { ...pl, ok: r.ok, turns, real: snap?.verdict?.real ?? false, finalStatus: fin, meta: r.meta };
+      return {
+        ...pl,
+        ok: r.ok,
+        turns,
+        real: snap?.verdict?.real ?? false,
+        finalStatus: fin,
+        attempts: r.attempts,
+        ...(r.ok ? {} : { errorText: r.errorText }),
+        meta: r.meta,
+      };
     },
     CONCURRENCY,
   );
+  const costUsd = results.reduce((s, r) => s + (Number(r.meta?.total_cost_usd) || 0), 0);
   const index = {
     runId,
     createdAt: new Date().toISOString(),
@@ -286,17 +370,24 @@ async function main() {
     players: results,
     summary: {
       ok: results.filter((r) => r.ok).length,
+      // `failed` makes silent drops VISIBLE — a player that never produced a clean interview is
+      // counted here (and carries an errorText), instead of just shrinking the corpus unnoticed.
+      failed: results.filter((r) => !r.ok).length,
+      retried: results.filter((r) => r.attempts > 1).length,
       realnessVerified: results.filter((r) => r.real).length,
       won: results.filter((r) => r.finalStatus === 'won').length,
       lost: results.filter((r) => r.finalStatus === 'lost').length,
       active: results.filter((r) => r.finalStatus === 'active').length,
+      costUsd: Number(costUsd.toFixed(4)),
     },
   };
   writeFileSync(resolve(OUT, 'index.json'), JSON.stringify(index, null, 2));
   console.log(
-    `\n✓ swarm done in ${((Date.now() - t0) / 1000).toFixed(0)}s · ${index.summary.ok}/${N} interviews · ${index.summary.realnessVerified} realness-verified`,
+    `\n✓ swarm done in ${((Date.now() - t0) / 1000).toFixed(0)}s · ${index.summary.ok}/${N} interviews · ${index.summary.realnessVerified} realness-verified · ${index.summary.failed} failed`,
   );
-  console.log(`  won=${index.summary.won} lost=${index.summary.lost} active=${index.summary.active}`);
+  console.log(
+    `  won=${index.summary.won} lost=${index.summary.lost} active=${index.summary.active} · ~$${index.summary.costUsd} · retried=${index.summary.retried}`,
+  );
   console.log(`  index: ${resolve(OUT, 'index.json')}`);
   // Force a clean exit. The data is already written; a lingering child handle (or the win32
   // tsx console-title quirk at process teardown) can otherwise hang this process for HOURS

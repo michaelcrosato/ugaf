@@ -95,6 +95,25 @@ describe('wait until <phase> — a real single-turn fast-forward at safe nodes (
     expect(tod(s)).toBe('04:00');
   });
 
+  // night12a p002 (speedrunner, LOST): "wait until day advanced 30 minutes per invocation... the
+  // verb is non-functional." It was CORRECTLY refusing to skip a hazard, but said nothing — so a
+  // valid safety gate read as a broken verb, and the player rushed in and lost. A blocked
+  // fast-forward must SAY why and point to the fix (move to safe ground / shed the metal).
+  it('a blocked fast-forward SAYS WHY it will not skip the dark, instead of a silent +30 (night12a p002)', () => {
+    // the ford carrying iron (the Greywater is ALWAYS live, so this is deterministic, unlike the
+    // rotating Hollow-Dark fork): a long wait here is correctly refused — and must now explain itself.
+    const s = sess('ff-ford-iron'); // this seed deals iron (the existing hazard test uses it)
+    for (const c of ['out', 'road', 'road', 'on', 'fork', 'water']) s.act(c); // -> greywater_ford, carrying iron
+    expect(s.state.facts['loc.pc']).toBe('greywater_ford');
+    expect(s.state.facts['law.wait_ff_unsafe']).toBe(true);
+    const before = tod(s);
+    const r = s.act('wait until predawn');
+    expect(r.text.toLowerCase()).toMatch(/cannot|can't|will not|no safe|not.*safe place/); // it explains, not silent
+    expect(r.text.toLowerCase()).toMatch(/still|move|dry|metal|deep|safe ground|out of the/); // and points to the fix
+    expect(tod(s)).not.toBe('04:00'); // and (correctly) still did not skip the dark
+    expect(before).not.toBe(tod(s)); // one ordinary step still passed
+  });
+
   it('HAZARD-HANDLED: carrying the core in the Greywater, a long wait never silently skips the slump', () => {
     // fetch the core through real play — on this seed you reach the cache at dusk, carrying the core
     // in the Greywater's hungry hours. The anomalous core makes a long wait hazardous, so the fast-

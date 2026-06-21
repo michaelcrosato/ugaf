@@ -31,6 +31,40 @@ Output lands in `playtest-runs/swarm/<runId>/` (git-ignored): per-player `*.inte
 (the player's exit interview) + `*.snapshot.json` (the realness-verified transcript), an
 `index.json` manifest, and `compiled-feedback.md`.
 
+### Rate limits, one cohort at a time
+
+The swarm fans out real `claude -p` sessions, which share your account's rate limit. Two things keep
+it from drawing 429/overload errors, both tunable:
+
+- `--launch-gap <ms>` (default 1500) staggers the *moment of launch* so N players never cold-start
+  into the API at once. It throttles starts only; runs still overlap up to `--concurrency`.
+- `--retries <R>` (default 2) re-runs a player that died to a **transient** error (overload / 429 /
+  network) with exponential backoff (`--retry-base <ms>`, default 20000 → 20s, 40s, …). A genuine
+  fatal error or exhausted retries leaves the player **counted as failed** in the manifest (never
+  silently dropped — `index.json.summary.failed`, with a per-player `errorText`).
+
+**Run one cohort at a time.** Launching several swarm cohorts in parallel is the fastest way to get
+throttled. Keep `--concurrency` modest (≤ 6–8), let a cohort finish, then start the next. The manifest
+`summary` now surfaces `failed`, `retried`, and `costUsd` so a throttled run is visible at a glance.
+
+### De-noising the persona↔model confound (two-cohort merge)
+
+The roster hard-pairs each persona to one model (e.g. `parser-purist` is always opus), so within a
+single cohort a persona only ever appears at one tier — and the compiler's capability-differential
+filter (§4.3) can't fire. To span the size axis, run a second cohort that forces the analytic personas
+onto a different model, then **merge** before compiling:
+
+```bash
+npm run swarm -- --personas soulslike-vet,parser-purist,speedrunner,qa-breaker --out cohort-default
+npm run swarm -- --personas soulslike-vet,parser-purist,speedrunner,qa-breaker --models opus --out cohort-opus
+npx tsx scripts/merge-cohorts.ts --out combined a=playtest-runs/swarm/cohort-default b=playtest-runs/swarm/cohort-opus
+npm run feedback -- --run playtest-runs/swarm/combined
+```
+
+`merge-cohorts.ts` prefixes player ids by cohort tag (they collide otherwise) and rebuilds a combined
+`index.json`. Always pass `--run` explicitly after a merge — `npm run feedback` with no arg picks the
+newest run by `index.json` mtime, which a merge can shuffle.
+
 ## Why it is trustworthy (and where it isn't)
 
 - **Blind by construction.** The player is launched with `--tools mcp__proctor__observe mcp__proctor__act`

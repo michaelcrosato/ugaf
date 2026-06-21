@@ -411,7 +411,7 @@ export const NODES: NodeDef[] = [
     regionId: 'mileroad',
     kind: 'junction',
     look: {
-      base: "The road runs dead straight between fields of grey, dead wheat. A milepost stands at the verge. Behind you, the lamps of Lyle's Rest. Ahead, more road, and more mileposts, dwindling toward a horizon the colour of a held breath.",
+      base: "The road runs dead straight between fields of grey, dead wheat. A milepost stands at the verge. Behind you, the lamps of Lyle's Rest. Ahead, more road, and more mileposts, dwindling toward a horizon the colour of wet slate.",
       variants: [
         {
           when: { fact: 'facing.pc', eq: 'behind' },
