@@ -172,6 +172,11 @@ const VERBS: [string, IntentClass][] = [
   ['retreat', 'flee'],
   ['give', 'give'],
   ['hand', 'give'],
+  // a player offloading an item for value reaches for "sell"/"trade" (night12a p000: `sell relic to
+  // Mox` bounced where `give` worked). Route them to the same item-handover path (the relic trade /
+  // an honest "no use for that"), never a dead unclassified.
+  ['sell', 'give'],
+  ['trade', 'give'],
   ['wait', 'wait'],
   ['z', 'wait'],
   ['pause', 'wait'],

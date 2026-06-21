@@ -150,6 +150,20 @@ describe('the NPC information-economy', () => {
     expect(s.state.facts['meta.coins']).toBe(2); // one coin spent
   });
 
+  it('"sell"/"trade" the relic route to the give-handover, not a dead unclassified (night12a p000)', () => {
+    for (const verb of ['sell', 'trade']) {
+      const s = sess('econ-sell-' + verb);
+      for (const c of ['out', 'road', 'road', 'on', 'antennas']) s.act(c);
+      s.act('take the relic');
+      expect(s.state.facts['possession.pc.antenna_relic']).toBe(true);
+      for (const c of ['mile', 'back', 'back', 'survey']) s.act(c);
+      const r = s.act(`${verb} the relic to eun`);
+      expect(r.text).not.toContain('not sure how to'); // NOT a dead unclassified nudge
+      expect(s.state.facts['possession.pc.antenna_relic']).toBeUndefined(); // the shard was traded...
+      expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // ...for the Greywater table
+    }
+  });
+
   it('giving the antenna shard is a TRADE, not a request to buy the antenna law (the "for"-clause guard)', () => {
     // the brave relic path must still work even though "antenna" appears in the give phrase
     const s = sess('relic-trade');
