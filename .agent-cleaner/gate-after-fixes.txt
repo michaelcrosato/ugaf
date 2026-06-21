@@ -1,0 +1,44 @@
+
+> loom-engine@0.1.0 gate
+> tsx scripts/gate.ts
+
+
+▶ typecheck: npx tsc --noEmit
+
+▶ boundaries: npx tsx scripts/check-boundaries.ts
+✓ boundaries clean (41 files scanned)
+
+▶ integrity: npx tsx scripts/verify-integrity.ts
+✓ integrity clean (65 tests; deterministic layers free of wall-clock/entropy)
+
+▶ tests: npx vitest run
+
+ RUN  v4.1.9 C:/dev/ugaf
+
+
+ Test Files  12 passed (12)
+      Tests  64 passed (64)
+   Start at  17:31:38
+   Duration  423ms (transform 1.49s, setup 0ms, import 2.29s, tests 411ms, environment 1ms)
+
+
+▶ coherence: npx tsx scripts/coherence-pass.ts
+
+▸ coherence: The Hush — The Cordon's Edge (31 checks)
+  31/31 checks pass
+  ✓ learnability, delegated clamp, drift tells, matrix totality, coupling: antenna_field(summon) x mile_road(topology)
+
+✓ coherence pass clean
+
+▶ golden: npx tsx scripts/golden-tape.ts
+✓ golden tape replays bit-for-bit (31 turns, fp=db9670e9b3ff, final=won)
+
+──────── GATE SUMMARY ────────
+  ✓ typecheck
+  ✓ boundaries
+  ✓ integrity
+  ✓ tests
+  ✓ coherence
+  ✓ golden
+
+✓ GATE PASSED — build is sealable

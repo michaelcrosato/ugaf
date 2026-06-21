@@ -159,11 +159,19 @@ export interface TellProse {
 // ---------------------------------------------------------------------------
 export interface SeedVarianceSpec {
   /** of the full law set, how many are LIVE in a given seed (per-seed which-laws). */
-  readonly liveLaws: { readonly min: number; readonly max: number; readonly always?: readonly string[] };
+  readonly liveLaws: {
+    readonly min: number;
+    readonly max: number;
+    readonly always?: readonly string[];
+  };
   /** rumor truth/distortion is re-rolled per seed. */
   readonly rerollRumorTruth?: boolean;
   /** starting kit/debt variants. */
-  readonly startKits?: readonly { readonly id: string; readonly items: readonly string[]; readonly facts?: Readonly<Record<string, JsonValue>> }[];
+  readonly startKits?: readonly {
+    readonly id: string;
+    readonly items: readonly string[];
+    readonly facts?: Readonly<Record<string, JsonValue>>;
+  }[];
 }
 
 // ---------------------------------------------------------------------------
@@ -195,7 +203,13 @@ export interface WorldPack {
     readonly opening?: string;
   };
   /** win/lose goals the session checks each turn (a goal's `when` satisfied => end). */
-  readonly goals?: readonly { readonly id: string; readonly when: Predicate; readonly outcome: 'won' | 'lost'; readonly title: string; readonly epilogue: string }[];
+  readonly goals?: readonly {
+    readonly id: string;
+    readonly when: Predicate;
+    readonly outcome: 'won' | 'lost';
+    readonly title: string;
+    readonly epilogue: string;
+  }[];
   readonly seedVariance?: SeedVarianceSpec;
 }
 

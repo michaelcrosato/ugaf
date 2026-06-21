@@ -12,14 +12,20 @@
  */
 import { makeManifest } from '../../sdk/define.js';
 import type { JsonObject } from '../../sdk/json.js';
-import type { Module, ModuleResult, WorldEvent } from '../../sdk/types.js';
+import type { Module, ModuleResult } from '../../sdk/types.js';
 
 export function createCombat(): Module {
   const manifest = makeManifest({
     id: 'combat.ito',
     content: { model: 'auto-hit, damage-first, STR-save-crit' },
     source: 'Into the Odd (Mark of the Odd) — uncopyrightable mechanic, clean-room',
-    license: { identifier: 'Mark-of-the-Odd', attribution: 'mechanic after Into the Odd (Bayliss); reimplemented clean-room', tier: 'green', provenance: 'clean-room', indicationOfChanges: 'auto-hit/damage-first/STR-save reimplemented; no copied text or ShareAlike content' },
+    license: {
+      identifier: 'Mark-of-the-Odd',
+      attribution: 'mechanic after Into the Odd (Bayliss); reimplemented clean-room',
+      tier: 'green',
+      provenance: 'clean-room',
+      indicationOfChanges: 'auto-hit/damage-first/STR-save reimplemented; no copied text or ShareAlike content',
+    },
     domain: 'combat',
     priority: 30,
     intents: ['attack'],
@@ -37,7 +43,14 @@ export function createCombat(): Module {
       const dmg = args.tape.die('combat', 6, 'damage');
       return {
         nativeNext: args.native,
-        events: [{ tag: 'attack', mutations: [{ op: 'adjust', key: 'survival.pc.exposure', by: 1, min: 0, max: 10 }], summary: `You strike out. Steel is a poor argument with the Hush — it costs you more than it gives.`, data: { dmg } }],
+        events: [
+          {
+            tag: 'attack',
+            mutations: [{ op: 'adjust', key: 'survival.pc.exposure', by: 1, min: 0, max: 10 }],
+            summary: `You strike out. Steel is a poor argument with the Hush — it costs you more than it gives.`,
+            data: { dmg },
+          },
+        ],
         control: { kind: 'continue' },
         render: { labels: ['combat.attack'], valence: 'cost' },
       };
@@ -55,12 +68,17 @@ export function createCombat(): Module {
             {
               tag: 'changed_warn',
               mutations: [{ op: 'adjust', key: 'survival.pc.exposure', by: 2, min: 0, max: 10 }],
-              summary: 'A shape resolves out of the dark — too many joints, moving wrong. It brushes past you, cold as well-water, and is gone. You are unhurt. You will not be, twice.',
+              summary:
+                'A shape resolves out of the dark — too many joints, moving wrong. It brushes past you, cold as well-water, and is gone. You are unhurt. You will not be, twice.',
               severity: 'reversible',
             },
           ],
           control: { kind: 'continue' },
-          render: { labels: ['combat.changed_warn'], valence: 'cost', hints: { firstContact: true } },
+          render: {
+            labels: ['combat.changed_warn'],
+            valence: 'cost',
+            hints: { firstContact: true },
+          },
         };
       }
 
@@ -74,8 +92,12 @@ export function createCombat(): Module {
         events: [
           {
             tag: 'changed_kill',
-            mutations: [{ op: 'set', key: 'survival.pc.hp', value: 0 }, { op: 'set', key: 'survival.pc', value: 'dead' }],
-            summary: 'The Changed does not warn twice. It takes you the way the Zone takes everything — completely, and without malice.',
+            mutations: [
+              { op: 'set', key: 'survival.pc.hp', value: 0 },
+              { op: 'set', key: 'survival.pc', value: 'dead' },
+            ],
+            summary:
+              'The Changed does not warn twice. It takes you the way the Zone takes everything — completely, and without malice.',
             severity: 'lethal',
           },
         ],

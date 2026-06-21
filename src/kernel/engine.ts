@@ -12,7 +12,6 @@ import { CONFIDENCE, type ParsedIntent } from '../sdk/intents.js';
 import type { JsonObject, JsonValue } from '../sdk/json.js';
 import {
   BEAT_PHASES,
-  type BeatPhase,
   type ClarifyRequest,
   type GameState,
   type GameStatus,
@@ -78,7 +77,10 @@ export type RejectionCode =
   | 'SESSION_OVER';
 
 class StepReject extends Error {
-  constructor(readonly code: RejectionCode, msg: string) {
+  constructor(
+    readonly code: RejectionCode,
+    msg: string,
+  ) {
     super(msg);
   }
 }
@@ -102,12 +104,7 @@ function severityRank(sev: WorldEvent['severity']): number {
  * The single authoritative transition. Pure function of (state, registry,
  * intent, options). Never mutates `state`.
  */
-export function step(
-  state: GameState,
-  registry: ModuleRegistry,
-  intent: ParsedIntent,
-  opts: StepOptions,
-): StepOutcome {
+export function step(state: GameState, registry: ModuleRegistry, intent: ParsedIntent, opts: StepOptions): StepOutcome {
   if (state.status !== 'active') {
     return { kind: 'rejected', state, reason: 'session is over', code: 'SESSION_OVER' };
   }
@@ -187,13 +184,25 @@ function runStep(
   }
 
   // ---- pushdown stack control (nested / encapsulated frames) ----------------
-  function handleStackControl(control: { kind: string; label?: string; request?: import('../sdk/types.js').NestedRequest }): void {
+  function handleStackControl(control: {
+    kind: string;
+    label?: string;
+    request?: import('../sdk/types.js').NestedRequest;
+  }): void {
     if (control.kind === 'push' && control.request) {
       const req = control.request;
       if (!(req.module in native)) native[req.module] = registry.get(req.module).init(state.seed);
       const frame: StackFrame = {
         module: req.module,
-        snapshotHash: hashState({ ...state, facts, native, stack, scheduler: { pending }, rngCounters: counters, turn }),
+        snapshotHash: hashState({
+          ...state,
+          facts,
+          native,
+          stack,
+          scheduler: { pending },
+          rngCounters: counters,
+          turn,
+        }),
         terminalLabels: req.terminalLabels,
         meta: req.payload ?? {},
         ...(req.fuse !== undefined ? { fuse: req.fuse } : {}),
@@ -281,9 +290,7 @@ function runStep(
     for (;;) {
       if (++guard > MAX_BEAT_ITERS) throw new StepReject('BEAT_NONCONVERGENCE', `beat did not converge at ${phase}`);
 
-      const ready = pending
-        .filter((e) => e.fireAtTurn <= turn && e.phase === phase)
-        .sort(beatOrder);
+      const ready = pending.filter((e) => e.fireAtTurn <= turn && e.phase === phase).sort(beatOrder);
       if (ready.length > 0) {
         const ev = ready[0]!;
         pending = pending.filter((e) => e !== ev);

@@ -13,7 +13,18 @@ import { glob } from 'node:fs/promises';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 
-type Layer = 'sdk' | 'kernel' | 'modules' | 'world' | 'narrator' | 'game' | 'proctor' | 'cli' | 'gates' | 'content' | 'unknown';
+type Layer =
+  | 'sdk'
+  | 'kernel'
+  | 'modules'
+  | 'world'
+  | 'narrator'
+  | 'game'
+  | 'proctor'
+  | 'cli'
+  | 'gates'
+  | 'content'
+  | 'unknown';
 
 // which layers each layer may import from
 const ALLOWED: Record<Layer, Layer[]> = {
@@ -76,7 +87,9 @@ async function main() {
       }
       // module isolation: a module may import only its OWN subdir among modules
       if (from.layer === 'modules' && to.layer === 'modules' && from.moduleDir !== to.moduleDir) {
-        violations.push(`${relFrom}\n    imports ${spec}  [module ${from.moduleDir} -> module ${to.moduleDir} FORBIDDEN: compose by routing, not import]`);
+        violations.push(
+          `${relFrom}\n    imports ${spec}  [module ${from.moduleDir} -> module ${to.moduleDir} FORBIDDEN: compose by routing, not import]`,
+        );
       }
     }
   }

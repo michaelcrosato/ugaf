@@ -55,7 +55,11 @@ function digestSnapshot(id: string): string {
   const spath = resolve(RUN, 'players', `${id}.snapshot.json`);
   if (!existsSync(spath)) return 'no snapshot';
   let snap: { finalStatus?: string; ended?: boolean; turns?: { command: string; text: string }[] };
-  try { snap = JSON.parse(readFileSync(spath, 'utf8')); } catch { return 'unreadable snapshot'; }
+  try {
+    snap = JSON.parse(readFileSync(spath, 'utf8'));
+  } catch {
+    return 'unreadable snapshot';
+  }
   const turns = snap.turns ?? [];
   const blob = turns.map((t) => (t.text ?? '').toLowerCase()).join('\n');
   const has = (...needles: string[]) => needles.some((n) => blob.includes(n));
@@ -63,14 +67,23 @@ function digestSnapshot(id: string): string {
 
   // outcome / cause
   let outcome = snap.finalStatus ?? 'active';
-  if (outcome === 'won') outcome = has('read true') ? 'WON·mastery' : has('bought map') ? 'WON·bought-map' : 'WON·basic';
-  else if (outcome === 'lost') outcome = has('the road took you home') ? 'LOST·mile-road' : has('the dark closed the distance') ? 'LOST·hollow-dark' : has('taken') ? 'LOST·antenna/dead' : 'LOST';
+  if (outcome === 'won')
+    outcome = has('read true') ? 'WON·mastery' : has('bought map') ? 'WON·bought-map' : 'WON·basic';
+  else if (outcome === 'lost')
+    outcome = has('the road took you home')
+      ? 'LOST·mile-road'
+      : has('the dark closed the distance')
+        ? 'LOST·hollow-dark'
+        : has('taken')
+          ? 'LOST·antenna/dead'
+          : 'LOST';
   else outcome = 'timed-out (rig cap)';
 
   const surveyed = count('you are certain now'); // each successful deduce
   const bought = count('you hand over'); // each purchase
   const tags: string[] = [];
-  if (has('twice as long', 'the road is growing behind you', 'look back one time too many')) tags.push('mile-lookback-tripped');
+  if (has('twice as long', 'the road is growing behind you', 'look back one time too many'))
+    tags.push('mile-lookback-tripped');
   if (has('rotten-red', 'slumping toward ore', 'goes soft', 'going soft')) tags.push('greywater-ate-iron');
   if (has('something has heard you', 'the changed', 'turns toward the sound')) tags.push('antenna-summoned');
   if (has('the dark leans in', 'go still one time too many', 'dark is one step closer')) tags.push('hollow-dark-bit');
@@ -82,7 +95,14 @@ function digestSnapshot(id: string): string {
 }
 
 const gathered: Gathered[] = [];
-for (const pl of index.players as { id: string; persona: string; model: string; finalStatus: string; turns: number; real: boolean }[]) {
+for (const pl of index.players as {
+  id: string;
+  persona: string;
+  model: string;
+  finalStatus: string;
+  turns: number;
+  real: boolean;
+}[]) {
   const ipath = resolve(RUN, 'players', `${pl.id}.interview.json`);
   if (!existsSync(ipath)) continue;
   let interview = '';
@@ -93,7 +113,16 @@ for (const pl of index.players as { id: string; persona: string; model: string; 
     continue;
   }
   if (!interview.trim()) continue;
-  gathered.push({ id: pl.id, persona: pl.persona, model: pl.model, outcome: pl.finalStatus, turns: pl.turns, real: pl.real, interview, digest: digestSnapshot(pl.id) });
+  gathered.push({
+    id: pl.id,
+    persona: pl.persona,
+    model: pl.model,
+    outcome: pl.finalStatus,
+    turns: pl.turns,
+    real: pl.real,
+    interview,
+    digest: digestSnapshot(pl.id),
+  });
 }
 
 if (!gathered.length) {
@@ -106,7 +135,10 @@ const N = gathered.length;
 // sections (prose/replayability) aren't truncated for small/medium N, bounded for large N.
 const PER_CAP = Math.max(2500, Math.min(7000, Math.floor(280000 / N)));
 const corpus = gathered
-  .map((g) => `--- PLAYER ${g.id} · persona=${g.persona} · model=${g.model} · realness=${g.real ? 'VERIFIED' : 'FAILED'} ---\nBEHAVIOUR (from the verified turn log — ground truth, trust over self-report): ${g.digest}\nEXIT INTERVIEW (self-report — cross-check against the behaviour above):\n${g.interview.slice(0, PER_CAP)}`)
+  .map(
+    (g) =>
+      `--- PLAYER ${g.id} · persona=${g.persona} · model=${g.model} · realness=${g.real ? 'VERIFIED' : 'FAILED'} ---\nBEHAVIOUR (from the verified turn log — ground truth, trust over self-report): ${g.digest}\nEXIT INTERVIEW (self-report — cross-check against the behaviour above):\n${g.interview.slice(0, PER_CAP)}`,
+  )
   .join('\n\n');
 
 // population-level behavioural ground truth — what actually happened across the cohort
@@ -160,7 +192,16 @@ const useShell = process.platform === 'win32';
 // invocation used --dangerously-skip-permissions, which let the opus agent autonomously EDIT files
 // (it wrote a report straight into feedback/0013.md). Drop the bypass (headless auto-denies tools
 // without it), pin out MCP, and explicitly deny every mutation tool. The report comes back as TEXT.
-const args = ['-p', '--model', MODEL, '--output-format', 'json', '--strict-mcp-config', '--disallowedTools', 'Edit,Write,MultiEdit,NotebookEdit,Bash'];
+const args = [
+  '-p',
+  '--model',
+  MODEL,
+  '--output-format',
+  'json',
+  '--strict-mcp-config',
+  '--disallowedTools',
+  'Edit,Write,MultiEdit,NotebookEdit,Bash',
+];
 const res = spawnSync(useShell ? ['claude', ...args].join(' ') : 'claude', useShell ? [] : args, {
   shell: useShell,
   input: prompt,

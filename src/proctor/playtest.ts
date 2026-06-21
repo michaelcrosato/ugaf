@@ -41,13 +41,33 @@ export function playScript(pack: WorldPack, seed: string, commands: readonly str
     n++;
     const r = p.act(o.turn_nonce, cmd);
     if (r.ok) {
-      turns.push({ n, command: cmd, ok: true, text: plain(r.result_text), statusLine: plain(r.next.status_line) });
+      turns.push({
+        n,
+        command: cmd,
+        ok: true,
+        text: plain(r.result_text),
+        statusLine: plain(r.next.status_line),
+      });
     } else {
-      turns.push({ n, command: cmd, ok: false, rejection: r.rejection, text: plain(r.detail ?? r.rejection), statusLine: plain(o.status_line) });
+      turns.push({
+        n,
+        command: cmd,
+        ok: false,
+        rejection: r.rejection,
+        text: plain(r.detail ?? r.rejection),
+        statusLine: plain(o.status_line),
+      });
     }
   }
   const manifest = p.manifest();
-  return { seed, opening, turns, finalStatus: manifest.final_status, manifest, verdict: verifyRealness(manifest, game) };
+  return {
+    seed,
+    opening,
+    turns,
+    finalStatus: manifest.final_status,
+    manifest,
+    verdict: verifyRealness(manifest, game),
+  };
 }
 
 /** Render a PlayResult as a readable transcript (for a human or a critic agent). */
@@ -57,15 +77,27 @@ export function renderTranscript(r: PlayResult): string {
   for (const t of r.turns) {
     out.push(`> ${t.command}`);
     if (!t.ok) out.push(`  [${t.rejection}] ${t.text}`);
-    else out.push(t.text.split('\n').map((l) => '  ' + l).join('\n'));
+    else
+      out.push(
+        t.text
+          .split('\n')
+          .map((l) => '  ' + l)
+          .join('\n'),
+      );
     out.push('  ' + t.statusLine, '');
   }
-  out.push(`final: ${r.finalStatus}   ·   realness: ${r.verdict.real ? 'VERIFIED' : 'FAILED'} (${r.verdict.checks.map((c) => `${c.name}:${c.ok ? 'ok' : 'FAIL'}`).join(', ')})`);
+  out.push(
+    `final: ${r.finalStatus}   ·   realness: ${r.verdict.real ? 'VERIFIED' : 'FAILED'} (${r.verdict.checks.map((c) => `${c.name}:${c.ok ? 'ok' : 'FAIL'}`).join(', ')})`,
+  );
   return out.join('\n');
 }
 
 /** The "last observation" — for a turn-by-turn driver feeding a live agent. */
-export function observeAfter(pack: WorldPack, seed: string, commands: readonly string[]): { text: string; ended: boolean; status: string; legal: string[] } {
+export function observeAfter(
+  pack: WorldPack,
+  seed: string,
+  commands: readonly string[],
+): { text: string; ended: boolean; status: string; legal: string[] } {
   const game = createGame(pack, seed);
   const p = new ProctorSession(game, { delayMs: 0 });
   for (const cmd of commands) {
@@ -74,5 +106,10 @@ export function observeAfter(pack: WorldPack, seed: string, commands: readonly s
     p.act(o.turn_nonce, cmd);
   }
   const o = p.observe();
-  return { text: formatObservation(o), ended: o.ended, status: o.outcome ?? 'active', legal: o.legal_actions.map((a) => a.label) };
+  return {
+    text: formatObservation(o),
+    ended: o.ended,
+    status: o.outcome ?? 'active',
+    legal: o.legal_actions.map((a) => a.label),
+  };
 }

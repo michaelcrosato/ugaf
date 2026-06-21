@@ -56,7 +56,7 @@ async function main() {
 
   out('');
   out(bold('  T H E   H U S H'));
-  out(dim('  an anomaly zone where survival means learning the world\'s hidden, lawful physics'));
+  out(dim("  an anomaly zone where survival means learning the world's hidden, lawful physics"));
   out(dim(`  seed: ${session.game.seed}   ·   type "help" for how to play`));
   out('');
   out(session.opening());

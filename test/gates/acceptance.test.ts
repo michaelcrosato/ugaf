@@ -44,7 +44,10 @@ describe('acceptance — named invariants', () => {
     // a synthetic registry where two modules tie -> the audit must catch it
     const g = game();
     const base = g.registry.get('combat.ito');
-    const clash = { ...base, manifest: { ...base.manifest, id: 'combat.clash', priority: base.manifest.priority } };
+    const clash = {
+      ...base,
+      manifest: { ...base.manifest, id: 'combat.clash', priority: base.manifest.priority },
+    };
     const reg = new ModuleRegistry([base, clash]);
     const audit = bootCollisionAudit(reg, [{ label: 'fight', armed: new Set(['combat']), sampleFacts: {} }]);
     expect(audit.ok).toBe(false);

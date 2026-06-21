@@ -19,7 +19,9 @@ for (const pack of packs) {
     for (const e of r.errors) console.error(`  ✗ ${e}`);
   } else {
     const coupling = r.checks.find((c) => c.name === 'cross_law_coupling');
-    console.log(`  ✓ learnability, delegated clamp, drift tells, matrix totality${coupling?.detail ? `, coupling: ${coupling.detail}` : ''}`);
+    console.log(
+      `  ✓ learnability, delegated clamp, drift tells, matrix totality${coupling?.detail ? `, coupling: ${coupling.detail}` : ''}`,
+    );
   }
 }
 

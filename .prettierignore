@@ -1,0 +1,21 @@
+# Prettier is scoped to source code only. Hand-written prose (the design corpus
+# markdown) and generated fixtures are intentionally NOT machine-reformatted.
+
+# Dependencies / build / runtime artifacts
+node_modules/
+dist/
+build/
+.tmp/
+saves/
+.proctor/
+playtest-runs/
+
+# Generated / lockfiles
+package-lock.json
+test/golden/
+
+# Prose corpus and reports — authored, not formatted
+*.md
+.agent-cleaner/
+feedback/
+playtest-runs/

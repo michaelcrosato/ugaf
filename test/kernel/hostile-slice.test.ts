@@ -33,13 +33,25 @@ import { replay, type ReplayDriver } from '../../src/kernel/replay.js';
 // ---------------------------------------------------------------------------
 //  Toy module helpers
 // ---------------------------------------------------------------------------
-function manifest(id: string, priority: number, intents: IntentClass[], writes: string[], reads: string[]): ModuleManifest {
+function manifest(
+  id: string,
+  priority: number,
+  intents: IntentClass[],
+  writes: string[],
+  reads: string[],
+): ModuleManifest {
   return {
     id,
     version: '0.0.1',
     contentHash: `hash:${id}`,
     source: 'toy',
-    license: { identifier: 'NONE', attribution: 'toy', tier: 'green', approvedForImplementation: true, provenance: 'clean-room' },
+    license: {
+      identifier: 'NONE',
+      attribution: 'toy',
+      tier: 'green',
+      approvedForImplementation: true,
+      provenance: 'clean-room',
+    },
     fidelity: 'native-subsystem',
     domain: id.split('.')[0]!,
     priority,
@@ -47,7 +59,12 @@ function manifest(id: string, priority: number, intents: IntentClass[], writes: 
     owns: { nativeStatePaths: [id] },
     writesFacts: writes,
     readsFacts: reads,
-    forbids: { numericalCrosswalks: true, normalizedOutcomes: true, universalBaseStatistics: true, runtimeRuleGeneration: true },
+    forbids: {
+      numericalCrosswalks: true,
+      normalizedOutcomes: true,
+      universalBaseStatistics: true,
+      runtimeRuleGeneration: true,
+    },
   };
 }
 
@@ -58,7 +75,15 @@ const sched = (
   kind: string,
   id: string,
   payload?: Record<string, unknown>,
-): ScheduledEvent => ({ fireAtTurn: turn, phase, module, kind, id, order: 0, ...(payload ? { payload: payload as ScheduledEvent['payload'] } : {}) });
+): ScheduledEvent => ({
+  fireAtTurn: turn,
+  phase,
+  module,
+  kind,
+  id,
+  order: 0,
+  ...(payload ? { payload: payload as ScheduledEvent['payload'] } : {}),
+});
 
 // ---- spine: lowest-priority catch-all floor -------------------------------
 const spine: Module = {
@@ -80,7 +105,13 @@ const clock: Module = {
     if (ev.kind === 'ring_bell') {
       return {
         nativeNext: native,
-        events: [{ tag: 'bell_rung', mutations: [{ op: 'set', key: 'phase.now', value: 'rung' }], summary: 'A bell tone rings out.' }],
+        events: [
+          {
+            tag: 'bell_rung',
+            mutations: [{ op: 'set', key: 'phase.now', value: 'rung' }],
+            summary: 'A bell tone rings out.',
+          },
+        ],
         control: { kind: 'continue' },
       };
     }
@@ -90,7 +121,13 @@ const clock: Module = {
 
 // ---- travel.move: owns location; crossing the ward rings the bell ---------
 const travel: Module = {
-  manifest: manifest('travel.move', 10, ['go', 'cross_threshold', 'look_back', 'wait'], ['loc', 'facing', 'route'], ['loc', 'facing']),
+  manifest: manifest(
+    'travel.move',
+    10,
+    ['go', 'cross_threshold', 'look_back', 'wait'],
+    ['loc', 'facing', 'route'],
+    ['loc', 'facing'],
+  ),
   init: () => ({ node: 'outside' }),
   claims: (intent) => ['go', 'cross_threshold', 'look_back'].includes(intent.class),
   validateLegality: (intent, native) =>
@@ -102,7 +139,13 @@ const travel: Module = {
     if (intent.class === 'cross_threshold') {
       return {
         nativeNext: { node: 'inside' },
-        events: [{ tag: 'cross', mutations: [{ op: 'set', key: 'loc.pc', value: 'inside' }], summary: 'You step across the ward-line.' }],
+        events: [
+          {
+            tag: 'cross',
+            mutations: [{ op: 'set', key: 'loc.pc', value: 'inside' }],
+            summary: 'You step across the ward-line.',
+          },
+        ],
         control: { kind: 'continue' },
         scheduled: [
           sched(args.ctx.turn, 'phase_change', 'time.clock', 'ring_bell', `ring:${args.ctx.turn}`),
@@ -113,7 +156,13 @@ const travel: Module = {
     if (intent.class === 'look_back') {
       return {
         nativeNext: args.native,
-        events: [{ tag: 'look_back', mutations: [{ op: 'set', key: 'facing.pc', value: 'behind' }], summary: 'You glance back the way you came.' }],
+        events: [
+          {
+            tag: 'look_back',
+            mutations: [{ op: 'set', key: 'facing.pc', value: 'behind' }],
+            summary: 'You glance back the way you came.',
+          },
+        ],
         control: { kind: 'continue' },
       };
     }
@@ -123,7 +172,13 @@ const travel: Module = {
     ev.kind === 'arrive'
       ? {
           nativeNext: native,
-          events: [{ tag: 'arrived', mutations: [{ op: 'set', key: 'route.last_arrival', value: 'inside' }], summary: 'The ward closes behind you.' }],
+          events: [
+            {
+              tag: 'arrived',
+              mutations: [{ op: 'set', key: 'route.last_arrival', value: 'inside' }],
+              summary: 'The ward closes behind you.',
+            },
+          ],
           control: { kind: 'continue' },
         }
       : { nativeNext: native, events: [], control: { kind: 'continue' } },
@@ -135,7 +190,11 @@ const anomaly: Module = {
   init: () => ({}),
   claims: () => false, // purely reactive
   validateLegality: () => ({ legal: true }),
-  execute: (args): ModuleResult => ({ nativeNext: args.native, events: [], control: { kind: 'continue' } }),
+  execute: (args): ModuleResult => ({
+    nativeNext: args.native,
+    events: [],
+    control: { kind: 'continue' },
+  }),
   beatTriggers: ['law_trigger'],
   onBeat: (_phase, native, facts, _tape, ctx): BeatResult => {
     const lastIntent = facts.getString('flag.last_intent');
@@ -156,7 +215,15 @@ const anomaly: Module = {
           data: { contacts },
         },
       ];
-      return { nativeNext: native, events, scheduled: [sched(ctx.turn, 'summon_act', 'combat.strike', 'watcher_strike', `strike:${ctx.turn}`, { contacts })] };
+      return {
+        nativeNext: native,
+        events,
+        scheduled: [
+          sched(ctx.turn, 'summon_act', 'combat.strike', 'watcher_strike', `strike:${ctx.turn}`, {
+            contacts,
+          }),
+        ],
+      };
     }
     return {};
   },
@@ -168,7 +235,11 @@ const combat: Module = {
   init: () => ({}),
   claims: (intent) => intent.class === 'attack',
   validateLegality: () => ({ legal: true }),
-  execute: (args): ModuleResult => ({ nativeNext: args.native, events: [], control: { kind: 'continue' } }),
+  execute: (args): ModuleResult => ({
+    nativeNext: args.native,
+    events: [],
+    control: { kind: 'continue' },
+  }),
   onScheduled: (ev, native, _facts, tape): ModuleResult => {
     if (ev.kind !== 'watcher_strike') return { nativeNext: native, events: [], control: { kind: 'continue' } };
     const contacts = typeof ev.payload?.contacts === 'number' ? (ev.payload.contacts as number) : 1;
@@ -191,7 +262,12 @@ const combat: Module = {
     return {
       nativeNext: native,
       events: [
-        { tag: 'watcher_kill', mutations: [{ op: 'set', key: 'survival.pc', value: 'dead' }], summary: 'The Watcher does not warn twice.', severity: 'lethal' },
+        {
+          tag: 'watcher_kill',
+          mutations: [{ op: 'set', key: 'survival.pc', value: 'dead' }],
+          summary: 'The Watcher does not warn twice.',
+          severity: 'lethal',
+        },
       ],
       control: { kind: 'terminate', label: 'dead' },
     };
@@ -206,8 +282,22 @@ const ritual: Module = {
   validateLegality: () => ({ legal: true }),
   execute: (args): ModuleResult => ({
     nativeNext: args.native,
-    events: [{ tag: 'ritual_open', mutations: [{ op: 'set', key: 'flag.ritual', value: 'open' }], summary: 'Something steps out of the dark to meet you.' }],
-    control: { kind: 'push', request: { module: 'encounter.watcher', entry: 'closes_in', fuse: 2, terminalLabels: ['fled', 'slain', 'survived'] } },
+    events: [
+      {
+        tag: 'ritual_open',
+        mutations: [{ op: 'set', key: 'flag.ritual', value: 'open' }],
+        summary: 'Something steps out of the dark to meet you.',
+      },
+    ],
+    control: {
+      kind: 'push',
+      request: {
+        module: 'encounter.watcher',
+        entry: 'closes_in',
+        fuse: 2,
+        terminalLabels: ['fled', 'slain', 'survived'],
+      },
+    },
   }),
 };
 
@@ -221,11 +311,21 @@ const encounter: Module = {
     if (args.action.intent.class === 'flee') {
       return {
         nativeNext: args.native,
-        events: [{ tag: 'fled', mutations: [{ op: 'set', key: 'flag.encounter_outcome', value: 'fled' }], summary: 'You break away into the dark.' }],
+        events: [
+          {
+            tag: 'fled',
+            mutations: [{ op: 'set', key: 'flag.encounter_outcome', value: 'fled' }],
+            summary: 'You break away into the dark.',
+          },
+        ],
         control: { kind: 'terminate', label: 'fled' },
       };
     }
-    return { nativeNext: args.native, events: [{ tag: 'stalk', mutations: [], summary: 'It circles, just out of reach.' }], control: { kind: 'continue' } };
+    return {
+      nativeNext: args.native,
+      events: [{ tag: 'stalk', mutations: [], summary: 'It circles, just out of reach.' }],
+      control: { kind: 'continue' },
+    };
   },
 };
 
@@ -251,7 +351,14 @@ function obs(state: GameState, role: Role): RoleObservation {
     location: (state.facts['loc.pc'] as string) ?? '—',
     facts: state.facts,
     self: {},
-    scene: { nodeId: (state.facts['loc.pc'] as string) ?? '—', title: 'slice', exits: [], entities: [], tellHints: [], labels: [] },
+    scene: {
+      nodeId: (state.facts['loc.pc'] as string) ?? '—',
+      title: 'slice',
+      exits: [],
+      entities: [],
+      tellHints: [],
+      labels: [],
+    },
     legalActions: [],
   };
 }
@@ -270,7 +377,10 @@ class Harness {
     this.log = new EventLog('c1', this.state.seed, engineFingerprint(REGISTRY), hashState(this.state));
   }
   do(i: ParsedIntent) {
-    const outcome = step(this.state, REGISTRY, i, { armed: armedAt(), observation: obs(this.state, 'player') });
+    const outcome = step(this.state, REGISTRY, i, {
+      armed: armedAt(),
+      observation: obs(this.state, 'player'),
+    });
     if (outcome.kind === 'committed') {
       const rec: EventRecord = {
         eventIndex: outcome.state.turn,
@@ -307,7 +417,14 @@ describe('hostile kernel vertical slice', () => {
     expect(r.kind).toBe('committed');
     // canonical beat order: action(cross) -> travel_complete(arrived) -> phase_change(bell)
     //                       -> law_trigger(ward) -> summon_act(graze)
-    expect((r as Committed).events.map((e) => e.tag)).toEqual(['cross', 'physical_act', 'arrived', 'bell_rung', 'ward_triggered', 'watcher_graze']);
+    expect((r as Committed).events.map((e) => e.tag)).toEqual([
+      'cross',
+      'physical_act',
+      'arrived',
+      'bell_rung',
+      'ward_triggered',
+      'watcher_graze',
+    ]);
     // the law correctly saw the *rung* bell because phase_change resolves before law_trigger
     expect(h.state.facts['survival.pc']).toBe('wounded'); // first contact: non-lethal (clamp + fail-safe)
     expect(h.state.facts['law.ward.contacts']).toBe(1);
@@ -386,7 +503,9 @@ describe('hostile kernel vertical slice', () => {
       ...golden,
       records: golden.records.map((r) => ({
         ...r,
-        tape: r.tape.map((t) => (t.kind === 'rng' && typeof t.value === 'number' ? { ...t, value: (t.value as number) + 0.1 } : t)),
+        tape: r.tape.map((t) =>
+          t.kind === 'rng' && typeof t.value === 'number' ? { ...t, value: (t.value as number) + 0.1 } : t,
+        ),
       })),
     };
     const bad = replay(driver(), tampered);
@@ -406,7 +525,7 @@ describe('hostile kernel vertical slice', () => {
   it('property/fuzz: 200 random intent sequences each replay bit-identically', () => {
     // a deterministic LCG drives sequence generation (no Math.random in a determinism test)
     let lcg = 0x2545f491;
-    const rnd = () => ((lcg = (lcg * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    const rnd = () => (lcg = (lcg * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
     const verbs: IntentClass[] = ['look', 'wait', 'cross_threshold', 'look_back', 'use', 'flee', 'attack', 'rest'];
 
     for (let run = 0; run < 200; run++) {

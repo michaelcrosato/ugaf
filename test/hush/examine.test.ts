@@ -24,7 +24,14 @@ describe('examine fixes', () => {
 
   it('examining the crowbar describes it and foreshadows the Greywater (iron is load-bearing)', () => {
     const s = sess('ex-crowbar'); // some kits deal a crowbar; force one into hand to assert the description
-    s.state = { ...s.state, facts: { ...s.state.facts, 'possession.pc.crowbar': true, 'possession.pc.crowbar.class': 'metal' } };
+    s.state = {
+      ...s.state,
+      facts: {
+        ...s.state.facts,
+        'possession.pc.crowbar': true,
+        'possession.pc.crowbar.class': 'metal',
+      },
+    };
     const r = s.act('examine the crowbar');
     expect(r.text.toLowerCase()).toContain('iron');
     expect(r.text.toLowerCase()).toContain('greywater'); // the look prose foreshadows the hazard

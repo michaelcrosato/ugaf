@@ -69,7 +69,9 @@ export function makeFactView(facts: FactRecord): FactView {
     keysUnder: (prefix) => {
       const p = prefix.endsWith('.') ? prefix : prefix + '.';
       const exact = prefix;
-      return Object.keys(facts).filter((k) => k === exact || k.startsWith(p)).sort();
+      return Object.keys(facts)
+        .filter((k) => k === exact || k.startsWith(p))
+        .sort();
     },
   };
 }
@@ -78,7 +80,13 @@ export function makeFactView(facts: FactRecord): FactView {
 export type FactMutation =
   | { readonly op: 'set'; readonly key: string; readonly value: FactValue }
   | { readonly op: 'delete'; readonly key: string }
-  | { readonly op: 'adjust'; readonly key: string; readonly by: number; readonly min?: number; readonly max?: number };
+  | {
+      readonly op: 'adjust';
+      readonly key: string;
+      readonly by: number;
+      readonly min?: number;
+      readonly max?: number;
+    };
 
 /** Apply a list of mutations to a fact record immutably, returning a new record. */
 export function applyMutations(facts: FactRecord, mutations: readonly FactMutation[]): FactRecord {

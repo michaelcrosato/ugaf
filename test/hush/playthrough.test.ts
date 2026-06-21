@@ -12,17 +12,43 @@ import { replay } from '../../src/kernel/replay.js';
 
 function freshSession(seed = 'test-seed') {
   // force the 'broke' kit (iron_knife + lantern + coin) for deterministic tests
-  return new Session(createGame({ ...HUSH_PACK, seedVariance: { ...HUSH_PACK.seedVariance!, startKits: [{ id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} }] } }, seed));
+  return new Session(
+    createGame(
+      {
+        ...HUSH_PACK,
+        seedVariance: {
+          ...HUSH_PACK.seedVariance!,
+          startKits: [{ id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} }],
+        },
+      },
+      seed,
+    ),
+  );
 }
 
 describe('The Hush — Cordon’s Edge', () => {
   it('a march to the cache wins — but the core is watched-for, so you must slip the gate to carry it out', () => {
     const s = freshSession('win-1');
     const path = [
-      'out', 'road', 'road', 'on', 'fork', 'water', 'in', 'cache',
+      'out',
+      'road',
+      'road',
+      'on',
+      'fork',
+      'water',
+      'in',
+      'cache',
       'take core', // the Cordon now watches the gate for it
-      'out', 'back', 'back', 'mile', 'back', 'back', 'gate',
-      'ask holt about the gap', 'hide', 'back', // slip the watched gate: learn its blind spot, then go low (iron's gone to the Greywater)
+      'out',
+      'back',
+      'back',
+      'mile',
+      'back',
+      'back',
+      'gate',
+      'ask holt about the gap',
+      'hide',
+      'back', // slip the watched gate: learn its blind spot, then go low (iron's gone to the Greywater)
     ];
     let last = { status: 'active' as string };
     for (const cmd of path) last = s.act(cmd);
@@ -34,10 +60,35 @@ describe('The Hush — Cordon’s Edge', () => {
   it('the mastery ending is REACHABLE: deduce ALL THREE laws, carry the core out, get "Read True"', () => {
     const s = freshSession('mastery-1');
     const path = [
-      'out', 'road', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road',
-      'antennas', 'examine the names', 'listen', 'deduce the antenna field', // the listening field is now load-bearing for mastery
-      'fork', 'water', 'examine the rust', 'listen', 'deduce the greywater',
-      'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'ask holt about the gap', 'hide', 'back',
+      'out',
+      'road',
+      'road',
+      'examine the milepost',
+      'on',
+      'examine the walker',
+      'deduce the mile road',
+      'antennas',
+      'examine the names',
+      'listen',
+      'deduce the antenna field', // the listening field is now load-bearing for mastery
+      'fork',
+      'water',
+      'examine the rust',
+      'listen',
+      'deduce the greywater',
+      'in',
+      'cache',
+      'take core',
+      'out',
+      'back',
+      'back',
+      'mile',
+      'back',
+      'back',
+      'gate',
+      'ask holt about the gap',
+      'hide',
+      'back',
     ];
     // all three laws were read true at some point (even if drift later re-Settled them)
     let last = { text: '', status: 'active' as string };
@@ -54,7 +105,15 @@ describe('The Hush — Cordon’s Edge', () => {
     const base = () => {
       const g = createGame(HUSH_PACK, 'intercept-1');
       const sess = new Session(g);
-      sess.state = { ...sess.state, facts: { ...sess.state.facts, 'loc.pc': 'cordon_checkpoint', 'possession.pc.salvage_core': true, 'flag.intercepted': true } };
+      sess.state = {
+        ...sess.state,
+        facts: {
+          ...sess.state.facts,
+          'loc.pc': 'cordon_checkpoint',
+          'possession.pc.salvage_core': true,
+          'flag.intercepted': true,
+        },
+      };
       return sess;
     };
     const exitOpen = (sess: Session) => sess.obs().scene.exits.some((e) => e.to === 'waystation');
@@ -64,7 +123,10 @@ describe('The Hush — Cordon’s Edge', () => {
 
     // (a) WORKING iron: USE it to pry the wire-gap wide
     const iron = base();
-    iron.state = { ...iron.state, facts: { ...iron.state.facts, 'possession.pc.crowbar': true, 'possession.pc.crowbar.class': 'metal' } };
+    iron.state = {
+      ...iron.state,
+      facts: { ...iron.state.facts, 'possession.pc.crowbar': true, 'possession.pc.crowbar.class': 'metal' },
+    };
     iron.act('use the crowbar');
     expect(iron.state.facts['flag.intercept_clear']).toBe(true);
     expect(exitOpen(iron)).toBe(true);
@@ -72,7 +134,16 @@ describe('The Hush — Cordon’s Edge', () => {
     // (b) SLUMPED iron (Greywater ate its temper): the pry FAILS
     const slumped = base();
     // every start kit now deals iron; degrade ALL of it so the only iron on hand is the slumped bar
-    slumped.state = { ...slumped.state, facts: { ...slumped.state.facts, 'possession.pc.crowbar': true, 'possession.pc.crowbar.class': 'metal', 'possession.pc.crowbar.condition': 'ore', 'possession.pc.iron_knife.condition': 'ore' } };
+    slumped.state = {
+      ...slumped.state,
+      facts: {
+        ...slumped.state.facts,
+        'possession.pc.crowbar': true,
+        'possession.pc.crowbar.class': 'metal',
+        'possession.pc.crowbar.condition': 'ore',
+        'possession.pc.iron_knife.condition': 'ore',
+      },
+    };
     const fail = slumped.act('use the crowbar');
     expect(slumped.state.facts['flag.intercept_clear']).toBeUndefined();
     expect(fail.text.toLowerCase()).toContain('warm wax');
@@ -153,7 +224,18 @@ describe('The Hush — Cordon’s Edge', () => {
   it('exact replay: a real Hush session replays bit-for-bit', () => {
     const game = createGame(HUSH_PACK, 'replay-1');
     const s = new Session(game);
-    for (const cmd of ['out', 'road', 'talk to lyle', 'ask lyle about the mile road', 'road', 'examine the milepost', 'look back', 'on', 'examine the walker', 'deduce the mile road']) {
+    for (const cmd of [
+      'out',
+      'road',
+      'talk to lyle',
+      'ask lyle about the mile road',
+      'road',
+      'examine the milepost',
+      'look back',
+      'on',
+      'examine the walker',
+      'deduce the mile road',
+    ]) {
       s.act(cmd);
     }
     const golden = s.log.toGolden();
@@ -181,7 +263,17 @@ describe('The Hush — Cordon’s Edge', () => {
     const s = freshSession('drift-1');
     // survey the Mile Road early, then dwell at a TRULY safe spot — mile_road_low, OUTSIDE the
     // Hollow Dark's scope (mile_road_high is inside it, and the Dark now bites after dark).
-    for (const c of ['out', 'road', 'road', 'examine the milepost', 'on', 'examine the walker', 'deduce the mile road', 'back']) s.act(c);
+    for (const c of [
+      'out',
+      'road',
+      'road',
+      'examine the milepost',
+      'on',
+      'examine the walker',
+      'deduce the mile road',
+      'back',
+    ])
+      s.act(c);
     expect(s.state.facts['known.law.mile_road']).toBe('surveyed');
     const surveyTurn = s.state.facts['known.mile_road.surveyed_turn'] as number;
     expect(typeof surveyTurn).toBe('number');
@@ -214,7 +306,12 @@ describe('The Hush — Cordon’s Edge', () => {
     const kitOf = (seed: string) => {
       const game = createGame(HUSH_PACK, seed);
       const st = game.initialState();
-      return Object.keys(st.facts).filter((k) => k.startsWith('possession.pc.') && !k.includes('.', 'possession.pc.'.length) && st.facts[k] === true).sort().join(',');
+      return Object.keys(st.facts)
+        .filter(
+          (k) => k.startsWith('possession.pc.') && !k.includes('.', 'possession.pc.'.length) && st.facts[k] === true,
+        )
+        .sort()
+        .join(',');
     };
     const kits = new Set(['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8'].map(kitOf));
     expect(kits.size).toBeGreaterThan(1); // not every seed gives the identical kit
@@ -223,7 +320,8 @@ describe('The Hush — Cordon’s Edge', () => {
   it('determinism: two runs of the same seed + commands reach the identical state hash', () => {
     const run = () => {
       const s = freshSession('det-1');
-      for (const cmd of ['out', 'road', 'survey', 'talk to eun', 'out', 'road', 'on', 'examine the milepost']) s.act(cmd);
+      for (const cmd of ['out', 'road', 'survey', 'talk to eun', 'out', 'road', 'on', 'examine the milepost'])
+        s.act(cmd);
       return s;
     };
     const a = run();

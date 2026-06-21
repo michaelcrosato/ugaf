@@ -73,7 +73,11 @@ function blindLeakCheck(manifest: SessionManifest, game: Game): RealnessVerdict[
   // reconstruct the final state by replaying the recorded intents
   let state = game.driver().initialState();
   for (const rec of manifest.golden.records) {
-    const out = step(state, game.registry, rec.intent, { armed: game.armedAt(state), observation: game.buildObservation(state, 'player'), recordedTape: rec.tape });
+    const out = step(state, game.registry, rec.intent, {
+      armed: game.armedAt(state),
+      observation: game.buildObservation(state, 'player'),
+      recordedTape: rec.tape,
+    });
     if (out.kind === 'committed') state = out.state;
   }
   void hashState(state);
@@ -93,6 +97,8 @@ function blindLeakCheck(manifest: SessionManifest, game: Game): RealnessVerdict[
   }
   return {
     suspicious: false, // we don't fail a run on this heuristic; we surface it
-    detail: suspicious.length ? `laws untouched & unobserved (expected for unvisited scope): ${suspicious.join(', ')}` : 'no anomalous avoidance pattern',
+    detail: suspicious.length
+      ? `laws untouched & unobserved (expected for unvisited scope): ${suspicious.join(', ')}`
+      : 'no anomalous avoidance pattern',
   };
 }

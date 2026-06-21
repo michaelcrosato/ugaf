@@ -11,7 +11,16 @@ import type { BeatResult, Module, ModuleResult } from '../../sdk/types.js';
 
 export type Phase = 'predawn' | 'day' | 'dusk' | 'night';
 
-const COST: Record<string, number> = { rest: 120, wait: 30, go: 25, cross_threshold: 15, look_back: 5, flee: 10, hide: 5, sneak: 20 };
+const COST: Record<string, number> = {
+  rest: 120,
+  wait: 30,
+  go: 25,
+  cross_threshold: 15,
+  look_back: 5,
+  flee: 10,
+  hide: 5,
+  sneak: 20,
+};
 
 export function phaseOf(minuteOfDay: number): Phase {
   const m = ((minuteOfDay % 1440) + 1440) % 1440;
@@ -34,7 +43,12 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
     id: 'time.cycle',
     content: { start, cost: COST },
     source: 'clean-room day/night scheduler (uncopyrightable mechanic)',
-    license: { identifier: 'NONE', attribution: 'LOOM original', tier: 'green', provenance: 'clean-room' },
+    license: {
+      identifier: 'NONE',
+      attribution: 'LOOM original',
+      tier: 'green',
+      provenance: 'clean-room',
+    },
     domain: 'time',
     priority: 5,
     intents: [],
@@ -47,7 +61,11 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
     init: () => ({ minutes: start }),
     claims: () => false,
     validateLegality: () => ({ legal: true }),
-    execute: (args): ModuleResult => ({ nativeNext: args.native, events: [], control: { kind: 'continue' } }),
+    execute: (args): ModuleResult => ({
+      nativeNext: args.native,
+      events: [],
+      control: { kind: 'continue' },
+    }),
     beatTriggers: ['phase_change'],
     onBeat: (_phase, native, facts, _tape, ctx): BeatResult => {
       // idempotent: advance the clock once per turn
@@ -55,7 +73,8 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
       const cur = native as { minutes: number };
       const intent = facts.getString('flag.last_intent') ?? 'wait';
       // honour an explicit per-action time cost only if it was set THIS turn
-      const override = facts.getNumber('flag.time_cost_turn') === ctx.turn ? facts.getNumber('flag.time_cost') : undefined;
+      const override =
+        facts.getNumber('flag.time_cost_turn') === ctx.turn ? facts.getNumber('flag.time_cost') : undefined;
       const cost = override ?? COST[intent] ?? 10;
       const minutes = cur.minutes + cost;
       const newPhase = phaseOf(minutes);
@@ -84,7 +103,11 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
               data: { phase: newPhase },
             },
           ],
-          render: { labels: [`phase.${newPhase}`], hints: { phase: newPhase }, valence: newPhase === 'night' ? 'cost' : 'neutral' },
+          render: {
+            labels: [`phase.${newPhase}`],
+            hints: { phase: newPhase },
+            valence: newPhase === 'night' ? 'cost' : 'neutral',
+          },
         };
       }
       return out;
@@ -115,5 +138,5 @@ const PHASE_LINES: Record<Phase, string[]> = {
 
 function phaseLine(p: Phase, minutes: number): string {
   const lines = PHASE_LINES[p];
-  return lines[((minutes % (lines.length * 7)) / 7 | 0) % lines.length]!;
+  return lines[(((minutes % (lines.length * 7)) / 7) | 0) % lines.length]!;
 }

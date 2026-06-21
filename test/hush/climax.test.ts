@@ -17,7 +17,13 @@ import { HUSH_PACK } from '../../content/hush/index.js';
 import { createGame } from '../../src/game/assemble.js';
 import { Session } from '../../src/game/session.js';
 
-const brokePack = { ...HUSH_PACK, seedVariance: { ...HUSH_PACK.seedVariance!, startKits: [{ id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} }] } };
+const brokePack = {
+  ...HUSH_PACK,
+  seedVariance: {
+    ...HUSH_PACK.seedVariance!,
+    startKits: [{ id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} }],
+  },
+};
 // a player primed at the watched gate AT NIGHT, carrying the core (the interception is live).
 // night because the SLIP route needs cover of dark; pry/debt work at any hour.
 const atGate = (seed: string, extra: Record<string, unknown> = {}) => {
@@ -25,7 +31,15 @@ const atGate = (seed: string, extra: Record<string, unknown> = {}) => {
   s.state = {
     ...s.state,
     native: { ...s.state.native, 'time.cycle': { minutes: 1320 } }, // 22:00 — night
-    facts: { ...s.state.facts, 'loc.pc': 'cordon_checkpoint', 'phase.now': 'night', 'clock.minutes': 1320, 'possession.pc.salvage_core': true, 'flag.intercepted': true, ...extra },
+    facts: {
+      ...s.state.facts,
+      'loc.pc': 'cordon_checkpoint',
+      'phase.now': 'night',
+      'clock.minutes': 1320,
+      'possession.pc.salvage_core': true,
+      'flag.intercepted': true,
+      ...extra,
+    },
   };
   return s;
 };
@@ -54,7 +68,11 @@ describe('the climax has teeth — the watched gate must be EARNED', () => {
   it('the SLIP route is closed in BROAD DAYLIGHT — the gap is no use without the cover of dark', () => {
     // arriving disarmed (no iron, no debt) by DAY genuinely narrows your odds (feedback/0013 #1, #3)
     const s = atGate('climax-day', { 'possession.pc.iron_knife.condition': 'ore' });
-    s.state = { ...s.state, native: { ...s.state.native, 'time.cycle': { minutes: 600 } }, facts: { ...s.state.facts, 'phase.now': 'day', 'clock.minutes': 600 } };
+    s.state = {
+      ...s.state,
+      native: { ...s.state.native, 'time.cycle': { minutes: 600 } },
+      facts: { ...s.state.facts, 'phase.now': 'day', 'clock.minutes': 600 },
+    };
     s.act('ask holt about the gap');
     s.act('hide');
     expect(s.state.facts['phase.now']).toBe('day');
@@ -78,14 +96,25 @@ describe('the climax has teeth — the watched gate must be EARNED', () => {
     const stuck = atGate('climax-look-stuck', { 'possession.pc.iron_knife.condition': 'ore' });
     expect(stuck.act('look').text.toLowerCase()).toContain('ask him about the gap');
     // gap-known at night: the look acknowledges the route opened (dark on your side)
-    const ready = atGate('climax-look-ready', { 'possession.pc.iron_knife.condition': 'ore', 'objective.knows_gap': true });
+    const ready = atGate('climax-look-ready', {
+      'possession.pc.iron_knife.condition': 'ore',
+      'objective.knows_gap': true,
+    });
     expect(ready.act('look').text.toLowerCase()).toMatch(/go low and quiet|dark is on your side/);
     // gap-known but BY DAY: the look says you must wait for dark
     const day = atGate('climax-look-day', { 'objective.knows_gap': true });
-    day.state = { ...day.state, facts: { ...day.state.facts, 'phase.now': 'day', 'clock.minutes': 600 }, native: { ...day.state.native, 'time.cycle': { minutes: 600 } } };
+    day.state = {
+      ...day.state,
+      facts: { ...day.state.facts, 'phase.now': 'day', 'clock.minutes': 600 },
+      native: { ...day.state.native, 'time.cycle': { minutes: 600 } },
+    };
     expect(day.act('look').text.toLowerCase()).toMatch(/broad day|wait for the light/);
     // patrol ALERT (hidden, knows gap, night): the SLIP "go" prose must NOT show — the route is shut
-    const alerted = atGate('climax-look-alert', { 'objective.knows_gap': true, 'flag.hidden': true, 'awareness.cordon_patrol': 'alert' });
+    const alerted = atGate('climax-look-alert', {
+      'objective.knows_gap': true,
+      'flag.hidden': true,
+      'awareness.cordon_patrol': 'alert',
+    });
     expect(canLeave(alerted)).toBe(false); // exit correctly blocked while alert
     expect(alerted.act('look').text.toLowerCase()).not.toContain('go low and quiet'); // and the prose agrees
   });

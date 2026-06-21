@@ -25,7 +25,19 @@ import { createSocial } from '../modules/social/index.js';
 import { createCombat } from '../modules/combat/index.js';
 
 const ALWAYS_ARMED = ['anomaly', 'invest', 'time', 'travel', 'spine', 'combat'];
-const PLAYER_VISIBLE_NS = new Set(['loc', 'facing', 'phase', 'clock', 'survival', 'known', 'reputation', 'possession', 'meta', 'aspect', 'objective']);
+const PLAYER_VISIBLE_NS = new Set([
+  'loc',
+  'facing',
+  'phase',
+  'clock',
+  'survival',
+  'known',
+  'reputation',
+  'possession',
+  'meta',
+  'aspect',
+  'objective',
+]);
 
 export interface Game {
   readonly pack: WorldPack;
@@ -58,7 +70,8 @@ export function createGame(pack: WorldPack, seed: string, opts: GameOptions = {}
   const registry = new ModuleRegistry(modules);
   const nodes = new Map<string, NodeDef>(pack.nodes.map((n) => [n.id, n]));
   const npcAtNode = new Map<string, string[]>();
-  for (const n of pack.npcs) for (const nd of n.atNodes ?? []) (npcAtNode.get(nd) ?? npcAtNode.set(nd, []).get(nd)!).push(n.id);
+  for (const n of pack.npcs)
+    for (const nd of n.atNodes ?? []) (npcAtNode.get(nd) ?? npcAtNode.set(nd, []).get(nd)!).push(n.id);
 
   function liveLaws(): Set<string> {
     const v = pack.seedVariance?.liveLaws;
@@ -122,7 +135,8 @@ export function createGame(pack: WorldPack, seed: string, opts: GameOptions = {}
     for (const [k, v] of Object.entries(facts)) {
       const ns = k.split('.', 1)[0]!;
       if (PLAYER_VISIBLE_NS.has(ns)) out[k] = v;
-      else if (ns === 'law' && (k.endsWith('.witnessed') || k.endsWith('.contacts') || k.endsWith('.drift_warned'))) out[k] = v;
+      else if (ns === 'law' && (k.endsWith('.witnessed') || k.endsWith('.contacts') || k.endsWith('.drift_warned')))
+        out[k] = v;
       else if (ns === 'awareness' && !k.endsWith('.turn')) out[k] = v;
     }
     return out;
@@ -138,7 +152,13 @@ export function createGame(pack: WorldPack, seed: string, opts: GameOptions = {}
       const ok = !e.when || evalPredicate(e.when, view);
       if (ok) acts.push({ id: `go:${e.to}`, label: e.label, intent: 'go', target: e.to });
     }
-    for (const ex of node.examinables ?? []) acts.push({ id: `examine:${ex.id}`, label: `examine ${ex.names[0]}`, intent: 'examine', target: ex.id });
+    for (const ex of node.examinables ?? [])
+      acts.push({
+        id: `examine:${ex.id}`,
+        label: `examine ${ex.names[0]}`,
+        intent: 'examine',
+        target: ex.id,
+      });
     for (const nid of npcAtNode.get(node.id) ?? []) {
       const npc = pack.npcs.find((n) => n.id === nid)!;
       acts.push({ id: `talk:${nid}`, label: `talk to ${npc.name}`, intent: 'talk', target: nid });
@@ -166,7 +186,9 @@ export function createGame(pack: WorldPack, seed: string, opts: GameOptions = {}
     const groundHere = Object.keys(state.facts)
       .filter((k) => k.startsWith(`world.ground.${nodeId}.`) && state.facts[k] === true)
       .map((k) => k.slice(`world.ground.${nodeId}.`.length));
-    const itemIdsHere = [...new Set([...(node?.items ?? []).filter((id) => state.facts[`possession.pc.${id}`] !== true), ...groundHere])];
+    const itemIdsHere = [
+      ...new Set([...(node?.items ?? []).filter((id) => state.facts[`possession.pc.${id}`] !== true), ...groundHere]),
+    ];
     const itemsHere = itemIdsHere.map((id) => {
       const it = pack.items.find((x) => x.id === id)!;
       return { id: `item.${id}`, label: it?.names[0] ?? id, kind: 'item' };

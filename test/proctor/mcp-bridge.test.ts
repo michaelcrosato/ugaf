@@ -10,17 +10,29 @@ import { createGame } from '../../src/game/assemble.js';
 import { ProctorMcpBridge } from '../../src/proctor/mcp-server.js';
 
 function bridge(opts?: { maxTurns?: number; seed?: string }) {
-  return new ProctorMcpBridge(createGame(HUSH_PACK, opts?.seed ?? 'mcp-test'), { maxTurns: opts?.maxTurns });
+  return new ProctorMcpBridge(createGame(HUSH_PACK, opts?.seed ?? 'mcp-test'), {
+    maxTurns: opts?.maxTurns,
+  });
 }
 function callTool(b: ProctorMcpBridge, name: string, args: Record<string, unknown> = {}): string {
-  const r = b.handle({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name, arguments: args } });
+  const r = b.handle({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'tools/call',
+    params: { name, arguments: args },
+  });
   const result = (r as { result: { content: { text: string }[] } }).result;
   return result.content[0]!.text;
 }
 
 describe('PROCTOR MCP bridge', () => {
   it('initialize returns serverInfo and a tools capability', () => {
-    const r = bridge().handle({ jsonrpc: '2.0', id: 0, method: 'initialize', params: { protocolVersion: '2025-06-18' } });
+    const r = bridge().handle({
+      jsonrpc: '2.0',
+      id: 0,
+      method: 'initialize',
+      params: { protocolVersion: '2025-06-18' },
+    });
     const res = (r as { result: Record<string, unknown> }).result;
     expect((res.serverInfo as { name: string }).name).toBe('proctor');
     expect(res.capabilities).toHaveProperty('tools');
@@ -54,7 +66,17 @@ describe('PROCTOR MCP bridge', () => {
   it('act drives the game; a real tool-driven run is realness-verified', () => {
     const b = bridge({ seed: 'mcp-real' });
     callTool(b, 'observe');
-    for (const cmd of ['out', 'road', 'talk to lyle', 'road', 'examine the milepost', 'look back', 'on', 'examine the walker', 'deduce the mile road']) {
+    for (const cmd of [
+      'out',
+      'road',
+      'talk to lyle',
+      'road',
+      'examine the milepost',
+      'look back',
+      'on',
+      'examine the walker',
+      'deduce the mile road',
+    ]) {
       callTool(b, 'act', { command: cmd });
     }
     const snap = b.snapshot();
@@ -63,7 +85,12 @@ describe('PROCTOR MCP bridge', () => {
   });
 
   it('act requires a non-empty command', () => {
-    const r = bridge().handle({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'act', arguments: { command: '   ' } } });
+    const r = bridge().handle({
+      jsonrpc: '2.0',
+      id: 3,
+      method: 'tools/call',
+      params: { name: 'act', arguments: { command: '   ' } },
+    });
     expect((r as { error: { code: number } }).error.code).toBe(-32602);
   });
 

@@ -35,7 +35,11 @@ export function route(
   if (top.length > 1) {
     return { kind: 'ambiguous', intent: intent.class, tied: top.map((m) => m.manifest.id) };
   }
-  return { kind: 'owner', owner: top[0]!.manifest.id, candidates: claimants.map((m) => m.manifest.id) };
+  return {
+    kind: 'owner',
+    owner: top[0]!.manifest.id,
+    candidates: claimants.map((m) => m.manifest.id),
+  };
 }
 
 /** One arming scenario from the campaign charter (a reachable node + its armed set). */
@@ -74,7 +78,11 @@ export function bootCollisionAudit(
       const maxPriority = Math.max(...claimants.map((m) => m.manifest.priority));
       const top = claimants.filter((m) => m.manifest.priority === maxPriority);
       if (top.length > 1) {
-        collisions.push({ scenario: scenario.label, intent: cls, tied: top.map((m) => m.manifest.id) });
+        collisions.push({
+          scenario: scenario.label,
+          intent: cls,
+          tied: top.map((m) => m.manifest.id),
+        });
       }
     }
   }

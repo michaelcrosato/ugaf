@@ -16,7 +16,13 @@ import { createGame } from '../../src/game/assemble.js';
 import { Session } from '../../src/game/session.js';
 
 // force the 'broke' kit (iron_knife + lantern + coin) for deterministic tests
-const brokePack = { ...HUSH_PACK, seedVariance: { ...HUSH_PACK.seedVariance!, startKits: [{ id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} }] } };
+const brokePack = {
+  ...HUSH_PACK,
+  seedVariance: {
+    ...HUSH_PACK.seedVariance!,
+    startKits: [{ id: 'broke', items: ['iron_knife', 'lantern', 'coin_roll'], facts: {} }],
+  },
+};
 const freshSession = (seed = 'drift-seed') => new Session(createGame(brokePack, seed));
 
 describe('Law Drift charges — the hungry hours lengthen', () => {
@@ -117,7 +123,18 @@ describe('Law Drift charges — the hungry hours lengthen', () => {
   it('natural drift sets the widened-window flag AND the demote message names the consequence', () => {
     const s = freshSession('decay-natural');
     // survey the Greywater first-hand
-    for (const c of ['out', 'road', 'road', 'on', 'fork', 'water', 'examine the rust', 'listen', 'deduce the greywater']) s.act(c);
+    for (const c of [
+      'out',
+      'road',
+      'road',
+      'on',
+      'fork',
+      'water',
+      'examine the rust',
+      'listen',
+      'deduce the greywater',
+    ])
+      s.act(c);
     expect(s.state.facts['known.law.greywater']).toBe('surveyed');
     const surveyTurn = s.state.facts['known.greywater.surveyed_turn'] as number;
     expect(typeof surveyTurn).toBe('number');
