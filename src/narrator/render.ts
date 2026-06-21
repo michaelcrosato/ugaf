@@ -41,7 +41,14 @@ export function createRenderer(pack: WorldPack): Renderer {
   const ambientCursor = new Map<string, number>(); // presentation state: no-repeat ambient rotation
   const regionsSeen = new Set<string>(); // presentation state: a region's baseline shows once, not per-room
 
-  function compose(block: DescriptionBlock, facts: FactView, turn: number, nodeId: string, firstVisit: boolean, rotate = false): string {
+  function compose(
+    block: DescriptionBlock,
+    facts: FactView,
+    turn: number,
+    nodeId: string,
+    firstVisit: boolean,
+    rotate = false,
+  ): string {
     const matching = (block.variants ?? []).filter((v) => evalPredicate(v.when, facts));
     // a `replace:true` variant SUPPLANTS the whole block (base + every append variant)
     // for this turn — the last matching replace wins; otherwise base + appends.
@@ -101,7 +108,11 @@ export function createRenderer(pack: WorldPack): Renderer {
     return lines.join('\n');
   }
 
-  function renderEvents(events: readonly WorldEvent[], _renders: readonly RenderPayload[], _obs: RoleObservation): string {
+  function renderEvents(
+    events: readonly WorldEvent[],
+    _renders: readonly RenderPayload[],
+    _obs: RoleObservation,
+  ): string {
     const out: string[] = [];
     for (const ev of events) {
       if (ev.visibility === 'private') continue;

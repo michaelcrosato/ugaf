@@ -61,7 +61,24 @@ describe('the NPC information-economy', () => {
     s.act('out');
     expect(s.act('talk to holt').text).toContain('Going in, are you'); // default greeting
     // fetch the core and return to the gate (carrying it), all through real play
-    for (const c of ['road', 'road', 'on', 'fork', 'water', 'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate']) s.act(c);
+    for (const c of [
+      'road',
+      'road',
+      'on',
+      'fork',
+      'water',
+      'in',
+      'cache',
+      'take core',
+      'out',
+      'back',
+      'back',
+      'mile',
+      'back',
+      'back',
+      'gate',
+    ])
+      s.act(c);
     expect(s.state.facts['possession.pc.salvage_core']).toBe(true);
     expect(s.state.facts['loc.pc']).toBe('cordon_checkpoint');
     const after = s.act('talk to holt').text;

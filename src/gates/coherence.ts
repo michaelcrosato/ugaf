@@ -44,20 +44,38 @@ export function coherencePass(pack: WorldPack): CoherenceReport {
     const tag = `law[${law.id}]`;
 
     // exactly one effect-category, <=2 secondary
-    record(`${tag}.one_effect_category`, EFFECT_CATEGORIES.includes(law.effectCategory), `unknown effect category ${law.effectCategory}`);
+    record(
+      `${tag}.one_effect_category`,
+      EFFECT_CATEGORIES.includes(law.effectCategory),
+      `unknown effect category ${law.effectCategory}`,
+    );
     if ((law.secondaryCategories?.length ?? 0) > 2) errors.push(`${tag}: more than 2 secondary categories`);
 
     // scope nodes exist
     const badNodes = (law.scope.nodes ?? []).filter((n) => !nodeIds.has(n));
-    record(`${tag}.scope_nodes_exist`, badNodes.length === 0, badNodes.length ? `unknown scope nodes: ${badNodes.join(', ')}` : undefined);
+    record(
+      `${tag}.scope_nodes_exist`,
+      badNodes.length === 0,
+      badNodes.length ? `unknown scope nodes: ${badNodes.join(', ')}` : undefined,
+    );
 
     // tells reference real library entries
     const badTells = law.tells.filter((t) => !tellIds.has(t.id)).map((t) => t.id);
-    record(`${tag}.tells_exist`, badTells.length === 0, badTells.length ? `unknown tells: ${badTells.join(', ')}` : undefined);
+    record(
+      `${tag}.tells_exist`,
+      badTells.length === 0,
+      badTells.length ? `unknown tells: ${badTells.join(', ')}` : undefined,
+    );
 
     // tells reachable via non-lethal observation (every tell has an `at` location or is on a scope node)
-    const reachableTells = law.tells.filter((t) => (t.at?.nodes?.length ?? 0) > 0 || (t.at?.regions?.length ?? 0) > 0 || (law.scope.nodes?.length ?? 0) > 0);
-    record(`${tag}.tells_reachable`, reachableTells.length >= law.discovery.minTellsToSurvey, `only ${reachableTells.length} reachable tells but ${law.discovery.minTellsToSurvey} needed to survey`);
+    const reachableTells = law.tells.filter(
+      (t) => (t.at?.nodes?.length ?? 0) > 0 || (t.at?.regions?.length ?? 0) > 0 || (law.scope.nodes?.length ?? 0) > 0,
+    );
+    record(
+      `${tag}.tells_reachable`,
+      reachableTells.length >= law.discovery.minTellsToSurvey,
+      `only ${reachableTells.length} reachable tells but ${law.discovery.minTellsToSurvey} needed to survey`,
+    );
 
     // fail-safe first contact present (non-lethal warning before it can hurt)
     record(`${tag}.failsafe_first_contact`, !!law.failSafe?.firstContact?.tell, 'missing fail-safe first-contact tell');
@@ -65,17 +83,29 @@ export function coherencePass(pack: WorldPack): CoherenceReport {
     // delegated-lethality clamp for laws that route into combat/summon
     const lethalDelegate = law.combatConsequence || law.effect.kind === 'summon';
     if (lethalDelegate) {
-      record(`${tag}.delegated_clamp`, law.failSafe?.delegatedClamp === true, 'law routes into combat/summon but lacks the delegated-lethality clamp');
+      record(
+        `${tag}.delegated_clamp`,
+        law.failSafe?.delegatedClamp === true,
+        'law routes into combat/summon but lacks the delegated-lethality clamp',
+      );
     }
 
     // drift laws emit a pre-demotion tell that exists
     if (law.drift) {
-      record(`${tag}.predemotion_tell`, tellIds.has(law.drift.predemotionTell), `pre-demotion drift tell "${law.drift.predemotionTell}" not in the tell library`);
+      record(
+        `${tag}.predemotion_tell`,
+        tellIds.has(law.drift.predemotionTell),
+        `pre-demotion drift tell "${law.drift.predemotionTell}" not in the tell library`,
+      );
     }
 
     // declared interactions point at real laws
     const badEdges = law.interactions.filter((id) => !lawIds.has(id));
-    record(`${tag}.interactions_exist`, badEdges.length === 0, badEdges.length ? `interactions reference unknown laws: ${badEdges.join(', ')}` : undefined);
+    record(
+      `${tag}.interactions_exist`,
+      badEdges.length === 0,
+      badEdges.length ? `interactions reference unknown laws: ${badEdges.join(', ')}` : undefined,
+    );
   }
 
   // ---- >=1 authored cross-law coupling among the demo laws ----------------
@@ -88,13 +118,19 @@ export function coherencePass(pack: WorldPack): CoherenceReport {
         coupling = `${a.id}(${a.effectCategory}) x ${b.id}(${b.effectCategory})`;
       }
     }
-  record('cross_law_coupling', !!coupling, coupling ? undefined : 'no authored cross-law coupling among laws (would be a branch, not emergence)');
+  record(
+    'cross_law_coupling',
+    !!coupling,
+    coupling ? undefined : 'no authored cross-law coupling among laws (would be a branch, not emergence)',
+  );
   if (coupling) checks.find((c) => c.name === 'cross_law_coupling')!.detail = coupling;
 
   // ---- light: contradictory rumors (warn only) ----------------------------
   for (const r of pack.rumors) {
     if (r.truth === 'false' && !pack.rumors.some((o) => o.topic === r.topic && o.truth === 'true')) {
-      warnings.push(`rumor[${r.id}]: a false rumor about "${r.topic}" with no true counterpart — a player may have no way to disconfirm it`);
+      warnings.push(
+        `rumor[${r.id}]: a false rumor about "${r.topic}" with no true counterpart — a player may have no way to disconfirm it`,
+      );
     }
   }
 

@@ -26,7 +26,12 @@ export function createAnomaly(pack: WorldPack): Module {
     id: 'anomaly.hush',
     content: { laws: pack.laws.map((l) => ({ id: l.id, cat: l.effectCategory })) },
     source: 'bespoke (The Hush) — original anomaly physics',
-    license: { identifier: 'NONE', attribution: 'LOOM original (The Hush)', tier: 'green', provenance: 'clean-room' },
+    license: {
+      identifier: 'NONE',
+      attribution: 'LOOM original (The Hush)',
+      tier: 'green',
+      provenance: 'clean-room',
+    },
     domain: 'anomaly',
     priority: 50, // highest — the Zone distorts everything
     intents: [],
@@ -131,7 +136,9 @@ export function createAnomaly(pack: WorldPack): Module {
             { op: 'set', key: `law.${law.id}.active`, value: true }, // the Changed is now hunting
             { op: 'set', key: `law.${law.id}.active_turn`, value: turn },
           ],
-          summary: firstContact ? law.failSafe.firstContact.tell : 'The hum sharpens. Something has heard you, and it is coming.',
+          summary: firstContact
+            ? law.failSafe.firstContact.tell
+            : 'The hum sharpens. Something has heard you, and it is coming.',
           data: { law: law.id },
         });
         break;
@@ -170,7 +177,11 @@ export function createAnomaly(pack: WorldPack): Module {
         break;
       }
     }
-    return { events, scheduled, render: { labels, valence: 'cost', hints: { law: law.id, firstContact } } };
+    return {
+      events,
+      scheduled,
+      render: { labels, valence: 'cost', hints: { law: law.id, firstContact } },
+    };
   }
 
   return {
@@ -178,7 +189,11 @@ export function createAnomaly(pack: WorldPack): Module {
     init: (): JsonObject => ({}),
     claims: () => false, // purely reactive
     validateLegality: () => ({ legal: true }),
-    execute: (args): ModuleResult => ({ nativeNext: args.native, events: [], control: { kind: 'continue' } }),
+    execute: (args): ModuleResult => ({
+      nativeNext: args.native,
+      events: [],
+      control: { kind: 'continue' },
+    }),
     beatTriggers: ['law_trigger', 'drift_apply'],
     onBeat: (phase, native, facts, _tape, ctx): BeatResult => {
       const node = facts.getString('loc.pc');
@@ -195,13 +210,34 @@ export function createAnomaly(pack: WorldPack): Module {
       let huntRender: BeatResult['render'] | undefined;
       if (facts.getBool('law.antenna_field.active')) {
         const activeTurn = facts.getNumber('law.antenna_field.active_turn');
-        const spokeThisTurn = facts.getString('flag.last_intent') === 'speak_aloud' && facts.getNumber('flag.last_turn') === ctx.turn;
+        const spokeThisTurn =
+          facts.getString('flag.last_intent') === 'speak_aloud' && facts.getNumber('flag.last_turn') === ctx.turn;
         if (node !== 'antenna_field') {
-          huntEvents.push({ tag: 'antenna_escape', mutations: [{ op: 'set', key: 'law.antenna_field.active', value: false }], summary: 'You put the antenna field behind you. Out in the dark, the thing that heard you loses the thread of you — and turns away, slow and reluctant, to listen for someone else.', data: { law: 'antenna_field' } });
+          huntEvents.push({
+            tag: 'antenna_escape',
+            mutations: [{ op: 'set', key: 'law.antenna_field.active', value: false }],
+            summary:
+              'You put the antenna field behind you. Out in the dark, the thing that heard you loses the thread of you — and turns away, slow and reluctant, to listen for someone else.',
+            data: { law: 'antenna_field' },
+          });
           huntRender = { labels: ['antenna.escape'], valence: 'boon' };
         } else if (!spokeThisTurn && activeTurn !== undefined && activeTurn < ctx.turn) {
-          huntScheduled.push({ fireAtTurn: ctx.turn, phase: 'summon_act', module: 'combat.ito', kind: 'changed_strike', id: `changed:antenna_field:${ctx.turn}`, order: 0, payload: { law: 'antenna_field', firstContact: false, entity: 'the_changed' } });
-          huntEvents.push({ tag: 'antenna_close', mutations: [{ op: 'set', key: 'law.antenna_field.active', value: false }], summary: 'You stayed in the field a beat too long. The Changed has closed the distance, and the hum is the sound of it arriving.', data: { law: 'antenna_field' } });
+          huntScheduled.push({
+            fireAtTurn: ctx.turn,
+            phase: 'summon_act',
+            module: 'combat.ito',
+            kind: 'changed_strike',
+            id: `changed:antenna_field:${ctx.turn}`,
+            order: 0,
+            payload: { law: 'antenna_field', firstContact: false, entity: 'the_changed' },
+          });
+          huntEvents.push({
+            tag: 'antenna_close',
+            mutations: [{ op: 'set', key: 'law.antenna_field.active', value: false }],
+            summary:
+              'You stayed in the field a beat too long. The Changed has closed the distance, and the hum is the sound of it arriving.',
+            data: { law: 'antenna_field' },
+          });
           huntRender = { labels: ['antenna.close'], valence: 'cost' };
         }
       }

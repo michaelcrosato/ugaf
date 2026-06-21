@@ -137,7 +137,11 @@ export interface SceneView {
   readonly regionId?: string;
   readonly phase?: string; // day/night, if known
   readonly exits: readonly { readonly dir: string; readonly to?: string; readonly label: string }[];
-  readonly entities: readonly { readonly id: EntityId; readonly label: string; readonly kind: string }[];
+  readonly entities: readonly {
+    readonly id: EntityId;
+    readonly label: string;
+    readonly kind: string;
+  }[];
   readonly tellHints: readonly string[]; // stable tell-library cue keys present and observable
   readonly labels: readonly string[]; // descriptive label keys for the renderer
 }
@@ -288,7 +292,13 @@ export interface Module {
    * Optional: handle a scheduled beat that fired (K7). Returns events + native
    * delta the same way execute does, but driven by the scheduler, not a player.
    */
-  onScheduled?(event: ScheduledEvent, native: JsonObject, facts: FactView, tape: TapeReader, ctx: ModuleContext): ModuleResult;
+  onScheduled?(
+    event: ScheduledEvent,
+    native: JsonObject,
+    facts: FactView,
+    tape: TapeReader,
+    ctx: ModuleContext,
+  ): ModuleResult;
   /**
    * The beat phases this module wants to be POLLED in each beat (reactive
    * standing triggers — e.g. anomaly.hush polls `law_trigger`; time.cycle polls

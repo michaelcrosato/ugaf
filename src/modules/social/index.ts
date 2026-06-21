@@ -22,7 +22,13 @@ export function createSocial(pack: WorldPack): Module {
     id: 'social.fate',
     content: { npcs: pack.npcs.map((n) => n.id) },
     source: 'Fate Core SRD §create-advantage / aspects (CC-BY-3.0)',
-    license: { identifier: 'CC-BY-3.0', attribution: 'Fate Core by Evil Hat Productions', tier: 'green', provenance: 'licensed-source', indicationOfChanges: 'reimplemented as deterministic create-advantage + scoped reputation' },
+    license: {
+      identifier: 'CC-BY-3.0',
+      attribution: 'Fate Core by Evil Hat Productions',
+      tier: 'green',
+      provenance: 'licensed-source',
+      indicationOfChanges: 'reimplemented as deterministic create-advantage + scoped reputation',
+    },
     domain: 'social',
     priority: 25,
     intents: ['talk', 'parley', 'bribe', 'intimidate', 'say', 'give', 'ask_about'],
@@ -30,7 +36,11 @@ export function createSocial(pack: WorldPack): Module {
     readsFacts: ['reputation', 'aspect', 'known', 'flag', 'possession', 'loc'],
   });
 
-  function presentNpc(node: string | undefined, targetId?: string, raw?: string): { npc?: NpcDef; namedButAbsent?: string } {
+  function presentNpc(
+    node: string | undefined,
+    targetId?: string,
+    raw?: string,
+  ): { npc?: NpcDef; namedButAbsent?: string } {
     if (!node) return {};
     const here = (npcAt.get(node) ?? []).map((id) => npcs.get(id)!).filter(Boolean);
     if (targetId && npcs.has(targetId)) {
@@ -48,7 +58,11 @@ export function createSocial(pack: WorldPack): Module {
     return { npc: here[0] };
   }
 
-  function pickLine(npc: NpcDef, topic: string | undefined, facts: import('../../sdk/facts.js').FactView): DialogueLine | undefined {
+  function pickLine(
+    npc: NpcDef,
+    topic: string | undefined,
+    facts: import('../../sdk/facts.js').FactView,
+  ): DialogueLine | undefined {
     const lines = (npc.dialogue ?? []).filter((l) => !l.when || evalPredicate(l.when, facts));
     if (topic) {
       const q = topic.toLowerCase();
@@ -61,7 +75,9 @@ export function createSocial(pack: WorldPack): Module {
   return {
     manifest,
     init: (): JsonObject => ({}),
-    claims: (intent, _facts, armed) => armed.has('social') && ['talk', 'parley', 'bribe', 'intimidate', 'say', 'give', 'ask_about'].includes(intent.class),
+    claims: (intent, _facts, armed) =>
+      armed.has('social') &&
+      ['talk', 'parley', 'bribe', 'intimidate', 'say', 'give', 'ask_about'].includes(intent.class),
     validateLegality: (intent, _native, facts) => {
       const node = facts.getString('loc.pc');
       const { npc, namedButAbsent } = presentNpc(node, intent.target?.id, intent.target?.raw);
@@ -102,13 +118,31 @@ export function createSocial(pack: WorldPack): Module {
 
       // parley / intimidate / (bribing a non-merchant) -> a create-advantage contest
       const roll = args.tape.die('social', 6, 'fate');
-      const rep = facts.getNumber(`reputation.pc.${npc.faction ?? npc.id}`) ?? (npc.disposition ?? 0);
+      const rep = facts.getNumber(`reputation.pc.${npc.faction ?? npc.id}`) ?? npc.disposition ?? 0;
       const success = roll + Math.sign(rep) * 1 >= 4;
       const dir = success ? 1 : -1;
       const events: WorldEvent[] = [
-        { tag: `social_${c}`, mutations: [{ op: 'adjust', key: `reputation.pc.${npc.faction ?? npc.id}`, by: dir, min: -3, max: 3 }], summary: contestLine(npc, c, success), data: { npc: npc.id, success } },
+        {
+          tag: `social_${c}`,
+          mutations: [
+            {
+              op: 'adjust',
+              key: `reputation.pc.${npc.faction ?? npc.id}`,
+              by: dir,
+              min: -3,
+              max: 3,
+            },
+          ],
+          summary: contestLine(npc, c, success),
+          data: { npc: npc.id, success },
+        },
       ];
-      return { nativeNext: args.native, events, control: { kind: 'continue' }, render: { labels: [`social.${c}`, `npc.${npc.id}`], valence: success ? 'boon' : 'cost' } };
+      return {
+        nativeNext: args.native,
+        events,
+        control: { kind: 'continue' },
+        render: { labels: [`social.${c}`, `npc.${npc.id}`], valence: success ? 'boon' : 'cost' },
+      };
     },
   };
 
@@ -121,7 +155,12 @@ export function createSocial(pack: WorldPack): Module {
   }
 
   function beat(native: JsonObject, summary: string, labels: string[]): ModuleResult {
-    return { nativeNext: native, events: [{ tag: 'social_beat', mutations: [], summary }], control: { kind: 'continue' }, render: { labels } };
+    return {
+      nativeNext: native,
+      events: [{ tag: 'social_beat', mutations: [], summary }],
+      control: { kind: 'continue' },
+      render: { labels },
+    };
   }
 
   function contestLine(npc: NpcDef, c: string, success: boolean): string {
@@ -132,27 +171,53 @@ export function createSocial(pack: WorldPack): Module {
   function dialogue(npc: NpcDef, line: DialogueLine, native: JsonObject): ModuleResult {
     return {
       nativeNext: native,
-      events: [{ tag: 'dialogue', mutations: mutFromLine(line), summary: `${npc.name}: “${line.text}”`, data: { npc: npc.id, line: line.id } }],
+      events: [
+        {
+          tag: 'dialogue',
+          mutations: mutFromLine(line),
+          summary: `${npc.name}: “${line.text}”`,
+          data: { npc: npc.id, line: line.id },
+        },
+      ],
       control: { kind: 'continue' },
-      render: { labels: ['social.talk', `npc.${npc.id}`], hints: { npc: npc.id, grants: line.grantsRumor ?? line.grantsLeadTell ?? null } },
+      render: {
+        labels: ['social.talk', `npc.${npc.id}`],
+        hints: { npc: npc.id, grants: line.grantsRumor ?? line.grantsLeadTell ?? null },
+      },
     };
   }
 
-  function pickTopicLine(npc: NpcDef, topic: string, facts: import('../../sdk/facts.js').FactView): DialogueLine | undefined {
+  function pickTopicLine(
+    npc: NpcDef,
+    topic: string,
+    facts: import('../../sdk/facts.js').FactView,
+  ): DialogueLine | undefined {
     const q = topic.toLowerCase();
-    return (npc.dialogue ?? [])
-      .filter((l) => !l.when || evalPredicate(l.when, facts))
-      // a grantsLeadTell line is the PAID law-map payload — never hand it over via a free ask
-      .find((l) => l.topic !== undefined && !l.grantsLeadTell && (l.topic === topic || q.includes(l.topic.toLowerCase())));
+    return (
+      (npc.dialogue ?? [])
+        .filter((l) => !l.when || evalPredicate(l.when, facts))
+        // a grantsLeadTell line is the PAID law-map payload — never hand it over via a free ask
+        .find(
+          (l) => l.topic !== undefined && !l.grantsLeadTell && (l.topic === topic || q.includes(l.topic.toLowerCase())),
+        )
+    );
   }
 
   // an unmatched ask: a merchant with an unbought law-map points you at PAYING (so a paywall
   // never reads as a parser miss); anyone else honestly admits they have nothing to say.
   function deflect(npc: NpcDef, facts: import('../../sdk/facts.js').FactView): string {
     const sells = (npc.dialogue ?? []).find((l) => l.grantsLeadTell && (!l.when || evalPredicate(l.when, facts)));
-    const lawId = sells ? Object.keys(sells.setsFacts ?? {}).find((k) => k.startsWith('known.purchased.'))?.slice('known.purchased.'.length) : undefined;
-    const unbought = lawId !== undefined && !facts.getBool(`known.purchased.${lawId}`) && stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) < stageRank('surveyed');
-    if (unbought) return `${npc.name}: “That is not free talk — that is what I sell. Pay me for it (give a coin, or “pay ${npc.names[0]}”) and it is yours.”`;
+    const lawId = sells
+      ? Object.keys(sells.setsFacts ?? {})
+          .find((k) => k.startsWith('known.purchased.'))
+          ?.slice('known.purchased.'.length)
+      : undefined;
+    const unbought =
+      lawId !== undefined &&
+      !facts.getBool(`known.purchased.${lawId}`) &&
+      stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) < stageRank('surveyed');
+    if (unbought)
+      return `${npc.name}: “That is not free talk — that is what I sell. Pay me for it (give a coin, or “pay ${npc.names[0]}”) and it is yours.”`;
     return `${npc.name} shakes their head. “Nothing I can tell you about that.”`;
   }
 
@@ -162,16 +227,36 @@ export function createSocial(pack: WorldPack): Module {
 
   // give/pay/bribe a merchant -> buy the law-map: spend the payment, grant the map (codex-visible
   // via the line's setsFacts), once. Honest refusal if there's nothing to pay with.
-  function trade(npc: NpcDef, lawLine: DialogueLine, c: string, intent: import('../../sdk/intents.js').ParsedIntent, facts: import('../../sdk/facts.js').FactView, native: JsonObject): ModuleResult {
-    const lawId = Object.keys(lawLine.setsFacts ?? {}).find((k) => k.startsWith('known.purchased.'))?.slice('known.purchased.'.length);
+  function trade(
+    npc: NpcDef,
+    lawLine: DialogueLine,
+    c: string,
+    intent: import('../../sdk/intents.js').ParsedIntent,
+    facts: import('../../sdk/facts.js').FactView,
+    native: JsonObject,
+  ): ModuleResult {
+    const lawId = Object.keys(lawLine.setsFacts ?? {})
+      .find((k) => k.startsWith('known.purchased.'))
+      ?.slice('known.purchased.'.length);
     // You already HAVE this law's knowledge — from ANY merchant, or your own eyes. Eun and Mox
     // sell the SAME Greywater law, so the knowledge is shared: never double-charge, and never claim
     // YOU sold it when another merchant (or first-hand observation) is where it actually came from.
-    if (lawId && stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) >= stageRank('surveyed')) {
-      return beat(native, `${npc.name}: “You already know that one cold — I can see it on you. Keep your coin; I'll not sell you what you've read with your own eyes.”`, ['social.already_known']);
+    if (
+      lawId &&
+      stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) >= stageRank('surveyed')
+    ) {
+      return beat(
+        native,
+        `${npc.name}: “You already know that one cold — I can see it on you. Keep your coin; I'll not sell you what you've read with your own eyes.”`,
+        ['social.already_known'],
+      );
     }
     if (lawId && facts.getBool(`known.purchased.${lawId}`)) {
-      return beat(native, `${npc.name}: “You already carry that map — buy it twice and you'll just have the same thing twice. Keep your coin; go put what you have to use.”`, ['social.already']);
+      return beat(
+        native,
+        `${npc.name}: “You already carry that map — buy it twice and you'll just have the same thing twice. Keep your coin; go put what you have to use.”`,
+        ['social.already'],
+      );
     }
     // payment: GIVE the relic spends the relic; otherwise (give a coin / pay / bribe) it costs
     // ONE coin off the purse — coins are a COUNTED resource now (meta.coins), not an all-or-nothing
@@ -180,26 +265,49 @@ export function createSocial(pack: WorldPack): Module {
     if (c === 'give') {
       const gid = intent.target?.id;
       if (gid === 'antenna_relic' && facts.getBool('possession.pc.antenna_relic')) payKind = 'relic';
-      else if (gid && facts.getString(`possession.pc.${gid}.class`) === 'coin' && coinsLeft(facts) > 0) payKind = 'coin';
+      else if (gid && facts.getString(`possession.pc.${gid}.class`) === 'coin' && coinsLeft(facts) > 0)
+        payKind = 'coin';
     } else if (coinsLeft(facts) > 0) {
       payKind = 'coin';
     }
-    if (!payKind) return beat(native, `${npc.name} wants paying first — a coin, or something genuinely worth the trade. You are out of coin.`, ['social.needs_pay']);
+    if (!payKind)
+      return beat(
+        native,
+        `${npc.name} wants paying first — a coin, or something genuinely worth the trade. You are out of coin.`,
+        ['social.needs_pay'],
+      );
 
-    const muts: import('../../sdk/facts.js').FactMutation[] = [...mutFromLine(lawLine), { op: 'adjust', key: `reputation.pc.${npc.faction ?? npc.id}`, by: 1, min: -3, max: 3 }];
+    const muts: import('../../sdk/facts.js').FactMutation[] = [
+      ...mutFromLine(lawLine),
+      { op: 'adjust', key: `reputation.pc.${npc.faction ?? npc.id}`, by: 1, min: -3, max: 3 },
+    ];
     let receipt: string;
     if (payKind === 'relic') {
-      muts.push({ op: 'delete', key: 'possession.pc.antenna_relic' }, { op: 'delete', key: 'possession.pc.antenna_relic.class' });
+      muts.push(
+        { op: 'delete', key: 'possession.pc.antenna_relic' },
+        { op: 'delete', key: 'possession.pc.antenna_relic.class' },
+      );
       receipt = 'the antenna-shard';
     } else {
       const left = coinsLeft(facts) - 1;
       muts.push({ op: 'adjust', key: 'meta.coins', by: -1, min: 0, max: 9 });
-      if (left <= 0) muts.push({ op: 'delete', key: 'possession.pc.coin_roll' }, { op: 'delete', key: 'possession.pc.coin_roll.class' });
+      if (left <= 0)
+        muts.push(
+          { op: 'delete', key: 'possession.pc.coin_roll' },
+          { op: 'delete', key: 'possession.pc.coin_roll.class' },
+        );
       receipt = left > 0 ? `a coin — ${left} left` : 'your last coin';
     }
     return {
       nativeNext: native,
-      events: [{ tag: 'trade', mutations: muts, summary: `${npc.name}: “${lawLine.text}”\n(You hand over ${receipt}.)`, data: { npc: npc.id, trade: lawId ?? 'lawmap', paid: payKind } }],
+      events: [
+        {
+          tag: 'trade',
+          mutations: muts,
+          summary: `${npc.name}: “${lawLine.text}”\n(You hand over ${receipt}.)`,
+          data: { npc: npc.id, trade: lawId ?? 'lawmap', paid: payKind },
+        },
+      ],
       control: { kind: 'continue' },
       render: { labels: ['social.trade', `npc.${npc.id}`], valence: 'boon' },
     };

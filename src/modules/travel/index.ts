@@ -12,7 +12,8 @@ const RETURN_WORDS = new Set(['back', 'leave', 'return', 'exit', 'away', 'retrea
 
 /** bespoke flavour for the demo's most important pickup (research rule 12). */
 function bespokeTake(id: string, name: string): string {
-  if (id === 'salvage_core') return 'You close your hand around the core. It is warmer than it should be, and it settles into your pack like it has decided to come with you.';
+  if (id === 'salvage_core')
+    return 'You close your hand around the core. It is warmer than it should be, and it settles into your pack like it has decided to come with you.';
   return `You take the ${name}.`;
 }
 import type { JsonObject } from '../../sdk/json.js';
@@ -40,7 +41,12 @@ export function createTravel(pack: WorldPack): Module {
     id: 'travel.graph',
     content: { nodes: pack.nodes.map((n) => n.id), edges: pack.edges.map((e) => e.id), start },
     source: 'clean-room graph traversal + orientation (uncopyrightable mechanic)',
-    license: { identifier: 'NONE', attribution: 'LOOM original', tier: 'green', provenance: 'clean-room' },
+    license: {
+      identifier: 'NONE',
+      attribution: 'LOOM original',
+      tier: 'green',
+      provenance: 'clean-room',
+    },
     domain: 'travel',
     priority: 10,
     intents: ['go', 'cross_threshold', 'look_back', 'flee', 'take', 'drop'],
@@ -58,24 +64,38 @@ export function createTravel(pack: WorldPack): Module {
       const dir = e.dir.toLowerCase();
       const to = e.to.toLowerCase();
       const lab = e.label.toLowerCase();
-      return (t && (e.to.toLowerCase() === t || lab.includes(t))) || (d && dir === d) || (r && (dir === r || lab.includes(r) || to.includes(r)));
+      return (
+        (t && (e.to.toLowerCase() === t || lab.includes(t))) ||
+        (d && dir === d) ||
+        (r && (dir === r || lab.includes(r) || to.includes(r)))
+      );
     });
   }
 
   return {
     manifest,
-    init: (): TravelNative => ({ node: start, facing: 'forward', previous: null, visited: [start], taken: [] }),
+    init: (): TravelNative => ({
+      node: start,
+      facing: 'forward',
+      previous: null,
+      visited: [start],
+      taken: [],
+    }),
     claims: (intent) => ['go', 'cross_threshold', 'look_back', 'flee', 'take', 'drop'].includes(intent.class),
     validateLegality: (intent, native, facts) => {
       const n = native as TravelNative;
       const c = intent.class;
       if (c === 'look_back') return { legal: true };
-      if (c === 'flee') return n.previous ? { legal: true, args: { to: n.previous } as JsonObject } : { legal: false, reason: 'nowhere to flee to' };
+      if (c === 'flee')
+        return n.previous
+          ? { legal: true, args: { to: n.previous } as JsonObject }
+          : { legal: false, reason: 'nowhere to flee to' };
       if (c === 'take') {
         const id = intent.target?.id ?? matchItem(intent.target?.raw);
         const here = nodeItems.get(n.node) ?? [];
         const onGround = id ? facts.getBool(`world.ground.${n.node}.${id}`) === true : false;
-        if (id && ((here.includes(id) && !n.taken.includes(id)) || onGround)) return { legal: true, args: { item: id, ground: onGround } as JsonObject };
+        if (id && ((here.includes(id) && !n.taken.includes(id)) || onGround))
+          return { legal: true, args: { item: id, ground: onGround } as JsonObject };
         return { legal: false, reason: `there is nothing like that here to take` };
       }
       if (c === 'drop') {
@@ -88,13 +108,23 @@ export function createTravel(pack: WorldPack): Module {
       if (!exit) {
         // generic "back / out / leave / return" -> retrace your steps
         const word = (intent.direction ?? intent.target?.raw ?? intent.raw ?? '').toLowerCase().trim();
-        if (RETURN_WORDS.has(word) && n.previous) return { legal: true, args: { to: n.previous, edge: null, label: 'back the way you came' } as JsonObject };
-        return { legal: false, reason: `there is no obvious way ${word ? `"${word}"` : 'like that'} from here — try one of: ${(exitsByNode.get(n.node) ?? []).map((e) => e.dir).join(', ')}` };
+        if (RETURN_WORDS.has(word) && n.previous)
+          return {
+            legal: true,
+            args: { to: n.previous, edge: null, label: 'back the way you came' } as JsonObject,
+          };
+        return {
+          legal: false,
+          reason: `there is no obvious way ${word ? `"${word}"` : 'like that'} from here — try one of: ${(exitsByNode.get(n.node) ?? []).map((e) => e.dir).join(', ')}`,
+        };
       }
       if (exit.when && !evalPredicate(exit.when, facts)) {
         return { legal: false, reason: exit.blockedText ?? 'that way is not passable right now' };
       }
-      return { legal: true, args: { to: exit.to, edge: exit.via ?? null, label: exit.label } as JsonObject };
+      return {
+        legal: true,
+        args: { to: exit.to, edge: exit.via ?? null, label: exit.label } as JsonObject,
+      };
 
       function matchItem(raw?: string): string | undefined {
         if (!raw) return undefined;
@@ -106,12 +136,24 @@ export function createTravel(pack: WorldPack): Module {
     execute: (args): ModuleResult => {
       const n = args.native as TravelNative;
       const c = args.action.intent.class;
-      const a = args.action.args as { to?: string; edge?: string | null; label?: string; item?: string; ground?: boolean };
+      const a = args.action.args as {
+        to?: string;
+        edge?: string | null;
+        label?: string;
+        item?: string;
+        ground?: boolean;
+      };
 
       if (c === 'look_back') {
         return {
           nativeNext: { ...n, facing: 'behind' },
-          events: [{ tag: 'looked_back', mutations: [{ op: 'set', key: 'facing.pc', value: 'behind' }], summary: 'You stop, and turn, and look back the way you came.' }],
+          events: [
+            {
+              tag: 'looked_back',
+              mutations: [{ op: 'set', key: 'facing.pc', value: 'behind' }],
+              summary: 'You stop, and turn, and look back the way you came.',
+            },
+          ],
           control: { kind: 'continue' },
           render: { labels: ['travel.look_back'] },
         };
@@ -124,7 +166,9 @@ export function createTravel(pack: WorldPack): Module {
             tag: 'took_item',
             mutations: [
               { op: 'set', key: `possession.pc.${id}`, value: true },
-              ...(it?.itemClass ? ([{ op: 'set', key: `possession.pc.${id}.class`, value: it.itemClass }] as const) : []),
+              ...(it?.itemClass
+                ? ([{ op: 'set', key: `possession.pc.${id}.class`, value: it.itemClass }] as const)
+                : []),
               ...(a.ground ? ([{ op: 'delete', key: `world.ground.${n.node}.${id}` }] as const) : []),
             ],
             summary: bespokeTake(id, it?.names[0] ?? id),
@@ -135,17 +179,33 @@ export function createTravel(pack: WorldPack): Module {
           ev.push({
             tag: 'core_intercept',
             mutations: [{ op: 'set', key: 'flag.intercepted', value: true }],
-            summary: 'Word of the core moves faster than you can. By the time you turn for home, the Cordon will be watching the gate for exactly what rides in your pack — and the Striders will be watching the Cordon.',
+            summary:
+              'Word of the core moves faster than you can. By the time you turn for home, the Cordon will be watching the gate for exactly what rides in your pack — and the Striders will be watching the Cordon.',
             data: { intercept: true },
           });
         }
-        return { nativeNext: { ...n, taken: [...n.taken, id] }, events: ev, control: { kind: 'continue' }, render: { labels: ['travel.take'], entities: [`item.${id}`] } };
+        return {
+          nativeNext: { ...n, taken: [...n.taken, id] },
+          events: ev,
+          control: { kind: 'continue' },
+          render: { labels: ['travel.take'], entities: [`item.${id}`] },
+        };
       }
       if (c === 'drop') {
         const id = a.item!;
         return {
           nativeNext: n,
-          events: [{ tag: 'dropped_item', mutations: [{ op: 'delete', key: `possession.pc.${id}` }, { op: 'delete', key: `possession.pc.${id}.class` }, { op: 'set', key: `world.ground.${n.node}.${id}`, value: true }], summary: `You set the ${items.get(id)?.names[0] ?? id} down. It is here if you want it again.` }],
+          events: [
+            {
+              tag: 'dropped_item',
+              mutations: [
+                { op: 'delete', key: `possession.pc.${id}` },
+                { op: 'delete', key: `possession.pc.${id}.class` },
+                { op: 'set', key: `world.ground.${n.node}.${id}`, value: true },
+              ],
+              summary: `You set the ${items.get(id)?.names[0] ?? id} down. It is here if you want it again.`,
+            },
+          ],
           control: { kind: 'continue' },
         };
       }

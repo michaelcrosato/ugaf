@@ -12,7 +12,13 @@ import { TELL_LIBRARY } from './tells.js';
 import { FACTIONS, NPCS, RUMORS } from './npcs.js';
 
 export const HUSH_PACK: WorldPack = {
-  meta: { id: 'hush.cordons-edge', title: "The Hush — The Cordon's Edge", version: '0.1.0', schemaVersion: 1, licenseTier: 'green' },
+  meta: {
+    id: 'hush.cordons-edge',
+    title: "The Hush — The Cordon's Edge",
+    version: '0.1.0',
+    schemaVersion: 1,
+    licenseTier: 'green',
+  },
   regions: REGIONS,
   nodes: NODES,
   edges: EDGES,
@@ -28,7 +34,8 @@ export const HUSH_PACK: WorldPack = {
     facts: {
       'world.patrol.cordon_checkpoint': 'cordon_patrol',
       'awareness.cordon_patrol': 'unaware',
-      'objective.lead': 'The core lies in the drowned pump-house, deep in the Greywater bottoms. Get to it, get it, get out — and learn the laws before they teach you.',
+      'objective.lead':
+        'The core lies in the drowned pump-house, deep in the Greywater bottoms. Get to it, get it, get out — and learn the laws before they teach you.',
       'meta.coins': 3,
     },
     opening:
@@ -51,7 +58,7 @@ export const HUSH_PACK: WorldPack = {
       outcome: 'won',
       title: 'The Core, Carried Out — and the Hush, Read True',
       epilogue:
-        "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. You did not buy your way past the Hush, and you did not luck your way past it. You read it — the dishonest road, the iron-hungry water, the listening field — each law in turn, until it had nothing left to surprise you with, and then you walked through it like a man who knew the house. That is the only victory the Hush offers, and you took the whole of it: not to beat the Zone, but to understand it well enough that it stands aside. It will re-Settle. The laws will shift. But you know how to learn them now, and that is a thing the Zone cannot take back.",
+        'You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. You did not buy your way past the Hush, and you did not luck your way past it. You read it — the dishonest road, the iron-hungry water, the listening field — each law in turn, until it had nothing left to surprise you with, and then you walked through it like a man who knew the house. That is the only victory the Hush offers, and you took the whole of it: not to beat the Zone, but to understand it well enough that it stands aside. It will re-Settle. The laws will shift. But you know how to learn them now, and that is a thing the Zone cannot take back.',
     },
     {
       id: 'recover_core_bought',
@@ -65,11 +72,16 @@ export const HUSH_PACK: WorldPack = {
       outcome: 'won',
       title: 'The Core, Carried Out — on a Bought Map',
       epilogue:
-        "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real — and it is not, strictly, yours. You paid the Striders for the way in, and Mox does not forget a debt or a face. Somewhere out past the wire she is already telling someone that the new arrival has the pump-house core, and that arrivals who buy their luck instead of learning it tend to need to buy it again. You got out. You did not, quite, get free. The Hush kept one law in reserve, the oldest one: what you do not understand, you remain at the mercy of.",
+        'You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real — and it is not, strictly, yours. You paid the Striders for the way in, and Mox does not forget a debt or a face. Somewhere out past the wire she is already telling someone that the new arrival has the pump-house core, and that arrivals who buy their luck instead of learning it tend to need to buy it again. You got out. You did not, quite, get free. The Hush kept one law in reserve, the oldest one: what you do not understand, you remain at the mercy of.',
     },
     {
       id: 'recover_core',
-      when: { all: [{ fact: 'possession.pc.salvage_core', eq: true }, { fact: 'loc.pc', eq: 'waystation' }] },
+      when: {
+        all: [
+          { fact: 'possession.pc.salvage_core', eq: true },
+          { fact: 'loc.pc', eq: 'waystation' },
+        ],
+      },
       outcome: 'won',
       title: 'The Core, Carried Out',
       epilogue:
@@ -102,7 +114,8 @@ export const HUSH_PACK: WorldPack = {
       when: { fact: 'survival.pc', eq: 'dead' },
       outcome: 'lost',
       title: 'Taken',
-      epilogue: 'The Hush takes you the way it takes everything — completely, lawfully, and without malice. Somewhere a Cordon warden will sign one more MISSING form, and the laws you almost learned will go on being true for someone else to learn.',
+      epilogue:
+        'The Hush takes you the way it takes everything — completely, lawfully, and without malice. Somewhere a Cordon warden will sign one more MISSING form, and the laws you almost learned will go on being true for someone else to learn.',
     },
   ],
   seedVariance: {

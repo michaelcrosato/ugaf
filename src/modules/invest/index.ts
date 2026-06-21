@@ -30,7 +30,10 @@ export function createGumshoe(pack: WorldPack): Module {
   const tellLaw = new Map<string, string>();
   const lawTells = new Map<string, string[]>();
   for (const law of pack.laws) {
-    lawTells.set(law.id, law.tells.map((t) => t.id));
+    lawTells.set(
+      law.id,
+      law.tells.map((t) => t.id),
+    );
     for (const t of law.tells) tellLaw.set(t.id, law.id);
   }
   // examinable id -> the tell it surfaces (so "examine the walker" finds its tell)
@@ -60,7 +63,13 @@ export function createGumshoe(pack: WorldPack): Module {
     id: 'invest.gumshoe',
     content: { laws: pack.laws.map((l) => l.id), tells: pack.tellLibrary.map((t) => t.id) },
     source: 'GUMSHOE SRD §investigative-abilities (CC-BY-3.0)',
-    license: { identifier: 'CC-BY-3.0', attribution: 'GUMSHOE by Robin D. Laws (add’l material Kenneth Hite & Kevin Kulp)', tier: 'green', provenance: 'licensed-source', indicationOfChanges: 'reimplemented as a deterministic tell->codex deduction engine over physical laws' },
+    license: {
+      identifier: 'CC-BY-3.0',
+      attribution: 'GUMSHOE by Robin D. Laws (add’l material Kenneth Hite & Kevin Kulp)',
+      tier: 'green',
+      provenance: 'licensed-source',
+      indicationOfChanges: 'reimplemented as a deterministic tell->codex deduction engine over physical laws',
+    },
     domain: 'investigation',
     priority: 15,
     intents: ['examine', 'search', 'listen', 'read', 'deduce', 'survey'],
@@ -107,12 +116,22 @@ export function createGumshoe(pack: WorldPack): Module {
         if (!lawId) lawId = lawInScope(node);
         // a non-live rotating law cannot be surveyed — there is no rule here to name
         if (lawId && !isLive(lawId, facts)) {
-          return beat(native, { labels: ['invest.deduce_dead'], hints: { law: lawId } }, 'You reach for a rule — and there is nothing there to take hold of. Whatever you half-sensed, the Zone is not enforcing it here. Not this time.');
+          return beat(
+            native,
+            { labels: ['invest.deduce_dead'], hints: { law: lawId } },
+            'You reach for a rule — and there is nothing there to take hold of. Whatever you half-sensed, the Zone is not enforcing it here. Not this time.',
+          );
         }
         if (!lawId) {
           const candidate = bestLawHint(facts);
-          const hint = candidate ? ` Do you mean ${laws.get(candidate)!.title}? Try: deduce the ${laws.get(candidate)!.title.replace(/^the /i, '').toLowerCase()}.` : '';
-          return beat(native, { labels: ['invest.deduce_nothing'], hints: { result: 'no_subject' } }, `You turn it over, but you are not sure which rule you are reaching for.${hint}`);
+          const hint = candidate
+            ? ` Do you mean ${laws.get(candidate)!.title}? Try: deduce the ${laws.get(candidate)!.title.replace(/^the /i, '').toLowerCase()}.`
+            : '';
+          return beat(
+            native,
+            { labels: ['invest.deduce_nothing'], hints: { result: 'no_subject' } },
+            `You turn it over, but you are not sure which rule you are reaching for.${hint}`,
+          );
         }
         const law = laws.get(lawId)!;
         const tells = lawTells.get(lawId) ?? [];
@@ -135,13 +154,20 @@ export function createGumshoe(pack: WorldPack): Module {
               },
             ],
             control: { kind: 'continue' },
-            render: { labels: [`survey.${lawId}`], valence: 'boon', hints: { law: lawId, stage: 'surveyed' } },
+            render: {
+              labels: [`survey.${lawId}`],
+              valence: 'boon',
+              hints: { law: lawId, stage: 'surveyed' },
+            },
           };
         }
         // not enough yet — friction, not a dead end
         return beat(
           native,
-          { labels: ['invest.deduce_short'], hints: { law: lawId, seen, need: law.discovery.minTellsToSurvey } },
+          {
+            labels: ['invest.deduce_short'],
+            hints: { law: lawId, seen, need: law.discovery.minTellsToSurvey },
+          },
           stageRank(cur) >= stageRank('approximate')
             ? `You can feel the shape of ${law.title}, but one more clear sign would settle it.`
             : `You don't have enough yet to trust a guess about ${law.title}. Watch for more.`,
@@ -150,7 +176,10 @@ export function createGumshoe(pack: WorldPack): Module {
 
       // ---- EXAMINE / SEARCH / LISTEN / READ: auto-acquire tells -----------
       const channel = c === 'listen' ? 'sound' : c === 'read' ? 'sight' : undefined;
-      const targetTell = c === 'examine' ? resolveExamineTell(args.action.intent.target?.id, args.action.intent.target?.raw, node) : undefined;
+      const targetTell =
+        c === 'examine'
+          ? resolveExamineTell(args.action.intent.target?.id, args.action.intent.target?.raw, node)
+          : undefined;
       const candidates = targetTell ? [targetTell] : observableHere(node, channel);
       // only LIVE laws have tells to read this seed (rotating laws absent on some seeds)
       const fresh = candidates.filter((t) => !facts.getBool(`known.tell.${t}`) && isLive(tellLaw.get(t), facts));
@@ -160,9 +189,17 @@ export function createGumshoe(pack: WorldPack): Module {
         // stay quiet rather than contradict it with "nothing here tells you anything".
         const exTarget = args.action.intent.target?.id;
         if (c === 'examine' && exTarget && (examIds.has(exTarget) || npcIds.has(exTarget) || itemIds.has(exTarget))) {
-          return { nativeNext: native, events: [{ tag: 'invest_examined', mutations: [], summary: '', visibility: 'private' }], control: { kind: 'continue' } };
+          return {
+            nativeNext: native,
+            events: [{ tag: 'invest_examined', mutations: [], summary: '', visibility: 'private' }],
+            control: { kind: 'continue' },
+          };
         }
-        return beat(native, { labels: ['invest.nothing_new'], hints: { intent: c } }, 'You look closely, but nothing here tells you anything you didn’t already know.');
+        return beat(
+          native,
+          { labels: ['invest.nothing_new'], hints: { intent: c } },
+          'You look closely, but nothing here tells you anything you didn’t already know.',
+        );
       }
 
       const events: WorldEvent[] = [];
@@ -173,7 +210,11 @@ export function createGumshoe(pack: WorldPack): Module {
       const examinedSpecific = c === 'examine' && !!targetTell;
       for (const t of c === 'search' ? fresh : fresh.slice(0, 1)) {
         const prose = tellProse.get(t);
-        const summary = prose ? (examinedSpecific ? prose.note : `${prose.cue} ${prose.note}`) : `You notice something.`;
+        const summary = prose
+          ? examinedSpecific
+            ? prose.note
+            : `${prose.cue} ${prose.note}`
+          : `You notice something.`;
         events.push({
           tag: 'tell_observed',
           mutations: [{ op: 'set', key: `known.tell.${t}`, value: true }],
@@ -197,17 +238,31 @@ export function createGumshoe(pack: WorldPack): Module {
             const title = laws.get(lid)!.title;
             hint = `You have seen enough to almost name the rule of ${title}. One clear thought might settle it — try: deduce the ${title.replace(/^the /i, '').toLowerCase()}.`;
           }
-          events.push({ tag: 'codex_advance', mutations: muts, summary: hint, data: { law: lid, stage: next }, visibility: hint ? 'public' : 'private' });
+          events.push({
+            tag: 'codex_advance',
+            mutations: muts,
+            summary: hint,
+            data: { law: lid, stage: next },
+            visibility: hint ? 'public' : 'private',
+          });
         }
       }
       return {
         nativeNext: native,
         events,
         control: { kind: 'continue' },
-        render: { labels: ['invest.observe', ...acquired.map((t) => `tell.${t}`)], valence: 'boon', hints: { tells: acquired } },
+        render: {
+          labels: ['invest.observe', ...acquired.map((t) => `tell.${t}`)],
+          valence: 'boon',
+          hints: { tells: acquired },
+        },
       };
 
-      function resolveExamineTell(id: string | undefined, raw: string | undefined, node: string | undefined): string | undefined {
+      function resolveExamineTell(
+        id: string | undefined,
+        raw: string | undefined,
+        node: string | undefined,
+      ): string | undefined {
         if (!node) return undefined;
         const here = nodeTells.get(node) ?? new Set();
         // an examinable maps to its surfaced tell; or the target may BE a tell id
@@ -229,7 +284,8 @@ export function createGumshoe(pack: WorldPack): Module {
     for (const [id, law] of laws) {
       const title = law.title.toLowerCase();
       const bare = title.replace(/^the /, '');
-      if (id === topic || title.includes(q) || q.includes(bare) || (law.scope.nodes ?? []).some((n) => q.includes(n))) return id;
+      if (id === topic || title.includes(q) || q.includes(bare) || (law.scope.nodes ?? []).some((n) => q.includes(n)))
+        return id;
     }
     return undefined;
   }
@@ -237,7 +293,9 @@ export function createGumshoe(pack: WorldPack): Module {
   /** a law whose authored scope covers the node you stand in (so "deduce" works in place). */
   function lawInScope(node: string | undefined): string | undefined {
     if (!node) return undefined;
-    for (const [id, law] of laws) if ((law.scope.nodes ?? []).includes(node) || (law.scope.region && nodeRegion.get(node) === law.scope.region)) return id;
+    for (const [id, law] of laws)
+      if ((law.scope.nodes ?? []).includes(node) || (law.scope.region && nodeRegion.get(node) === law.scope.region))
+        return id;
     return undefined;
   }
 
@@ -266,11 +324,17 @@ export function createGumshoe(pack: WorldPack): Module {
     const set = new Set(acquired);
     return {
       ...facts,
-      getBool: (k: string) => (k.startsWith('known.tell.') && set.has(k.slice('known.tell.'.length)) ? true : facts.getBool(k)),
+      getBool: (k: string) =>
+        k.startsWith('known.tell.') && set.has(k.slice('known.tell.'.length)) ? true : facts.getBool(k),
     } as FactView;
   }
 
   function beat(native: GumNative, render: { labels: string[]; hints?: JsonObject }, summary: string): ModuleResult {
-    return { nativeNext: native, events: [{ tag: 'invest_beat', mutations: [], summary, visibility: 'public' }], control: { kind: 'continue' }, render };
+    return {
+      nativeNext: native,
+      events: [{ tag: 'invest_beat', mutations: [], summary, visibility: 'public' }],
+      control: { kind: 'continue' },
+      render,
+    };
   }
 }

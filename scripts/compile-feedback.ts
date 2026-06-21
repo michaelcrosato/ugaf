@@ -25,7 +25,10 @@ function latestRun(): string {
   const base = resolve(ROOT, 'playtest-runs/swarm');
   const runs = readdirSync(base)
     .filter((d) => existsSync(resolve(base, d, 'index.json')))
-    .map((d) => ({ dir: resolve(base, d), mtime: statSync(resolve(base, d, 'index.json')).mtimeMs }))
+    .map((d) => ({
+      dir: resolve(base, d),
+      mtime: statSync(resolve(base, d, 'index.json')).mtimeMs,
+    }))
     .sort((a, b) => a.mtime - b.mtime); // newest by wall-clock, not by name (a timestamp dir sorts after "night1")
   if (!runs.length) throw new Error('no swarm runs found under playtest-runs/swarm');
   return runs[runs.length - 1]!.dir;
@@ -45,7 +48,14 @@ interface Gathered {
   interview: string;
 }
 const gathered: Gathered[] = [];
-for (const pl of index.players as { id: string; persona: string; model: string; finalStatus: string; turns: number; real: boolean }[]) {
+for (const pl of index.players as {
+  id: string;
+  persona: string;
+  model: string;
+  finalStatus: string;
+  turns: number;
+  real: boolean;
+}[]) {
   const ipath = resolve(RUN, 'players', `${pl.id}.interview.json`);
   if (!existsSync(ipath)) continue;
   let interview = '';
@@ -56,7 +66,15 @@ for (const pl of index.players as { id: string; persona: string; model: string; 
     continue;
   }
   if (!interview.trim()) continue;
-  gathered.push({ id: pl.id, persona: pl.persona, model: pl.model, outcome: pl.finalStatus, turns: pl.turns, real: pl.real, interview });
+  gathered.push({
+    id: pl.id,
+    persona: pl.persona,
+    model: pl.model,
+    outcome: pl.finalStatus,
+    turns: pl.turns,
+    real: pl.real,
+    interview,
+  });
 }
 
 if (!gathered.length) {
@@ -69,7 +87,10 @@ const N = gathered.length;
 // sections (prose/replayability) aren't truncated for small/medium N, bounded for large N.
 const PER_CAP = Math.max(2500, Math.min(7000, Math.floor(280000 / N)));
 const corpus = gathered
-  .map((g) => `--- PLAYER ${g.id} · persona=${g.persona} · model=${g.model} · outcome=${g.outcome} · turns=${g.turns} · realness=${g.real ? 'VERIFIED' : 'FAILED'} ---\n${g.interview.slice(0, PER_CAP)}`)
+  .map(
+    (g) =>
+      `--- PLAYER ${g.id} · persona=${g.persona} · model=${g.model} · outcome=${g.outcome} · turns=${g.turns} · realness=${g.real ? 'VERIFIED' : 'FAILED'} ---\n${g.interview.slice(0, PER_CAP)}`,
+  )
   .join('\n\n');
 
 const prompt = `You are compiling BLIND play-test feedback for THE HUSH (demo: "The Cordon's Edge"). ${N} cynical, high-expectations players played BLIND (saw only what the game showed them, never code/content) and wrote exit interviews. Synthesize a ranked, actionable report, applying the MASTER-BLUEPRINT §4.3/§4.5 synthesis discipline below. The persona AND model tier are shown for each player so you can apply the capability filter.

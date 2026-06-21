@@ -46,7 +46,14 @@ export type Predicate =
   | { readonly all: readonly Predicate[] }
   | { readonly any: readonly Predicate[] }
   | { readonly not: Predicate }
-  | { readonly fact: string; readonly eq?: FactValue; readonly neq?: FactValue; readonly gte?: number; readonly lte?: number; readonly exists?: boolean }
+  | {
+      readonly fact: string;
+      readonly eq?: FactValue;
+      readonly neq?: FactValue;
+      readonly gte?: number;
+      readonly lte?: number;
+      readonly exists?: boolean;
+    }
   | { readonly intent: IntentClass | readonly IntentClass[] } // the generic physical act just performed
   | { readonly phase: string | readonly string[] } // current world phase
   | { readonly carrying: string } // carry_item_class tag in force
@@ -134,7 +141,11 @@ export interface Tell {
   /** the knowledge stage observing this tell advances the law toward. */
   readonly advancesTo: KnowledgeStage;
   /** where the tell is observable: which nodes/routes/regions surface it. */
-  readonly at?: { readonly nodes?: readonly string[]; readonly routes?: readonly string[]; readonly regions?: readonly string[] };
+  readonly at?: {
+    readonly nodes?: readonly string[];
+    readonly routes?: readonly string[];
+    readonly regions?: readonly string[];
+  };
   /** a "dead adventurer" aftermath tell demonstrates lethality without the player dying. */
   readonly deadAdventurer?: boolean;
 }
@@ -144,7 +155,11 @@ export interface Tell {
 // ---------------------------------------------------------------------------
 export interface FailSafe {
   /** first contact with the UNSURVEYED law is non-lethal; this is the warning cost. */
-  readonly firstContact: { readonly condition?: string; readonly cost?: string; readonly tell: string };
+  readonly firstContact: {
+    readonly condition?: string;
+    readonly cost?: string;
+    readonly tell: string;
+  };
   /** if the effect routes into combat/summon, the delegated threat is clamped non-fatal on first contact. */
   readonly delegatedClamp?: boolean;
 }
@@ -171,19 +186,44 @@ export interface DriftPolicy {
 //  Law effects — data-described deterministic transforms (anomaly.hush applies)
 // ---------------------------------------------------------------------------
 export type LawEffect =
-  | { readonly kind: 'distance_mult'; readonly factor: number; readonly applies: 'behind' | 'edge' | 'all' } // topology
-  | { readonly kind: 'block_route'; readonly routes: readonly string[]; readonly unless?: Predicate } // topology
-  | { readonly kind: 'degrade_item_class'; readonly itemClass: string; readonly toCondition: string } // material
+  | {
+      readonly kind: 'distance_mult';
+      readonly factor: number;
+      readonly applies: 'behind' | 'edge' | 'all';
+    } // topology
+  | {
+      readonly kind: 'block_route';
+      readonly routes: readonly string[];
+      readonly unless?: Predicate;
+    } // topology
+  | {
+      readonly kind: 'degrade_item_class';
+      readonly itemClass: string;
+      readonly toCondition: string;
+    } // material
   | { readonly kind: 'repeat_window'; readonly window: string } // causality
   | { readonly kind: 'amplify_sound'; readonly radius: number } // perception
   | { readonly kind: 'reveal_tell'; readonly tell: string } // perception
-  | { readonly kind: 'impose_condition'; readonly condition: string; readonly severity?: 'reversible' | 'irreversible' } // agency
-  | { readonly kind: 'summon'; readonly entity: string; readonly via: 'utterance' | 'metal' | 'lookback'; readonly radius?: number }; // summon
+  | {
+      readonly kind: 'impose_condition';
+      readonly condition: string;
+      readonly severity?: 'reversible' | 'irreversible';
+    } // agency
+  | {
+      readonly kind: 'summon';
+      readonly entity: string;
+      readonly via: 'utterance' | 'metal' | 'lookback';
+      readonly radius?: number;
+    }; // summon
 
 export interface LawDefinition {
   readonly id: string;
   readonly title: string;
-  readonly scope: { readonly region?: string; readonly routes?: readonly string[]; readonly nodes?: readonly string[] };
+  readonly scope: {
+    readonly region?: string;
+    readonly routes?: readonly string[];
+    readonly nodes?: readonly string[];
+  };
   readonly ambientGate?: Predicate; // WHEN in force (time window, etc.); category-free
   readonly effectCategory: EffectCategory; // EXACTLY one (validator-enforced)
   readonly secondaryCategories?: readonly EffectCategory[]; // <= 2
@@ -210,24 +250,69 @@ export type Composition = 'independent' | 'multiply' | 'sequence' | 'couple';
  * exposure window — the Mile Road × Antenna Field showcase coupling).
  */
 export const CATEGORY_MATRIX: Record<EffectCategory, Record<EffectCategory, Composition>> = {
-  causality: { causality: 'sequence', topology: 'couple', material: 'independent', perception: 'independent', agency: 'independent', summon: 'couple' },
-  topology: { causality: 'couple', topology: 'multiply', material: 'independent', perception: 'couple', agency: 'independent', summon: 'couple' },
-  material: { causality: 'independent', topology: 'independent', material: 'sequence', perception: 'independent', agency: 'couple', summon: 'independent' },
-  perception: { causality: 'independent', topology: 'couple', material: 'independent', perception: 'sequence', agency: 'independent', summon: 'couple' },
-  agency: { causality: 'independent', topology: 'independent', material: 'couple', perception: 'independent', agency: 'sequence', summon: 'independent' },
-  summon: { causality: 'couple', topology: 'couple', material: 'independent', perception: 'couple', agency: 'independent', summon: 'sequence' },
+  causality: {
+    causality: 'sequence',
+    topology: 'couple',
+    material: 'independent',
+    perception: 'independent',
+    agency: 'independent',
+    summon: 'couple',
+  },
+  topology: {
+    causality: 'couple',
+    topology: 'multiply',
+    material: 'independent',
+    perception: 'couple',
+    agency: 'independent',
+    summon: 'couple',
+  },
+  material: {
+    causality: 'independent',
+    topology: 'independent',
+    material: 'sequence',
+    perception: 'independent',
+    agency: 'couple',
+    summon: 'independent',
+  },
+  perception: {
+    causality: 'independent',
+    topology: 'couple',
+    material: 'independent',
+    perception: 'sequence',
+    agency: 'independent',
+    summon: 'couple',
+  },
+  agency: {
+    causality: 'independent',
+    topology: 'independent',
+    material: 'couple',
+    perception: 'independent',
+    agency: 'sequence',
+    summon: 'independent',
+  },
+  summon: {
+    causality: 'couple',
+    topology: 'couple',
+    material: 'independent',
+    perception: 'couple',
+    agency: 'independent',
+    summon: 'sequence',
+  },
 };
 
 /** Assert the matrix is total (every ordered pair defined). Used by the coherence pass. */
 export function matrixIsTotal(): { ok: boolean; missing: string[] } {
   const missing: string[] = [];
-  for (const a of EFFECT_CATEGORIES) for (const b of EFFECT_CATEGORIES) {
-    if (CATEGORY_MATRIX[a]?.[b] === undefined) missing.push(`${a}x${b}`);
-  }
+  for (const a of EFFECT_CATEGORIES)
+    for (const b of EFFECT_CATEGORIES) {
+      if (CATEGORY_MATRIX[a]?.[b] === undefined) missing.push(`${a}x${b}`);
+    }
   return { ok: missing.length === 0, missing };
 }
 
 /** Canonical fold order for a set of laws bearing on a scene (K6 deterministic). */
 export function foldOrder(laws: readonly LawDefinition[]): LawDefinition[] {
-  return [...laws].sort((a, b) => CATEGORY_RANK[a.effectCategory] - CATEGORY_RANK[b.effectCategory] || a.id.localeCompare(b.id));
+  return [...laws].sort(
+    (a, b) => CATEGORY_RANK[a.effectCategory] - CATEGORY_RANK[b.effectCategory] || a.id.localeCompare(b.id),
+  );
 }

@@ -47,7 +47,17 @@ describe('PROCTOR', () => {
   });
 
   it('a real session produces a manifest the realness oracle accepts', () => {
-    const { game, p } = playScript(['out', 'road', 'talk to lyle', 'road', 'examine the milepost', 'look back', 'on', 'examine the walker', 'deduce the mile road']);
+    const { game, p } = playScript([
+      'out',
+      'road',
+      'talk to lyle',
+      'road',
+      'examine the milepost',
+      'look back',
+      'on',
+      'examine the walker',
+      'deduce the mile road',
+    ]);
     const manifest = p.manifest();
     expect(manifest.turns.length).toBeGreaterThan(5);
     const v = verifyRealness(manifest, game);
@@ -74,7 +84,10 @@ describe('PROCTOR', () => {
     const { game, p } = playScript(['out', 'road', 'on']);
     const manifest = p.manifest();
     const reused = manifest.turns[0]!.nonce_issued;
-    const tampered = { ...manifest, turns: manifest.turns.map((t) => ({ ...t, nonce_issued: reused, nonce_echoed: reused })) };
+    const tampered = {
+      ...manifest,
+      turns: manifest.turns.map((t) => ({ ...t, nonce_issued: reused, nonce_echoed: reused })),
+    };
     const v = verifyRealness(tampered, game);
     expect(v.checks.find((c) => c.name === 'nonce_chain')!.ok).toBe(false);
   });

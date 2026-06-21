@@ -22,7 +22,12 @@ export function createStealth(): Module {
     id: 'stealth.detection',
     content: { states: [...STATES] },
     source: 'clean-room detection FSM (uncopyrightable video-game pattern)',
-    license: { identifier: 'NONE', attribution: 'LOOM original (abstract detection FSM)', tier: 'green', provenance: 'clean-room' },
+    license: {
+      identifier: 'NONE',
+      attribution: 'LOOM original (abstract detection FSM)',
+      tier: 'green',
+      provenance: 'clean-room',
+    },
     domain: 'stealth',
     priority: 28,
     intents: ['hide', 'sneak'],
@@ -45,7 +50,21 @@ export function createStealth(): Module {
       const c = args.action.intent.class;
       const patrol = patrolAt(args.facts);
       if (!patrol) {
-        return { nativeNext: args.native, events: [{ tag: 'stealth_idle', mutations: [{ op: 'set', key: 'flag.hidden', value: true }], summary: c === 'hide' ? 'You press into cover and go still. Nothing here is hunting you.' : 'You move low and quiet, out of habit.' }], control: { kind: 'continue' }, render: { labels: [`stealth.${c}`] } };
+        return {
+          nativeNext: args.native,
+          events: [
+            {
+              tag: 'stealth_idle',
+              mutations: [{ op: 'set', key: 'flag.hidden', value: true }],
+              summary:
+                c === 'hide'
+                  ? 'You press into cover and go still. Nothing here is hunting you.'
+                  : 'You move low and quiet, out of habit.',
+            },
+          ],
+          control: { kind: 'continue' },
+          render: { labels: [`stealth.${c}`] },
+        };
       }
       const cur = (args.facts.getString(`awareness.${patrol}`) as Aware) ?? 'unaware';
       const next = clampState(idx(cur) - (c === 'hide' ? 2 : 1));
@@ -89,11 +108,18 @@ export function createStealth(): Module {
               { op: 'set', key: `awareness.${patrol}`, value: next },
               { op: 'set', key: `awareness.${patrol}.turn`, value: ctx.turn },
             ],
-            summary: next === 'alert' ? `Heads turn. The ${patrol.replace(/_/g, ' ')} has you — torches swing your way.` : `That carried. The ${patrol.replace(/_/g, ' ')} stirs, scanning.`,
+            summary:
+              next === 'alert'
+                ? `Heads turn. The ${patrol.replace(/_/g, ' ')} has you — torches swing your way.`
+                : `That carried. The ${patrol.replace(/_/g, ' ')} stirs, scanning.`,
             data: { patrol, awareness: next },
           },
         ],
-        render: { labels: ['stealth.detected'], valence: 'cost', hints: { patrol, awareness: next } },
+        render: {
+          labels: ['stealth.detected'],
+          valence: 'cost',
+          hints: { patrol, awareness: next },
+        },
       };
     },
   };

@@ -21,12 +21,23 @@ interface Stage {
 }
 
 const STAGES: Stage[] = [
+  { name: 'format', cmd: ['npx', 'prettier', '--check', '.'] },
   { name: 'typecheck', cmd: ['npx', 'tsc', '--noEmit'] },
   { name: 'boundaries', cmd: ['npx', 'tsx', 'scripts/check-boundaries.ts'] },
   { name: 'integrity', cmd: ['npx', 'tsx', 'scripts/verify-integrity.ts'] },
   { name: 'tests', cmd: ['npx', 'vitest', 'run'] },
-  { name: 'coherence', cmd: ['npx', 'tsx', 'scripts/coherence-pass.ts'], optional: true, entry: 'scripts/coherence-pass.ts' },
-  { name: 'golden', cmd: ['npx', 'tsx', 'scripts/golden-tape.ts'], optional: true, entry: 'scripts/golden-tape.ts' },
+  {
+    name: 'coherence',
+    cmd: ['npx', 'tsx', 'scripts/coherence-pass.ts'],
+    optional: true,
+    entry: 'scripts/coherence-pass.ts',
+  },
+  {
+    name: 'golden',
+    cmd: ['npx', 'tsx', 'scripts/golden-tape.ts'],
+    optional: true,
+    entry: 'scripts/golden-tape.ts',
+  },
 ];
 
 function run(stage: Stage): boolean {
@@ -38,9 +49,10 @@ function run(stage: Stage): boolean {
   // win32 needs a shell to resolve the npx/npm shims, but passing an args array
   // together with shell:true is deprecated (DEP0190) — so join into one command
   // string there. Stage args are fixed literals with no spaces, so this is exact.
-  const r = process.platform === 'win32'
-    ? spawnSync(stage.cmd.join(' '), { cwd: ROOT, stdio: 'inherit', shell: true })
-    : spawnSync(stage.cmd[0]!, stage.cmd.slice(1), { cwd: ROOT, stdio: 'inherit' });
+  const r =
+    process.platform === 'win32'
+      ? spawnSync(stage.cmd.join(' '), { cwd: ROOT, stdio: 'inherit', shell: true })
+      : spawnSync(stage.cmd[0]!, stage.cmd.slice(1), { cwd: ROOT, stdio: 'inherit' });
   return r.status === 0;
 }
 

@@ -19,7 +19,10 @@ export interface TurnResult {
   readonly text: string;
   readonly status: 'active' | 'won' | 'lost' | 'ended';
   readonly rejected?: boolean;
-  readonly clarify?: { question: string; options: readonly { readonly id: string; readonly label: string }[] };
+  readonly clarify?: {
+    question: string;
+    options: readonly { readonly id: string; readonly label: string }[];
+  };
 }
 
 export class Session {
@@ -31,7 +34,10 @@ export class Session {
   private ended = false;
   private endStatus: TurnResult['status'] = 'active';
 
-  constructor(readonly game: Game, readonly campaignId = 'play') {
+  constructor(
+    readonly game: Game,
+    readonly campaignId = 'play',
+  ) {
     this.state = game.initialState();
     this.parser = createParser(game.pack);
     this.renderer = createRenderer(game.pack);
@@ -70,7 +76,11 @@ export class Session {
   }
 
   act(input: string): TurnResult {
-    if (this.ended) return { text: 'The story has ended. (type `new` to begin again, or `quit`.)', status: this.endStatus };
+    if (this.ended)
+      return {
+        text: 'The story has ended. (type `new` to begin again, or `quit`.)',
+        status: this.endStatus,
+      };
     const intent = this.parse(input);
     return this.applyIntent(intent, input);
   }
@@ -80,21 +90,33 @@ export class Session {
     // meta queries: a free, non-committing view (reachable from BOTH the CLI and PROCTOR)
     if (intent.class === 'recall') {
       const topic = intent.topic ?? 'codex';
-      const text = topic === 'inv' ? this.inventory() : topic === 'map' ? this.mapText() : topic === 'help' ? HELP_TEXT : this.codex();
+      const text =
+        topic === 'inv'
+          ? this.inventory()
+          : topic === 'map'
+            ? this.mapText()
+            : topic === 'help'
+              ? HELP_TEXT
+              : this.codex();
       return { text, status: this.ended ? this.endStatus : 'active' };
     }
     // unclassified input is a FREE, helpful nudge — it never burns a turn (research rule 19)
     if (intent.class === 'unclassified') {
       const w = intent.raw.trim();
       return {
-        text: dim(`You're not sure how to ${w ? `“${w}”` : 'do that'} here. Try LOOK, GO <way>, EXAMINE <thing>, LISTEN, SEARCH, TAKE/USE/GIVE <thing>, TALK TO <someone>, or — once you have seen enough — DEDUCE <the law>. (CODEX, INVENTORY, MAP, HELP.)`),
+        text: dim(
+          `You're not sure how to ${w ? `“${w}”` : 'do that'} here. Try LOOK, GO <way>, EXAMINE <thing>, LISTEN, SEARCH, TAKE/USE/GIVE <thing>, TALK TO <someone>, or — once you have seen enough — DEDUCE <the law>. (CODEX, INVENTORY, MAP, HELP.)`,
+        ),
         status: this.ended ? this.endStatus : 'active',
         rejected: true,
       };
     }
     const before = this.state;
     const beforeLoc = before.facts['loc.pc'];
-    const outcome = step(before, this.game.registry, intent, { armed: this.game.armedAt(before), observation: this.obs() });
+    const outcome = step(before, this.game.registry, intent, {
+      armed: this.game.armedAt(before),
+      observation: this.obs(),
+    });
 
     if (outcome.kind === 'rejected') {
       return { text: italicReason(outcome.reason), status: 'active', rejected: true };
@@ -157,30 +179,50 @@ export class Session {
   /** Render the law codex (the fallible character sheet). */
   codex(): string {
     const f = this.state.facts;
-    const lines: string[] = [bold('THE LAW CODEX'), dim('(what you have learned of the Hush — and how far you trust it)')];
+    const lines: string[] = [
+      bold('THE LAW CODEX'),
+      dim('(what you have learned of the Hush — and how far you trust it)'),
+    ];
     let any = false;
     for (const law of this.game.pack.laws) {
-      const stage = (f[`known.law.${law.id}`] as KnowledgeStage) ?? (f[`law.${law.id}.witnessed`] ? 'referenced' : 'unknown');
+      const stage =
+        (f[`known.law.${law.id}`] as KnowledgeStage) ?? (f[`law.${law.id}.witnessed`] ? 'referenced' : 'unknown');
       if (stage === 'unknown' && !f[`law.${law.id}.witnessed`]) continue;
       any = true;
       const drift = f[`law.${law.id}.drift_warned`] ? '  (your certainty is decaying)' : '';
       const surveyed = stageRank(stage) >= stageRank('surveyed');
-      const purchased = f[`known.purchased.${law.id}`] && !surveyed ? '  (from a bought map — unverified; trust it at your own risk)' : '';
-      const nearly = stage === 'approximate' ? dim(`  — you have almost named it; try: deduce the ${law.title.replace(/^the /i, '').toLowerCase()}`) : '';
-      const conclusion = surveyed ? law.tells.map((t) => this.game.pack.tellLibrary.find((p) => p.id === t.id)?.conclusion).find(Boolean) : undefined;
+      const purchased =
+        f[`known.purchased.${law.id}`] && !surveyed
+          ? '  (from a bought map — unverified; trust it at your own risk)'
+          : '';
+      const nearly =
+        stage === 'approximate'
+          ? dim(`  — you have almost named it; try: deduce the ${law.title.replace(/^the /i, '').toLowerCase()}`)
+          : '';
+      const conclusion = surveyed
+        ? law.tells.map((t) => this.game.pack.tellLibrary.find((p) => p.id === t.id)?.conclusion).find(Boolean)
+        : undefined;
       lines.push(`  • ${bold(law.title)} — ${stage}${drift}${purchased}${nearly}`);
       if (conclusion) lines.push(dim(`      ${conclusion}`));
     }
-    if (!any) lines.push(dim('  You have learned nothing certain yet. Look. Listen. The Hush is lawful — it can be read.'));
+    if (!any)
+      lines.push(dim('  You have learned nothing certain yet. Look. Listen. The Hush is lawful — it can be read.'));
     // rumors heard — and any CONFLICTS between them (a wrong law gets you killed).
     // Once you have SURVEYED a law first-hand, the conflict is SETTLED: mark which
     // rumour proved true, and stop crying "verify it" about a thing you've verified.
     const heardRumors = this.game.pack.rumors.filter((r) => f[`known.rumor.${r.id}`]);
     if (heardRumors.length) {
-      const settled = (topic: string) => stageRank((f[`known.law.${topic}`] as KnowledgeStage) ?? 'unknown') >= stageRank('surveyed');
+      const settled = (topic: string) =>
+        stageRank((f[`known.law.${topic}`] as KnowledgeStage) ?? 'unknown') >= stageRank('surveyed');
       lines.push('', dim('Rumours you have heard (reliability varies — a wrong law gets you killed):'));
       for (const r of heardRumors) {
-        const verdict = settled(r.topic) ? (r.truth === 'false' ? '  — you have since seen this is FALSE' : r.truth === 'true' ? '  — you have confirmed this true' : '') : '';
+        const verdict = settled(r.topic)
+          ? r.truth === 'false'
+            ? '  — you have since seen this is FALSE'
+            : r.truth === 'true'
+              ? '  — you have confirmed this true'
+              : ''
+          : '';
         lines.push(dim(`  – “${r.text}”${verdict}`));
       }
       const byTopic = new Map<string, Set<string>>();
@@ -190,8 +232,12 @@ export class Session {
           const law = this.game.pack.laws.find((l) => l.id === topic);
           lines.push(
             settled(topic)
-              ? dim(`  ✓ You once heard opposite things about ${law?.title ?? topic}; you have since settled it by seeing the truth yourself.`)
-              : dim(`  ⚠ You have heard opposite things about ${law?.title ?? topic}. One of them is wrong — and here, wrong is fatal. Verify it yourself before you trust it.`),
+              ? dim(
+                  `  ✓ You once heard opposite things about ${law?.title ?? topic}; you have since settled it by seeing the truth yourself.`,
+                )
+              : dim(
+                  `  ⚠ You have heard opposite things about ${law?.title ?? topic}. One of them is wrong — and here, wrong is fatal. Verify it yourself before you trust it.`,
+                ),
           );
         }
       }
@@ -207,7 +253,13 @@ export class Session {
 
   inventory(): string {
     const items = Object.keys(this.state.facts)
-      .filter((k) => k.startsWith('possession.pc.') && !k.endsWith('.class') && !k.endsWith('.condition') && this.state.facts[k] === true)
+      .filter(
+        (k) =>
+          k.startsWith('possession.pc.') &&
+          !k.endsWith('.class') &&
+          !k.endsWith('.condition') &&
+          this.state.facts[k] === true,
+      )
       .map((k) => k.slice('possession.pc.'.length));
     if (!items.length) return dim('You are carrying nothing of note.');
     const lines = [bold('You are carrying:')];
@@ -221,7 +273,18 @@ export class Session {
   }
 
   save(): string {
-    return JSON.stringify({ seed: this.game.seed, campaignId: this.campaignId, golden: this.log.toGolden(), visited: [...this.visited], ended: this.ended, endStatus: this.endStatus }, null, 0);
+    return JSON.stringify(
+      {
+        seed: this.game.seed,
+        campaignId: this.campaignId,
+        golden: this.log.toGolden(),
+        visited: [...this.visited],
+        ended: this.ended,
+        endStatus: this.endStatus,
+      },
+      null,
+      0,
+    );
   }
 
   isEnded(): boolean {

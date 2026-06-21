@@ -21,11 +21,37 @@ const FIXTURE = resolve(ROOT, 'test/golden/hush-canonical.json');
 
 const SEED = 'golden-hush';
 const COMMANDS = [
-  'out', 'road', 'talk to lyle', 'ask lyle about the mile road', 'ask lyle about the greywater',
-  'survey', 'talk to eun', 'out',
-  'road', 'examine the milepost', 'look back', 'on', 'examine the walker', 'deduce the mile road',
-  'fork', 'water', 'examine the rust', 'listen', 'deduce the greywater',
-  'in', 'cache', 'take core', 'out', 'back', 'back', 'mile', 'back', 'back', 'gate', 'hide', 'back',
+  'out',
+  'road',
+  'talk to lyle',
+  'ask lyle about the mile road',
+  'ask lyle about the greywater',
+  'survey',
+  'talk to eun',
+  'out',
+  'road',
+  'examine the milepost',
+  'look back',
+  'on',
+  'examine the walker',
+  'deduce the mile road',
+  'fork',
+  'water',
+  'examine the rust',
+  'listen',
+  'deduce the greywater',
+  'in',
+  'cache',
+  'take core',
+  'out',
+  'back',
+  'back',
+  'mile',
+  'back',
+  'back',
+  'gate',
+  'hide',
+  'back',
 ];
 
 function record(): { golden: GoldenTape; status: string } {
@@ -45,12 +71,32 @@ const update = process.argv.includes('--update');
 if (update || !existsSync(FIXTURE)) {
   const { golden, status } = record();
   mkdirSync(resolve(FIXTURE, '..'), { recursive: true });
-  writeFileSync(FIXTURE, JSON.stringify({ seed: SEED, commands: COMMANDS, fingerprintId: golden.fingerprintId, finalStatus: status, golden }, null, 2));
-  console.log(`✓ golden tape ${update ? 're-pinned' : 'created'}: ${golden.records.length} turns, final=${status}, fp=${golden.fingerprintId}`);
+  writeFileSync(
+    FIXTURE,
+    JSON.stringify(
+      {
+        seed: SEED,
+        commands: COMMANDS,
+        fingerprintId: golden.fingerprintId,
+        finalStatus: status,
+        golden,
+      },
+      null,
+      2,
+    ),
+  );
+  console.log(
+    `✓ golden tape ${update ? 're-pinned' : 'created'}: ${golden.records.length} turns, final=${status}, fp=${golden.fingerprintId}`,
+  );
   process.exit(0);
 }
 
-const fixture = JSON.parse(readFileSync(FIXTURE, 'utf8')) as { seed: string; fingerprintId: string; finalStatus: string; golden: GoldenTape };
+const fixture = JSON.parse(readFileSync(FIXTURE, 'utf8')) as {
+  seed: string;
+  fingerprintId: string;
+  finalStatus: string;
+  golden: GoldenTape;
+};
 const currentFp = fingerprintId(engineFingerprint(createGame(HUSH_PACK, fixture.seed).registry));
 if (currentFp !== fixture.fingerprintId) {
   console.error(`✗ engine fingerprint changed (${fixture.fingerprintId} -> ${currentFp}).`);
@@ -62,4 +108,6 @@ if (!res.ok) {
   console.error(`✗ golden tape diverged at step ${res.divergedAt}: ${res.detail}`);
   process.exit(1);
 }
-console.log(`✓ golden tape replays bit-for-bit (${fixture.golden.records.length} turns, fp=${fixture.fingerprintId}, final=${fixture.finalStatus})`);
+console.log(
+  `✓ golden tape replays bit-for-bit (${fixture.golden.records.length} turns, fp=${fixture.fingerprintId}, final=${fixture.finalStatus})`,
+);

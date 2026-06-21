@@ -55,7 +55,8 @@ async function main() {
     for (const file of await listFiles(`${dir}/**/*.ts`)) {
       const masked = maskComments(readFileSync(file, 'utf8'));
       masked.split('\n').forEach((line, i) => {
-        if (FORBIDDEN_NONDET.test(line)) errors.push(`${rel(file)}:${i + 1}  non-determinism primitive: ${line.trim()}`);
+        if (FORBIDDEN_NONDET.test(line))
+          errors.push(`${rel(file)}:${i + 1}  non-determinism primitive: ${line.trim()}`);
       });
     }
   }
@@ -67,7 +68,8 @@ async function main() {
     console.log(`baseline updated: ${testCount} tests`);
   } else if (existsSync(BASELINE)) {
     const prev = JSON.parse(readFileSync(BASELINE, 'utf8')).testCount as number;
-    if (testCount < prev) errors.push(`test-count regression: ${testCount} < baseline ${prev} (use --update-baseline if intentional)`);
+    if (testCount < prev)
+      errors.push(`test-count regression: ${testCount} < baseline ${prev} (use --update-baseline if intentional)`);
   } else {
     writeFileSync(BASELINE, JSON.stringify({ testCount }, null, 2) + '\n');
     console.log(`baseline created: ${testCount} tests`);

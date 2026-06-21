@@ -63,7 +63,12 @@ export function makeManifest(spec: ManifestSpec): ModuleManifest {
     owns: { nativeStatePaths: spec.ownsPaths ?? [spec.id] },
     writesFacts: spec.writesFacts,
     readsFacts: spec.readsFacts,
-    forbids: { numericalCrosswalks: true, normalizedOutcomes: true, universalBaseStatistics: true, runtimeRuleGeneration: true },
+    forbids: {
+      numericalCrosswalks: true,
+      normalizedOutcomes: true,
+      universalBaseStatistics: true,
+      runtimeRuleGeneration: true,
+    },
   };
 }
 
@@ -72,7 +77,9 @@ export function validateManifest(m: ModuleManifest): string[] {
   const errors: string[] = [];
   const f = m.forbids;
   if (!(f.numericalCrosswalks && f.normalizedOutcomes && f.universalBaseStatistics && f.runtimeRuleGeneration)) {
-    errors.push(`${m.id}: forbids invariants must all be true (no crosswalks/normalized/universal-stats/runtime-rules)`);
+    errors.push(
+      `${m.id}: forbids invariants must all be true (no crosswalks/normalized/universal-stats/runtime-rules)`,
+    );
   }
   const ns = new Set<string>(FACT_NAMESPACES);
   for (const w of m.writesFacts) if (!ns.has(w)) errors.push(`${m.id}: writes unknown fact namespace "${w}"`);

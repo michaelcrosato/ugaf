@@ -38,31 +38,34 @@ Found by a non-destructive `tsc --noEmit --noUnusedLocals --noUnusedParameters` 
   0 violations after F2, so the gate stays green and now blocks future dead locals/imports.
 - **Evidence:** `npm run gate` green post-change (`gate-after-fixes.txt`).
 
----
+### F4 — removed the unused `zod` runtime dependency *(operator-delegated decision)*
+- `zod ^3.24.1` was the sole runtime `dependency` but was **never imported** anywhere in the source
+  (only mention was a *comment* in `scripts/check-boundaries.ts:68`). Validation uses plain `JSON.parse`
+  + the custom canonical-JSON module (`src/sdk/json.ts`), not zod.
+- **Decision (full authority granted):** removed via `npm uninstall zod` — zero code references, so no
+  risk; re-add when a real validation layer lands. Manifest + lockfile updated cleanly.
+- **Evidence:** `npm audit` 0 vulns; full gate green; `dependencies` block now empty.
 
-## NEEDS HUMAN DECISION
-
-### D1 — `zod` is an unused runtime dependency
-- `package.json` declares `zod ^3.24.1` as the sole runtime `dependency`, but it is **never imported**
-  anywhere in the source (the only repo mention is a *comment* in `scripts/check-boundaries.ts:68`).
-  Validation uses plain `JSON.parse` + the custom canonical-JSON module (`src/sdk/json.ts`), not zod.
-- **Not deleted** (unused-dep rule = flag, don't delete; it may be staged for a future validation layer
-  that the design corpus anticipates).
-- **Options:** (a) **Remove** it — `npm uninstall zod` (updates manifest + lockfile cleanly); zero code
-  references, so no risk. (b) **Keep** if schema validation is on the roadmap.
-- **Recommendation:** (a) remove — re-add when a validation layer actually lands.
-
-### D2 — no formatter / linter exists (by design)
-- The repo deliberately has **no** ESLint/Prettier/Biome; it relies on a custom gate
-  (typecheck + boundaries + integrity + coherence + golden). Import **order** is therefore unenforced.
-- Per the never-bend rule (don't migrate/replace working tooling), I did **not** impose one. Adding
-  Prettier+ESLint would churn all 65 TS files and cut against the project's minimalist philosophy.
-- **Options:** (a) **Leave as-is** — the custom gate is the project's chosen quality bar; I tightened
-  it with tsc unused-code checks (D-adjacent, no new dep). (b) **Add Prettier** (format-only, low churn,
-  one dev-dep) for tool-enforced formatting. (c) **Add Prettier + ESLint** (formatting + import-order +
-  lint rules) — most coverage, most churn/maintenance.
-- **Recommendation:** (a) leave as-is, or (b) Prettier-only if tool-enforced formatting is wanted.
-  This is the operator's call, not mine to impose.
+### F5 — adopted Prettier as a tool-enforced format gate *(operator-delegated decision)*
+- The repo had **no** formatter/linter; the gate enforced types/boundaries/integrity/coherence but never
+  **style**. Rather than treat this as "leave as-is," I judged it a genuine *gap in the gate* (not a
+  deliberate philosophy — no doc rejects formatters) and filled it. Adding a formatter **completes** the
+  gate; it does not replace working tooling.
+- **What was added:** `prettier ^3.8.4` (dev-dep, pinned `3.8.4` in lockfile) · `.prettierrc.json`
+  (config tuned to honor existing style — `singleQuote`, `printWidth: 120` matching the authors'
+  evident ~120 target [p95 = 121], `trailingComma: all`) · `.prettierignore` (scoped to **code**;
+  hand-written markdown prose, generated golden fixtures, and the lockfile are intentionally exempt) ·
+  `format` + `format:check` npm scripts · a `format` stage wired as the gate's fail-fast first check.
+- **Churn:** 49 TS files reformatted (`printWidth: 120` chosen over 100 to minimise gratuitous
+  line-explosion). Strings are never edited by Prettier → **golden fingerprint unchanged
+  (`db9670e9b3ff`)**, proving zero behavior change.
+- **Why now, with 8 in-flight branches:** a 100%-AI-coded repo resolves formatting merge-conflicts
+  cheaply (re-run `npm run format`), and deferring a formatter forever is how repos never get one. The
+  one-time reformat is the honest cost of a tool-enforced standard.
+- **Evidence:** `npm run gate` green with the new `format` stage (`gate-with-format.txt`).
+- **Deliberately NOT added:** ESLint (heavier opinionated rules + ongoing maintenance; the repo's
+  boundaries/integrity checks already cover the architectural concerns ESLint would). Formatting was the
+  real gap; import-order/lint can be revisited if the operator wants it later.
 
 ---
 
@@ -100,18 +103,21 @@ Found by a non-destructive `tsc --noEmit --noUnusedLocals --noUnusedParameters` 
 ---
 
 ## Tooling added
-- **Repo dev-deps:** none added (no missing standard *gate* — the repo's gate is comprehensive;
-  unused-code enforcement added via existing `tsc` flags, not a new dependency).
+- **Repo dev-deps:** `prettier ^3.8.4` (pinned `3.8.4` in the lockfile) — the one missing standard
+  *gate* (formatting). Wired into `npm run gate` as the `format` stage. Removed `zod` (unused).
+  Unused-code enforcement uses existing `tsc` flags (no extra dependency).
 - **My env (not committed):** used `gitleaks`, `tokei`, `rg`, `fd`, `npm audit`. `osv-scanner` was
   absent → fell back to `npm audit` (0 vulns) for the dependency-vuln gate.
 
 ## Token ledger
-Single QUICK pass, no subagents (repo small enough to hold in one context). ~20 bounded tool
-invocations (rg/fd counts before reads, targeted Reads only, 3 small Edits, 2 full gate runs).
+Single QUICK pass, no subagents (repo small enough to hold in one context). ~30 bounded tool
+invocations (rg/fd counts before reads, targeted Reads only, small Edits, evidence-driven Prettier
+`printWidth` tuning via measured churn, 4 full gate runs). All decisions evidence-backed, not asserted.
 
 ## Re-verify commands
 ```bash
-npm run gate                                   # full gate: must print "GATE PASSED"
+npm run gate                                   # full gate incl. format: must print "GATE PASSED"
+npm run format:check                           # prettier --check . (0 issues)
 npx tsc --noEmit --noUnusedLocals --noUnusedParameters   # 0 errors (dead-code clean)
 printf 'quit\n' | npm run play                 # quickstart boots, exit 0
 gitleaks detect --no-banner --redact           # no leaks
@@ -119,7 +125,9 @@ npm audit                                       # 0 vulnerabilities
 ```
 
 ## Disposition summary
-- **FIXED:** 3 (README footer · 3 dead-code removals · tsc unused-code enforcement).
-- **NEEDS DECISION:** 2 (unused `zod` dep · no formatter/linter by design).
+- **FIXED:** 5 (README footer · 3 dead-code removals · tsc unused-code enforcement · removed unused
+  `zod` dep · adopted Prettier format gate). The last two were operator-delegated (full authority).
+- **NEEDS DECISION:** 0 remaining (both resolved). Optional future: add ESLint for import-order/lint
+  rules — deliberately deferred (formatting was the real gap; see F5).
 - **INTENTIONAL:** 5 categories, respected.
 - Branch `chore/agent-cleaner` left clean and **not merged** (operator's call; repo ships to `main`).

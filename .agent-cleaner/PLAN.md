@@ -21,6 +21,8 @@ per repo operational reality, but this branch will NOT be merged by me — left 
 6. **Verify + Report** — re-run global gate; write STATE.md with FIXED / NEEDS DECISION / INTENTIONAL.
 
 ## Standing decisions
-- NO formatter/linter exists by design → flag as NEEDS DECISION, do not impose (never-bend rule).
-- Repo is opinionated; honor its custom gate/boundary/integrity philosophy.
+- Initially flagged the missing formatter as NEEDS DECISION; operator granted full authority →
+  RESOLVED: adopted Prettier as the gate's `format` stage + removed unused `zod`. See STATE.md F4/F5.
+- Repo is opinionated; honor its custom gate/boundary/integrity philosophy (Prettier was added to
+  COMPLETE the gate's coverage, not replace any working tool).
 - Fixes must be safe + reversible + evidence-backed (re-run the relevant gate).

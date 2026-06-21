@@ -72,7 +72,8 @@ export const TELL_LIBRARY: TellProse[] = [
     channel: 'sight',
     cue: 'Names are scratched into the concrete bases of the antennas, dozens of them. Beneath the freshest name lies a body not three days cold, mouth still open on its last syllable.',
     note: 'They came here and they said a name. The field took it, and gave them the Changed in return.',
-    conclusion: 'At the Antenna Field, a name spoken aloud calls the Changed. Speak nothing here you are not ready to be answered.',
+    conclusion:
+      'At the Antenna Field, a name spoken aloud calls the Changed. Speak nothing here you are not ready to be answered.',
   },
   // ---- The Hollow Dark (agency) — a rotating-slot law (per-seed variance) ----
   {
@@ -80,20 +81,23 @@ export const TELL_LIBRARY: TellProse[] = [
     channel: 'sound',
     cue: 'The silence here is not empty — it has a weight, and it leans on you, and the longer you stand still the more it presses.',
     note: 'The dark in the deep is patient and it does not like a thing that stops moving. To linger here after dark is to invite it closer.',
-    conclusion: 'In the deep dark, to wait or rest is to let the Hush lean in — it costs you your nerve, and it takes a step closer each time.',
+    conclusion:
+      'In the deep dark, to wait or rest is to let the Hush lean in — it costs you your nerve, and it takes a step closer each time.',
   },
   {
     id: 'hollow_heartbeat',
     channel: 'touch',
     cue: 'Your own heartbeat has gone loud and slow in your ears, and you have the distinct, animal certainty that something is matching it, breath for breath, just out past the light.',
     note: 'Stillness in the deep is what it hunts by. Keep moving, or the dark closes the distance.',
-    conclusion: 'In the deep dark, to wait or rest is to let the Hush lean in — keep moving, or it takes a step closer.',
+    conclusion:
+      'In the deep dark, to wait or rest is to let the Hush lean in — keep moving, or it takes a step closer.',
   },
   {
     id: 'hollow_sitter',
     channel: 'sight',
     cue: 'A salvager sits cross-legged in the dark a little way off, perfectly still, as if resting. He has been resting a long time. The dark has come all the way up to him and stopped, the way a tide stops, having got what it came for.',
     note: 'He sat down in the deep after dark to catch his breath. He never got up. Stillness is what it waits for.',
-    conclusion: 'In the deep dark, to wait or rest is fatal patience — the Hush leans in on anything that stops moving.',
+    conclusion:
+      'In the deep dark, to wait or rest is fatal patience — the Hush leans in on anything that stops moving.',
   },
 ];

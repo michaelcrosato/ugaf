@@ -43,22 +43,70 @@ interface Persona {
   lens: string;
 }
 const PERSONAS: Persona[] = [
-  { id: 'soulslike-vet', model: 'sonnet', lens: `You are a FromSoftware veteran. You respect brutal-but-fair; you despise unfair, untelegraphed death and hand-holding alike. Judge whether every danger was readable BEFORE it bit you, and whether mastery felt earned.` },
-  { id: 'parser-purist', model: 'opus', lens: `You are an Infocom/Inform parser-IF purist. You judge the parser ruthlessly: synonym coverage, guess-the-verb moments, dead-end inputs, disambiguation, whether the game ever left you stuck not knowing what to type. A single guess-the-verb wall is a cardinal sin.` },
-  { id: 'speedrunner', model: 'sonnet', lens: `You are a speedrunner/optimizer. You probe for the shortest path, degenerate strategies, and exploits. You are infuriated by ambiguity about what an action will cost or do. Tell us where the game wasted your time and where the optimal line was unclear.` },
-  { id: 'narrative-critic', model: 'opus', lens: `You are a literary critic who finds most game writing embarrassing. Judge the prose mercilessly: is it specific and restrained, or purple and over-written? Did the second-person voice and dread hold, or collapse into melodrama? Quote the worst line you saw.` },
-  { id: 'qa-breaker', model: 'sonnet', lens: `You are a QA tester who breaks games for a living. Hunt for soft-locks, dead ends, contradictory text, state that doesn't update, actions the game implies but won't let you do, and deaths that felt like the engine's fault not yours. Report concrete repro steps.` },
-  { id: 'impatient-normie', model: 'haiku', lens: `You are an impatient mainstream player with little patience for text games. If you are confused or bored in the first few minutes you will say so bluntly. Judge onboarding: did you understand what to do and why, without being told? If you'd have quit, say exactly when and why.` },
-  { id: 'systems-minmaxer', model: 'sonnet', lens: `You are a systems player who lives for emergent depth. Judge whether the world is a real system you can reason about and combine, or a scripted corridor wearing a system's clothes. Did your knowledge actually pay off mechanically? Where did it feel on-rails?` },
-  { id: 'horror-skeptic', model: 'haiku', lens: `You are a horror connoisseur who finds most "atmospheric" games cheap. Judge the dread: earned through restraint and implication, or manufactured with adjectives? Did anything actually unsettle you, or did you see the strings? Name the cheapest scare.` },
+  {
+    id: 'soulslike-vet',
+    model: 'sonnet',
+    lens: `You are a FromSoftware veteran. You respect brutal-but-fair; you despise unfair, untelegraphed death and hand-holding alike. Judge whether every danger was readable BEFORE it bit you, and whether mastery felt earned.`,
+  },
+  {
+    id: 'parser-purist',
+    model: 'opus',
+    lens: `You are an Infocom/Inform parser-IF purist. You judge the parser ruthlessly: synonym coverage, guess-the-verb moments, dead-end inputs, disambiguation, whether the game ever left you stuck not knowing what to type. A single guess-the-verb wall is a cardinal sin.`,
+  },
+  {
+    id: 'speedrunner',
+    model: 'sonnet',
+    lens: `You are a speedrunner/optimizer. You probe for the shortest path, degenerate strategies, and exploits. You are infuriated by ambiguity about what an action will cost or do. Tell us where the game wasted your time and where the optimal line was unclear.`,
+  },
+  {
+    id: 'narrative-critic',
+    model: 'opus',
+    lens: `You are a literary critic who finds most game writing embarrassing. Judge the prose mercilessly: is it specific and restrained, or purple and over-written? Did the second-person voice and dread hold, or collapse into melodrama? Quote the worst line you saw.`,
+  },
+  {
+    id: 'qa-breaker',
+    model: 'sonnet',
+    lens: `You are a QA tester who breaks games for a living. Hunt for soft-locks, dead ends, contradictory text, state that doesn't update, actions the game implies but won't let you do, and deaths that felt like the engine's fault not yours. Report concrete repro steps.`,
+  },
+  {
+    id: 'impatient-normie',
+    model: 'haiku',
+    lens: `You are an impatient mainstream player with little patience for text games. If you are confused or bored in the first few minutes you will say so bluntly. Judge onboarding: did you understand what to do and why, without being told? If you'd have quit, say exactly when and why.`,
+  },
+  {
+    id: 'systems-minmaxer',
+    model: 'sonnet',
+    lens: `You are a systems player who lives for emergent depth. Judge whether the world is a real system you can reason about and combine, or a scripted corridor wearing a system's clothes. Did your knowledge actually pay off mechanically? Where did it feel on-rails?`,
+  },
+  {
+    id: 'horror-skeptic',
+    model: 'haiku',
+    lens: `You are a horror connoisseur who finds most "atmospheric" games cheap. Judge the dread: earned through restraint and implication, or manufactured with adjectives? Did anything actually unsettle you, or did you see the strings? Name the cheapest scare.`,
+  },
   // Rule-breakers — the cohort careful players are NOT, tasked to probe whether the
   // telegraphed dangers actually bite and whether the punishment is FAIR.
-  { id: 'reckless-rusher', model: 'sonnet', lens: `You are a reckless, impatient rusher. You refuse to read carefully — you barrel ahead, take the fastest line, ignore warnings, and find out what happens the hard way. Do NOT play safe. Judge whether the game punishes haste FAIRLY (a telegraphed, survivable first mistake) or with cheap unforeseeable death — or whether recklessness is even punished at all. If nothing bad ever happened no matter how careless you were, say so bluntly.` },
-  { id: 'rule-breaker', model: 'sonnet', lens: `Your JOB is to BREAK every telegraphed rule on purpose and report whether the consequence is real and fair. Deliberately do all three: look back repeatedly on the Mile Road; carry iron into the Greywater after dark; and SAY A NAME ALOUD at the Antenna Field (try: say maren). For EACH, report exactly what happened — did it warn you before it bit, did it eventually kill or cost you something that mattered, or did the threatened danger never actually arrive? The game's notices claim "wrong is fatal." Find out if that is true, and whether any death was fair (telegraphed, avoidable) or cheap.` },
+  {
+    id: 'reckless-rusher',
+    model: 'sonnet',
+    lens: `You are a reckless, impatient rusher. You refuse to read carefully — you barrel ahead, take the fastest line, ignore warnings, and find out what happens the hard way. Do NOT play safe. Judge whether the game punishes haste FAIRLY (a telegraphed, survivable first mistake) or with cheap unforeseeable death — or whether recklessness is even punished at all. If nothing bad ever happened no matter how careless you were, say so bluntly.`,
+  },
+  {
+    id: 'rule-breaker',
+    model: 'sonnet',
+    lens: `Your JOB is to BREAK every telegraphed rule on purpose and report whether the consequence is real and fair. Deliberately do all three: look back repeatedly on the Mile Road; carry iron into the Greywater after dark; and SAY A NAME ALOUD at the Antenna Field (try: say maren). For EACH, report exactly what happened — did it warn you before it bit, did it eventually kill or cost you something that mattered, or did the threatened danger never actually arrive? The game's notices claim "wrong is fatal." Find out if that is true, and whether any death was fair (telegraphed, avoidable) or cheap.`,
+  },
   // Zone-specific breakers — because a single run can only test the FIRST rule a
   // rule-breaker triggers (they die there). These rush a specific law to test it.
-  { id: 'antenna-breaker', model: 'sonnet', lens: `Get to the ANTENNA FIELD as fast as you can WITHOUT looking back on the Mile Road or lingering, and there deliberately SAY A NAME ALOUD (try: say maren). Your job is to test ONLY the antenna name-taboo. Report precisely: were you warned before it killed you? After the first name, did you get a real chance to flee (leave the field) before the Changed reached you, or did the warning and the death arrive in the same beat with no turn to react? Was the death FAIR (telegraphed, escapable) or cheap (no actionable warning)? Also judge whether the relic you can pick up there does anything.` },
-  { id: 'greywater-breaker', model: 'sonnet', lens: `Get to the GREYWATER ford carrying iron (a knife or crowbar) AFTER DARK and cross it — deliberately do the thing the notices forbid. Your job is to test ONLY the iron-in-the-Greywater rule. Report precisely: did carrying iron into the night water cost you anything that MATTERED, or was it merely cosmetic (your blade turns to ore and nothing else happens)? Did losing your iron have a real downstream consequence (e.g. an escape route you could no longer use)? The game claims "wrong is fatal" — is the Greywater a real threat or a bluff that only takes your tools?` },
+  {
+    id: 'antenna-breaker',
+    model: 'sonnet',
+    lens: `Get to the ANTENNA FIELD as fast as you can WITHOUT looking back on the Mile Road or lingering, and there deliberately SAY A NAME ALOUD (try: say maren). Your job is to test ONLY the antenna name-taboo. Report precisely: were you warned before it killed you? After the first name, did you get a real chance to flee (leave the field) before the Changed reached you, or did the warning and the death arrive in the same beat with no turn to react? Was the death FAIR (telegraphed, escapable) or cheap (no actionable warning)? Also judge whether the relic you can pick up there does anything.`,
+  },
+  {
+    id: 'greywater-breaker',
+    model: 'sonnet',
+    lens: `Get to the GREYWATER ford carrying iron (a knife or crowbar) AFTER DARK and cross it — deliberately do the thing the notices forbid. Your job is to test ONLY the iron-in-the-Greywater rule. Report precisely: did carrying iron into the night water cost you anything that MATTERED, or was it merely cosmetic (your blade turns to ore and nothing else happens)? Did losing your iron have a real downstream consequence (e.g. an escape route you could no longer use)? The game claims "wrong is fatal" — is the Greywater a real threat or a bluff that only takes your tools?`,
+  },
 ];
 
 // ---- arg parsing ----------------------------------------------------------------
@@ -98,8 +146,14 @@ interface PlayerSpec {
 const players: PlayerSpec[] = [];
 for (let i = 0; i < N; i++) {
   const persona = roster[i % roster.length]!;
-  const model = (modelOverride.length ? modelOverride[i % modelOverride.length]! : persona.model);
-  players.push({ idx: i, id: `p${String(i).padStart(3, '0')}-${persona.id}`, persona: persona.id, model, seed: `${SEEDBASE}-${i}` });
+  const model = modelOverride.length ? modelOverride[i % modelOverride.length]! : persona.model;
+  players.push({
+    idx: i,
+    id: `p${String(i).padStart(3, '0')}-${persona.id}`,
+    persona: persona.id,
+    model,
+    seed: `${SEEDBASE}-${i}`,
+  });
 }
 
 const TASK_PROMPT =
@@ -124,13 +178,19 @@ function spawnPlayer(pl: PlayerSpec): Promise<{ ok: boolean; result?: string; me
   );
   const args = [
     '-p',
-    '--model', pl.model,
-    '--output-format', 'json',
+    '--model',
+    pl.model,
+    '--output-format',
+    'json',
     '--strict-mcp-config',
-    '--mcp-config', mcpPath,
-    '--tools', 'mcp__proctor__observe', 'mcp__proctor__act',
+    '--mcp-config',
+    mcpPath,
+    '--tools',
+    'mcp__proctor__observe',
+    'mcp__proctor__act',
     '--dangerously-skip-permissions',
-    '--append-system-prompt-file', personaPath,
+    '--append-system-prompt-file',
+    personaPath,
   ];
   const env = { ...process.env, MCP_TIMEOUT: '60000', MCP_TOOL_TIMEOUT: '180000' };
   const useShell = process.platform === 'win32';
@@ -150,11 +210,19 @@ function spawnPlayer(pl: PlayerSpec): Promise<{ ok: boolean; result?: string; me
       try {
         const j = JSON.parse(out);
         result = typeof j.result === 'string' ? j.result : undefined;
-        meta = { is_error: j.is_error, num_turns: j.num_turns, total_cost_usd: j.total_cost_usd, duration_ms: j.duration_ms };
+        meta = {
+          is_error: j.is_error,
+          num_turns: j.num_turns,
+          total_cost_usd: j.total_cost_usd,
+          duration_ms: j.duration_ms,
+        };
       } catch {
         /* keep raw */
       }
-      writeFileSync(resolve(OUT, 'players', `${pl.id}.interview.json`), out || JSON.stringify({ error: err.slice(0, 2000) }));
+      writeFileSync(
+        resolve(OUT, 'players', `${pl.id}.interview.json`),
+        out || JSON.stringify({ error: err.slice(0, 2000) }),
+      );
       const okPlay = existsSync(snapPath);
       resolveP({ ok: !!result && okPlay, result, meta });
     });
@@ -177,7 +245,9 @@ async function pool<T, R>(items: T[], worker: (t: T) => Promise<R>, concurrency:
 }
 
 async function main() {
-  console.log(`▸ blind swarm: ${N} players · ${roster.length} personas · concurrency ${CONCURRENCY} · ${TURNS} turns/player`);
+  console.log(
+    `▸ blind swarm: ${N} players · ${roster.length} personas · concurrency ${CONCURRENCY} · ${TURNS} turns/player`,
+  );
   console.log(`  out: ${OUT}\n`);
   const t0 = Date.now();
   let done = 0;
@@ -192,8 +262,17 @@ async function main() {
       const turns = snap?.turns?.length ?? 0;
       const real = snap?.verdict?.real ? 'VERIFIED' : 'FAILED';
       const fin = snap?.finalStatus ?? '?';
-      console.log(`  [${String(done).padStart(3)}/${N}] ${pl.id.padEnd(26)} ${pl.model.padEnd(7)} turns=${String(turns).padStart(2)} final=${String(fin).padEnd(6)} realness=${real} ${r.ok ? '' : '(no interview)'}`);
-      return { ...pl, ok: r.ok, turns, real: snap?.verdict?.real ?? false, finalStatus: fin, meta: r.meta };
+      console.log(
+        `  [${String(done).padStart(3)}/${N}] ${pl.id.padEnd(26)} ${pl.model.padEnd(7)} turns=${String(turns).padStart(2)} final=${String(fin).padEnd(6)} realness=${real} ${r.ok ? '' : '(no interview)'}`,
+      );
+      return {
+        ...pl,
+        ok: r.ok,
+        turns,
+        real: snap?.verdict?.real ?? false,
+        finalStatus: fin,
+        meta: r.meta,
+      };
     },
     CONCURRENCY,
   );
@@ -213,7 +292,9 @@ async function main() {
     },
   };
   writeFileSync(resolve(OUT, 'index.json'), JSON.stringify(index, null, 2));
-  console.log(`\n✓ swarm done in ${((Date.now() - t0) / 1000).toFixed(0)}s · ${index.summary.ok}/${N} interviews · ${index.summary.realnessVerified} realness-verified`);
+  console.log(
+    `\n✓ swarm done in ${((Date.now() - t0) / 1000).toFixed(0)}s · ${index.summary.ok}/${N} interviews · ${index.summary.realnessVerified} realness-verified`,
+  );
   console.log(`  won=${index.summary.won} lost=${index.summary.lost} active=${index.summary.active}`);
   console.log(`  index: ${resolve(OUT, 'index.json')}`);
   // Force a clean exit. The data is already written; a lingering child handle (or the win32

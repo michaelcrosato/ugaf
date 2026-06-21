@@ -18,18 +18,45 @@ export const LAWS: LawDefinition[] = [
     trigger: { intent: 'look_back' },
     effect: { kind: 'distance_mult', factor: 2, applies: 'behind' },
     tells: [
-      { id: 'mile_milepost_reset', channel: 'sight', weight: 3, advancesTo: 'referenced', at: { nodes: ['mile_road_low', 'mile_road_high'] } },
-      { id: 'mile_shadow_long', channel: 'sight', weight: 2, advancesTo: 'approximate', at: { nodes: ['mile_road_low', 'mile_road_high'] } },
-      { id: 'mile_dead_walker', channel: 'sight', weight: 3, advancesTo: 'approximate', at: { nodes: ['mile_road_high'] }, deadAdventurer: true },
+      {
+        id: 'mile_milepost_reset',
+        channel: 'sight',
+        weight: 3,
+        advancesTo: 'referenced',
+        at: { nodes: ['mile_road_low', 'mile_road_high'] },
+      },
+      {
+        id: 'mile_shadow_long',
+        channel: 'sight',
+        weight: 2,
+        advancesTo: 'approximate',
+        at: { nodes: ['mile_road_low', 'mile_road_high'] },
+      },
+      {
+        id: 'mile_dead_walker',
+        channel: 'sight',
+        weight: 3,
+        advancesTo: 'approximate',
+        at: { nodes: ['mile_road_high'] },
+        deadAdventurer: true,
+      },
     ],
-    discovery: { surveyVia: ['examine the mileposts', 'examine the dead walker'], minTellsToSurvey: 2 },
+    discovery: {
+      surveyVia: ['examine the mileposts', 'examine the dead walker'],
+      minTellsToSurvey: 2,
+    },
     failSafe: {
       firstContact: {
         tell: 'You glance back — and the road behind you yawns suddenly twice as long, the waystation dwindled to a far grey smudge. Something in you slips a notch out of true. (You are Unsettled.)',
       },
     },
     interactions: ['antenna_field'],
-    drift: { everyTurns: 40, driftAfter: 8, mutates: 'window', predemotionTell: 'mile_milepost_reset' },
+    drift: {
+      everyTurns: 40,
+      driftAfter: 8,
+      mutates: 'window',
+      predemotionTell: 'mile_milepost_reset',
+    },
     lore: 'The Settling pulled the road long. It keeps its true length at your back, where you cannot watch it.',
   },
   {
@@ -45,9 +72,28 @@ export const LAWS: LawDefinition[] = [
     trigger: { phase: ['dusk', 'night'] },
     effect: { kind: 'degrade_item_class', itemClass: 'metal', toCondition: 'ore' },
     tells: [
-      { id: 'grey_rust_bloom', channel: 'sight', weight: 3, advancesTo: 'referenced', at: { nodes: ['greywater_ford', 'greywater_bottoms'] } },
-      { id: 'grey_low_hum', channel: 'sound', weight: 2, advancesTo: 'approximate', at: { nodes: ['greywater_ford', 'greywater_bottoms'] } },
-      { id: 'grey_slumped_blade', channel: 'sight', weight: 3, advancesTo: 'approximate', at: { nodes: ['greywater_ford'] }, deadAdventurer: true },
+      {
+        id: 'grey_rust_bloom',
+        channel: 'sight',
+        weight: 3,
+        advancesTo: 'referenced',
+        at: { nodes: ['greywater_ford', 'greywater_bottoms'] },
+      },
+      {
+        id: 'grey_low_hum',
+        channel: 'sound',
+        weight: 2,
+        advancesTo: 'approximate',
+        at: { nodes: ['greywater_ford', 'greywater_bottoms'] },
+      },
+      {
+        id: 'grey_slumped_blade',
+        channel: 'sight',
+        weight: 3,
+        advancesTo: 'approximate',
+        at: { nodes: ['greywater_ford'] },
+        deadAdventurer: true,
+      },
     ],
     discovery: { surveyVia: ['examine the rust-bloom', 'listen for the hum'], minTellsToSurvey: 2 },
     failSafe: {
@@ -68,11 +114,33 @@ export const LAWS: LawDefinition[] = [
     trigger: { spokeName: true },
     effect: { kind: 'summon', entity: 'the_changed', via: 'utterance', radius: 1 },
     tells: [
-      { id: 'antenna_field_hum', channel: 'sound', weight: 3, advancesTo: 'referenced', at: { nodes: ['antenna_field'] } },
-      { id: 'antenna_far_echo', channel: 'sound', weight: 2, advancesTo: 'approximate', at: { nodes: ['antenna_field'] } },
-      { id: 'antenna_name_stones', channel: 'sight', weight: 3, advancesTo: 'approximate', at: { nodes: ['antenna_field'] }, deadAdventurer: true },
+      {
+        id: 'antenna_field_hum',
+        channel: 'sound',
+        weight: 3,
+        advancesTo: 'referenced',
+        at: { nodes: ['antenna_field'] },
+      },
+      {
+        id: 'antenna_far_echo',
+        channel: 'sound',
+        weight: 2,
+        advancesTo: 'approximate',
+        at: { nodes: ['antenna_field'] },
+      },
+      {
+        id: 'antenna_name_stones',
+        channel: 'sight',
+        weight: 3,
+        advancesTo: 'approximate',
+        at: { nodes: ['antenna_field'] },
+        deadAdventurer: true,
+      },
     ],
-    discovery: { surveyVia: ['examine the name-stones', 'listen to the field'], minTellsToSurvey: 2 },
+    discovery: {
+      surveyVia: ['examine the name-stones', 'listen to the field'],
+      minTellsToSurvey: 2,
+    },
     failSafe: {
       firstContact: {
         tell: 'The antennas take your word and carry it. You hear your own voice answer from a mile out in the dark — late, and wrong. Something turns toward the sound, and begins to come. (Be quiet now, or be gone.)',
@@ -81,7 +149,12 @@ export const LAWS: LawDefinition[] = [
     },
     interactions: ['mile_road'],
     combatConsequence: true,
-    drift: { everyTurns: 60, driftAfter: 10, mutates: 'tells', predemotionTell: 'antenna_field_hum' },
+    drift: {
+      everyTurns: 60,
+      driftAfter: 10,
+      mutates: 'tells',
+      predemotionTell: 'antenna_field_hum',
+    },
     lore: 'The field still listens on dead channels. Give it a name and it will broadcast you to everything that hungers.',
   },
   {
@@ -93,9 +166,28 @@ export const LAWS: LawDefinition[] = [
     trigger: { intent: ['wait', 'rest'] },
     effect: { kind: 'impose_condition', condition: 'unsettled', severity: 'reversible' },
     tells: [
-      { id: 'hollow_silence', channel: 'sound', weight: 3, advancesTo: 'referenced', at: { nodes: ['the_fork', 'antenna_field', 'mile_road_high'] } },
-      { id: 'hollow_heartbeat', channel: 'touch', weight: 2, advancesTo: 'approximate', at: { nodes: ['the_fork', 'antenna_field'] } },
-      { id: 'hollow_sitter', channel: 'sight', weight: 3, advancesTo: 'approximate', at: { nodes: ['the_fork'] }, deadAdventurer: true },
+      {
+        id: 'hollow_silence',
+        channel: 'sound',
+        weight: 3,
+        advancesTo: 'referenced',
+        at: { nodes: ['the_fork', 'antenna_field', 'mile_road_high'] },
+      },
+      {
+        id: 'hollow_heartbeat',
+        channel: 'touch',
+        weight: 2,
+        advancesTo: 'approximate',
+        at: { nodes: ['the_fork', 'antenna_field'] },
+      },
+      {
+        id: 'hollow_sitter',
+        channel: 'sight',
+        weight: 3,
+        advancesTo: 'approximate',
+        at: { nodes: ['the_fork'] },
+        deadAdventurer: true,
+      },
     ],
     discovery: { surveyVia: ['listen to the silence', 'examine the sitter'], minTellsToSurvey: 2 },
     failSafe: {

@@ -29,8 +29,18 @@ export interface Observation {
 }
 
 export type ActResult =
-  | { readonly ok: true; readonly committed_event_index: number; readonly result_text: string; readonly next: Observation }
-  | { readonly ok: false; readonly rejection: 'WRONG_NONCE' | 'DELAY_NOT_ELAPSED' | 'SESSION_OVER' | 'NOT_UNDERSTOOD'; readonly retry_after_ms?: number; readonly detail?: string };
+  | {
+      readonly ok: true;
+      readonly committed_event_index: number;
+      readonly result_text: string;
+      readonly next: Observation;
+    }
+  | {
+      readonly ok: false;
+      readonly rejection: 'WRONG_NONCE' | 'DELAY_NOT_ELAPSED' | 'SESSION_OVER' | 'NOT_UNDERSTOOD';
+      readonly retry_after_ms?: number;
+      readonly detail?: string;
+    };
 
 export interface TurnManifest {
   readonly turn: number;
@@ -71,7 +81,10 @@ export class ProctorSession {
   private readonly salt: string;
   private logicalClock = 0;
 
-  constructor(readonly game: Game, private readonly opts: ProctorOptions = {}) {
+  constructor(
+    readonly game: Game,
+    private readonly opts: ProctorOptions = {},
+  ) {
     this.session = new Session(game, 'proctor');
     this.renderer = createRenderer(game.pack);
     this.salt = hashText('proctor-salt:' + game.seed); // private to the server; players can't read it
@@ -95,7 +108,9 @@ export class ProctorSession {
     return {
       turn: this.session.state.turn,
       turn_nonce: this.nonce,
-      scene: this.session.isEnded() ? '(the story has ended)' : this.renderer.renderScene(this.session.state, o, { firstVisit: false }),
+      scene: this.session.isEnded()
+        ? '(the story has ended)'
+        : this.renderer.renderScene(this.session.state, o, { firstVisit: false }),
       status_line: this.session.statusLine(),
       you: o.self,
       world: o.facts,
@@ -112,14 +127,23 @@ export class ProctorSession {
 
   act(nonce: string, command: string): ActResult {
     if (this.session.isEnded()) return { ok: false, rejection: 'SESSION_OVER' };
-    if (nonce !== this.nonce) return { ok: false, rejection: 'WRONG_NONCE', detail: 'stale or missing nonce — observe() first' };
+    if (nonce !== this.nonce)
+      return {
+        ok: false,
+        rejection: 'WRONG_NONCE',
+        detail: 'stale or missing nonce — observe() first',
+      };
     const ready = this.lastCommitAt + (this.opts.delayMs ?? 0);
     const t = this.now();
     if (t < ready) return { ok: false, rejection: 'DELAY_NOT_ELAPSED', retry_after_ms: ready - t };
 
     const issued = this.nonce;
     const priorObs = this.session.obs('player');
-    const observationHash = hashTagged('proctor.obs', { scene: priorObs.scene, facts: priorObs.facts, legal: priorObs.legalActions } as unknown as Record<string, never>);
+    const observationHash = hashTagged('proctor.obs', {
+      scene: priorObs.scene,
+      facts: priorObs.facts,
+      legal: priorObs.legalActions,
+    } as unknown as Record<string, never>);
     const priorHash = this.session.log.latestHash();
     const intent = this.session.parse(command);
     const res = this.session.applyIntent(intent, command);
@@ -143,7 +167,12 @@ export class ProctorSession {
     }
 
     if (res.rejected) return { ok: false, rejection: 'NOT_UNDERSTOOD', detail: res.text };
-    return { ok: true, committed_event_index: this.session.state.turn, result_text: res.text, next: this.observe() };
+    return {
+      ok: true,
+      committed_event_index: this.session.state.turn,
+      result_text: res.text,
+      next: this.observe(),
+    };
   }
 
   manifest(): SessionManifest {

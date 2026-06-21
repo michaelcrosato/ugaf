@@ -64,7 +64,10 @@ export class ProctorMcpBridge {
   private n = 0;
   private readonly maxTurns: number;
 
-  constructor(private readonly game: Game, opts: { delayMs?: number; maxTurns?: number } = {}) {
+  constructor(
+    private readonly game: Game,
+    opts: { delayMs?: number; maxTurns?: number } = {},
+  ) {
     this.session = new ProctorSession(game, { delayMs: opts.delayMs ?? 0 });
     this.maxTurns = opts.maxTurns ?? 0; // 0 = unlimited
   }
@@ -148,7 +151,8 @@ export class ProctorMcpBridge {
     if (typeof you.unsettled === 'number' && you.unsettled > 0) bits.push(`unsettled ${you.unsettled}`);
     if (typeof you.exposure === 'number' && you.exposure > 0) bits.push(`exposure ${you.exposure}`);
     if (bits.length) lines.push('You feel: ' + bits.join(', ') + '.');
-    if (o.legal_actions.length) lines.push('', 'You can (among other things): ' + o.legal_actions.map((a) => a.label).join(' · '));
+    if (o.legal_actions.length)
+      lines.push('', 'You can (among other things): ' + o.legal_actions.map((a) => a.label).join(' · '));
     return lines.join('\n');
   }
 

@@ -17,46 +17,149 @@ const RETURN_WORDS = new Set(['back', 'leave', 'return', 'exit', 'away', 'retrea
 
 // meta queries route to `recall` (the Session renders them without committing a turn)
 const META: Record<string, string> = {
-  codex: 'codex', laws: 'codex', journal: 'codex', knowledge: 'codex', recall: 'codex',
-  inventory: 'inv', inv: 'inv', i: 'inv', 'check inventory': 'inv',
-  map: 'map', exits: 'map', ways: 'map',
-  help: 'help', '?': 'help', commands: 'help',
+  codex: 'codex',
+  laws: 'codex',
+  journal: 'codex',
+  knowledge: 'codex',
+  recall: 'codex',
+  inventory: 'inv',
+  inv: 'inv',
+  i: 'inv',
+  'check inventory': 'inv',
+  map: 'map',
+  exits: 'map',
+  ways: 'map',
+  help: 'help',
+  '?': 'help',
+  commands: 'help',
 };
 
 const DIRECTIONS: Record<string, string> = {
-  n: 'north', s: 'south', e: 'east', w: 'west', ne: 'northeast', nw: 'northwest', se: 'southeast', sw: 'southwest',
-  u: 'up', d: 'down', up: 'up', down: 'down', in: 'in', out: 'out', north: 'north', south: 'south', east: 'east', west: 'west',
-  northeast: 'northeast', northwest: 'northwest', southeast: 'southeast', southwest: 'southwest',
+  n: 'north',
+  s: 'south',
+  e: 'east',
+  w: 'west',
+  ne: 'northeast',
+  nw: 'northwest',
+  se: 'southeast',
+  sw: 'southwest',
+  u: 'up',
+  d: 'down',
+  up: 'up',
+  down: 'down',
+  in: 'in',
+  out: 'out',
+  north: 'north',
+  south: 'south',
+  east: 'east',
+  west: 'west',
+  northeast: 'northeast',
+  northwest: 'northwest',
+  southeast: 'southeast',
+  southwest: 'southwest',
 };
 
 // verb phrase -> intent class. Longer phrases are matched first.
 const VERBS: [string, IntentClass][] = [
-  ['look back', 'look_back'], ['turn around', 'look_back'], ['glance back', 'look_back'], ['look behind', 'look_back'],
-  ['look at', 'examine'], ['look in', 'examine'], ['look around', 'look'], ['look', 'look'],
-  ['examine', 'examine'], ['inspect', 'examine'], ['study', 'examine'], ['check', 'examine'], ['x', 'examine'],
-  ['search', 'search'], ['rummage', 'search'], ['forage', 'search'],
-  ['listen', 'listen'], ['read', 'read'],
-  ['pick up', 'take'], ['take', 'take'], ['get', 'take'], ['grab', 'take'], ['pocket', 'take'],
-  ['drop', 'drop'], ['discard', 'drop'],
-  ['cross', 'cross_threshold'], ['step across', 'cross_threshold'], ['step through', 'cross_threshold'],
-  ['enter', 'go'], ['go to', 'go'], ['go', 'go'], ['walk', 'go'], ['head', 'go'], ['move', 'go'], ['travel', 'go'], ['climb', 'go'],
-  ['ask about', 'ask_about'], ['ask', 'ask_about'], ['inquire', 'ask_about'],
-  ['talk to', 'talk'], ['talk', 'talk'], ['greet', 'talk'], ['speak to', 'talk'],
-  ['call out', 'speak_aloud'], ['shout', 'speak_aloud'], ['yell', 'speak_aloud'], ['say', 'speak_aloud'], ['call', 'speak_aloud'], ['speak', 'speak_aloud'],
-  ['parley', 'parley'], ['negotiate', 'parley'], ['persuade', 'parley'], ['convince', 'parley'],
-  ['bribe', 'bribe'], ['pay', 'bribe'], ['offer', 'bribe'],
-  ['intimidate', 'intimidate'], ['threaten', 'intimidate'], ['menace', 'intimidate'],
-  ['deduce', 'deduce'], ['figure out', 'deduce'], ['work out', 'deduce'], ['conclude', 'deduce'], ['solve', 'deduce'], ['think about', 'deduce'],
-  ['survey', 'survey'], ['confirm', 'survey'], ['verify', 'survey'],
-  ['recall', 'recall'], ['remember', 'recall'],
-  ['hide', 'hide'], ['conceal', 'hide'], ['take cover', 'hide'],
-  ['sneak', 'sneak'], ['creep', 'sneak'], ['slip', 'sneak'],
-  ['attack', 'attack'], ['hit', 'attack'], ['fight', 'attack'], ['strike', 'attack'], ['kill', 'attack'],
-  ['flee', 'flee'], ['run', 'flee'], ['escape', 'flee'], ['retreat', 'flee'],
-  ['give', 'give'], ['hand', 'give'],
-  ['wait', 'wait'], ['z', 'wait'], ['pause', 'wait'],
-  ['rest', 'rest'], ['sleep', 'rest'], ['camp', 'rest'],
-  ['open', 'open'], ['close', 'close'], ['use', 'use'], ['pry', 'use'], ['lever', 'use'], ['force', 'use'],
+  ['look back', 'look_back'],
+  ['turn around', 'look_back'],
+  ['glance back', 'look_back'],
+  ['look behind', 'look_back'],
+  ['look at', 'examine'],
+  ['look in', 'examine'],
+  ['look around', 'look'],
+  ['look', 'look'],
+  ['examine', 'examine'],
+  ['inspect', 'examine'],
+  ['study', 'examine'],
+  ['check', 'examine'],
+  ['x', 'examine'],
+  ['search', 'search'],
+  ['rummage', 'search'],
+  ['forage', 'search'],
+  ['listen', 'listen'],
+  ['read', 'read'],
+  ['pick up', 'take'],
+  ['take', 'take'],
+  ['get', 'take'],
+  ['grab', 'take'],
+  ['pocket', 'take'],
+  ['drop', 'drop'],
+  ['discard', 'drop'],
+  ['cross', 'cross_threshold'],
+  ['step across', 'cross_threshold'],
+  ['step through', 'cross_threshold'],
+  ['enter', 'go'],
+  ['go to', 'go'],
+  ['go', 'go'],
+  ['walk', 'go'],
+  ['head', 'go'],
+  ['move', 'go'],
+  ['travel', 'go'],
+  ['climb', 'go'],
+  ['ask about', 'ask_about'],
+  ['ask', 'ask_about'],
+  ['inquire', 'ask_about'],
+  ['talk to', 'talk'],
+  ['talk', 'talk'],
+  ['greet', 'talk'],
+  ['speak to', 'talk'],
+  ['call out', 'speak_aloud'],
+  ['shout', 'speak_aloud'],
+  ['yell', 'speak_aloud'],
+  ['say', 'speak_aloud'],
+  ['call', 'speak_aloud'],
+  ['speak', 'speak_aloud'],
+  ['parley', 'parley'],
+  ['negotiate', 'parley'],
+  ['persuade', 'parley'],
+  ['convince', 'parley'],
+  ['bribe', 'bribe'],
+  ['pay', 'bribe'],
+  ['offer', 'bribe'],
+  ['intimidate', 'intimidate'],
+  ['threaten', 'intimidate'],
+  ['menace', 'intimidate'],
+  ['deduce', 'deduce'],
+  ['figure out', 'deduce'],
+  ['work out', 'deduce'],
+  ['conclude', 'deduce'],
+  ['solve', 'deduce'],
+  ['think about', 'deduce'],
+  ['survey', 'survey'],
+  ['confirm', 'survey'],
+  ['verify', 'survey'],
+  ['recall', 'recall'],
+  ['remember', 'recall'],
+  ['hide', 'hide'],
+  ['conceal', 'hide'],
+  ['take cover', 'hide'],
+  ['sneak', 'sneak'],
+  ['creep', 'sneak'],
+  ['slip', 'sneak'],
+  ['attack', 'attack'],
+  ['hit', 'attack'],
+  ['fight', 'attack'],
+  ['strike', 'attack'],
+  ['kill', 'attack'],
+  ['flee', 'flee'],
+  ['run', 'flee'],
+  ['escape', 'flee'],
+  ['retreat', 'flee'],
+  ['give', 'give'],
+  ['hand', 'give'],
+  ['wait', 'wait'],
+  ['z', 'wait'],
+  ['pause', 'wait'],
+  ['rest', 'rest'],
+  ['sleep', 'rest'],
+  ['camp', 'rest'],
+  ['open', 'open'],
+  ['close', 'close'],
+  ['use', 'use'],
+  ['pry', 'use'],
+  ['lever', 'use'],
+  ['force', 'use'],
 ];
 
 export interface Parser {
@@ -67,21 +170,37 @@ export function createParser(pack: WorldPack): Parser {
   // node aliases: a destination node's title-words / region / id, so "go to the holdout" works
   const nodeAlias = new Map<string, string[]>();
   for (const n of pack.nodes) {
-    const words = [n.id, n.regionId, ...n.title.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(/\s+/).filter((w) => w.length > 2 && !['the', 'and'].includes(w))];
+    const words = [
+      n.id,
+      n.regionId,
+      ...n.title
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]/g, '')
+        .split(/\s+/)
+        .filter((w) => w.length > 2 && !['the', 'and'].includes(w)),
+    ];
     nodeAlias.set(n.id, [...new Set(words.map((w) => w.toLowerCase()))]);
   }
   const regionName = new Map(pack.regions.map((r) => [r.id, r.name.toLowerCase()]));
 
   // global lexicon: id -> names (examinables, npcs, items)
   const lexicon: { id: string; names: string[]; kind: string }[] = [];
-  for (const n of pack.nodes) for (const ex of n.examinables ?? []) lexicon.push({ id: ex.id, names: ex.names.map((s) => s.toLowerCase()), kind: 'examinable' });
+  for (const n of pack.nodes)
+    for (const ex of n.examinables ?? [])
+      lexicon.push({ id: ex.id, names: ex.names.map((s) => s.toLowerCase()), kind: 'examinable' });
   for (const npc of pack.npcs) lexicon.push({ id: npc.id, names: npc.names.map((s) => s.toLowerCase()), kind: 'npc' });
   for (const it of pack.items) lexicon.push({ id: it.id, names: it.names.map((s) => s.toLowerCase()), kind: 'item' });
   const itemClass = new Map(pack.items.map((i) => [i.id, i.itemClass]));
   // examinables, indexed by the node they live in — so a named prop resolves to the one in
   // the room you are standing in, not a same-named prop from another location (cross-room leak).
   const nodeExaminables = new Map<string, { id: string; names: string[] }[]>(
-    pack.nodes.map((n) => [n.id, (n.examinables ?? []).map((ex) => ({ id: ex.id, names: ex.names.map((s) => s.toLowerCase()) }))]),
+    pack.nodes.map((n) => [
+      n.id,
+      (n.examinables ?? []).map((ex) => ({
+        id: ex.id,
+        names: ex.names.map((s) => s.toLowerCase()),
+      })),
+    ]),
   );
 
   type Kind = 'exit' | 'item' | 'examinable' | 'npc';
@@ -109,7 +228,8 @@ export function createParser(pack: WorldPack): Parser {
     // an examinable in the CURRENT room wins over a same-named one elsewhere (no cross-room leak)
     if (kind === 'examinable') {
       for (const ex of nodeExaminables.get(obs.location) ?? []) {
-        if (ex.names.some((nm) => q === nm || q.includes(nm) || nm.includes(q))) return { id: ex.id, raw: q, tags: ['examinable'] };
+        if (ex.names.some((nm) => q === nm || q.includes(nm) || nm.includes(q)))
+          return { id: ex.id, raw: q, tags: ['examinable'] };
       }
     }
     // scene-present entities of this kind first (more specific than the global lexicon)
@@ -129,10 +249,17 @@ export function createParser(pack: WorldPack): Parser {
   }
 
   /** Verb-aware noun resolution: try the preferred kinds first (research rule 19). */
-  function resolveNoun(noun: string, obs: RoleObservation, prefer: Kind[] = ['exit', 'npc', 'item', 'examinable']): EntityRef | undefined {
+  function resolveNoun(
+    noun: string,
+    obs: RoleObservation,
+    prefer: Kind[] = ['exit', 'npc', 'item', 'examinable'],
+  ): EntityRef | undefined {
     const q = noun.toLowerCase().trim();
     if (!q) return undefined;
-    const order: Kind[] = [...prefer, ...(['exit', 'npc', 'item', 'examinable'] as Kind[]).filter((k) => !prefer.includes(k))];
+    const order: Kind[] = [
+      ...prefer,
+      ...(['exit', 'npc', 'item', 'examinable'] as Kind[]).filter((k) => !prefer.includes(k)),
+    ];
     for (const kind of order) {
       const r = matchKind(q, kind, obs);
       if (r) return r;
@@ -159,7 +286,10 @@ export function createParser(pack: WorldPack): Parser {
 
   function parse(input: string, obs: RoleObservation): ParsedIntent {
     const raw = input.trim();
-    const lower = raw.toLowerCase().replace(/^\s*(please|then)\s+/, '').replace(/[.!?]+$/, '');
+    const lower = raw
+      .toLowerCase()
+      .replace(/^\s*(please|then)\s+/, '')
+      .replace(/[.!?]+$/, '');
 
     // meta queries -> recall (a free, non-committing view; handled by the Session)
     if (META[lower]) return mk('recall', { topic: META[lower], confidence: 1 });
@@ -170,7 +300,12 @@ export function createParser(pack: WorldPack): Parser {
     // a single token that names an exit HERE wins over a same-spelled verb
     // (so "survey" / "salvage" walk to the Survey / Striders, not deduce-a-law)
     const exitDir = obs.scene.exits.find((e) => e.dir.toLowerCase() === lower);
-    if (exitDir) return mk('go', { direction: lower, target: { id: exitDir.to ?? exitDir.dir, raw: lower, tags: ['exit'] }, confidence: 0.9 });
+    if (exitDir)
+      return mk('go', {
+        direction: lower,
+        target: { id: exitDir.to ?? exitDir.dir, raw: lower, tags: ['exit'] },
+        confidence: 0.9,
+      });
 
     // bare direction -> go
     const firstTok = lower.split(/\s+/)[0] ?? '';
@@ -181,7 +316,10 @@ export function createParser(pack: WorldPack): Parser {
     // match a verb phrase (longest first)
     for (const [phrase, cls] of VERBS) {
       if (lower === phrase || lower.startsWith(phrase + ' ')) {
-        const rest = lower.slice(phrase.length).trim().replace(/^(at|to|the|on|in|into|about|a|an)\s+/, '');
+        const rest = lower
+          .slice(phrase.length)
+          .trim()
+          .replace(/^(at|to|the|on|in|into|about|a|an)\s+/, '');
         return classify(cls, phrase, rest, obs, raw);
       }
     }
@@ -202,18 +340,37 @@ export function createParser(pack: WorldPack): Parser {
     // vocal: the utterance is the remainder (a spoken name etc.)
     if (cls === 'speak_aloud') {
       const utter = rest.replace(/^["']|["']$/g, '');
-      return { class: 'speak_aloud', utterance: utter || raw, tags: ['vocal'], confidence: utter ? 0.9 : 0.7, raw };
+      return {
+        class: 'speak_aloud',
+        utterance: utter || raw,
+        tags: ['vocal'],
+        confidence: utter ? 0.9 : 0.7,
+        raw,
+      };
     }
     // ask_about: "ask X about Y" or "ask about Y"
     if (cls === 'ask_about') {
       const m = rest.match(/^(.*?)\s+about\s+(.*)$/);
       const topic = m ? m[2]!.trim() : rest;
       const whoRef = m ? resolveNoun(m[1]!.trim(), obs) : undefined;
-      return { class: 'ask_about', topic, ...(whoRef ? { target: whoRef } : {}), tags: ['social'], confidence: 0.8, raw };
+      return {
+        class: 'ask_about',
+        topic,
+        ...(whoRef ? { target: whoRef } : {}),
+        tags: ['social'],
+        confidence: 0.8,
+        raw,
+      };
     }
     // deduce/survey: the topic is a law phrase
     if (cls === 'deduce' || cls === 'survey') {
-      return { class: cls, topic: rest || undefined, tags: ['investigation'], confidence: rest ? 0.85 : 0.6, raw } as ParsedIntent;
+      return {
+        class: cls,
+        topic: rest || undefined,
+        tags: ['investigation'],
+        confidence: rest ? 0.85 : 0.6,
+        raw,
+      } as ParsedIntent;
     }
     // directional go
     if (cls === 'go' || cls === 'cross_threshold') {
@@ -221,7 +378,13 @@ export function createParser(pack: WorldPack): Parser {
       if (dir) return { class: cls, direction: dir, tags: ['movement'], confidence: 0.9, raw };
       const ref = resolveNoun(rest, obs, PREFER[cls]);
       if (ref) return { class: cls, target: ref, tags: ['movement'], confidence: 0.88, raw };
-      return { class: cls, ...(rest ? { target: { raw: rest } } : {}), tags: ['movement'], confidence: 0.5, raw };
+      return {
+        class: cls,
+        ...(rest ? { target: { raw: rest } } : {}),
+        tags: ['movement'],
+        confidence: 0.5,
+        raw,
+      };
     }
     // no-target verbs
     if (['look', 'wait', 'rest', 'recall', 'look_back', 'hide', 'sneak', 'flee', 'listen', 'search'].includes(cls)) {
@@ -232,10 +395,23 @@ export function createParser(pack: WorldPack): Parser {
     const ref = resolveNoun(rest, obs, PREFER[cls]);
     if (ref) {
       const itemCls = ref.tags?.find((t) => ['metal', 'light', 'salvage', 'coin', 'tool'].includes(t));
-      return { class: cls, target: ref, ...(itemCls ? { itemClass: itemCls } : {}), tags: [], confidence: 0.88, raw };
+      return {
+        class: cls,
+        target: ref,
+        ...(itemCls ? { itemClass: itemCls } : {}),
+        tags: [],
+        confidence: 0.88,
+        raw,
+      };
     }
     // verb understood, object not in scope -> tentative (forgiving near-miss, never lethal under K8)
-    return { class: cls, ...(rest ? { target: { raw: rest } } : {}), tags: [], confidence: 0.55, raw };
+    return {
+      class: cls,
+      ...(rest ? { target: { raw: rest } } : {}),
+      tags: [],
+      confidence: 0.55,
+      raw,
+    };
   }
 
   return { parse };

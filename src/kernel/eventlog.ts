@@ -24,7 +24,11 @@ export interface EngineFingerprint {
   readonly hashAlgo: string;
   readonly floatMode: string;
   readonly collectionOrder: string;
-  readonly modules: { readonly module: ModuleId; readonly version: string; readonly contentHash: string }[];
+  readonly modules: {
+    readonly module: ModuleId;
+    readonly version: string;
+    readonly contentHash: string;
+  }[];
 }
 
 export function engineFingerprint(registry: ModuleRegistry): EngineFingerprint {
@@ -67,7 +71,9 @@ export class EventLog {
 
   append(rec: EventRecord): void {
     if (this.records.length && this.records.at(-1)!.eventIndex + 1 !== rec.eventIndex) {
-      throw new Error(`event log gap: expected ${this.records.length + this.records[0]!.eventIndex} got ${rec.eventIndex}`);
+      throw new Error(
+        `event log gap: expected ${this.records.length + this.records[0]!.eventIndex} got ${rec.eventIndex}`,
+      );
     }
     if (this.records.length && this.records.at(-1)!.nextHash !== rec.priorHash) {
       throw new Error(`event log chain break at index ${rec.eventIndex}: priorHash mismatch`);

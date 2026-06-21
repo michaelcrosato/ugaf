@@ -84,24 +84,27 @@ async function main() {
   const claudeArgs = autonomous ? ['-p', '--dangerously-skip-permissions'] : ['-p', '--permission-mode', 'acceptEdits'];
   // Same DEP0190 avoidance: on win32 pass one shell command string (flags are
   // literal, no spaces). The multi-line prompt still rides stdin, never the args.
-  const agent = process.platform === 'win32'
-    ? spawnSync(['claude', ...claudeArgs].join(' '), {
-        cwd: ROOT,
-        shell: true,
-        encoding: 'utf8',
-        input: prompt,
-        stdio: ['pipe', 'inherit', 'inherit'],
-        maxBuffer: 64 * 1024 * 1024,
-      })
-    : spawnSync('claude', claudeArgs, {
-        cwd: ROOT,
-        encoding: 'utf8',
-        input: prompt,
-        stdio: ['pipe', 'inherit', 'inherit'],
-        maxBuffer: 64 * 1024 * 1024,
-      });
+  const agent =
+    process.platform === 'win32'
+      ? spawnSync(['claude', ...claudeArgs].join(' '), {
+          cwd: ROOT,
+          shell: true,
+          encoding: 'utf8',
+          input: prompt,
+          stdio: ['pipe', 'inherit', 'inherit'],
+          maxBuffer: 64 * 1024 * 1024,
+        })
+      : spawnSync('claude', claudeArgs, {
+          cwd: ROOT,
+          encoding: 'utf8',
+          input: prompt,
+          stdio: ['pipe', 'inherit', 'inherit'],
+          maxBuffer: 64 * 1024 * 1024,
+        });
   if (agent.status !== 0) {
-    console.error('\n✗ the agent step did not complete cleanly. If it stopped on a permission prompt, re-run with FLYWHEEL_AUTONOMOUS=1 (unattended) or drive it interactively.');
+    console.error(
+      '\n✗ the agent step did not complete cleanly. If it stopped on a permission prompt, re-run with FLYWHEEL_AUTONOMOUS=1 (unattended) or drive it interactively.',
+    );
     process.exit(1);
   }
 
