@@ -123,7 +123,11 @@ const TURNS = Number(arg('turns', '120'));
 const SEEDBASE = arg('seedbase', `s${Date.now().toString(36)}`)!;
 const runId = arg('out') ? arg('out')! : `run-${Date.now().toString(36)}`;
 const OUT = resolve(ROOT, 'playtest-runs/swarm', runId);
-const personaFilter = (arg('personas') ?? '').split(',').filter(Boolean);
+// split on comma OR whitespace: `npx` on Windows rewrites a comma-list arg into a space-joined
+// token ("a,b" -> "a b"), so a comma-only split collapses the whole list into ONE bogus id, the
+// roster comes up empty, and the player-build loop crashes on `undefined.model`. This is the exact
+// class of bug the --models rotation hit in night8; --personas was missed. Match the robust split.
+const personaFilter = (arg('personas') ?? '').split(/[\s,]+/).filter(Boolean);
 // accept comma OR whitespace separation — npm/Windows arg passing can turn "a,b,c" into one
 // space-joined token, which the old comma-only split collapsed to a single bogus model that the
 // shell-joined spawn then mangled (night8: --models opus,sonnet,haiku silently ran ALL-opus).
