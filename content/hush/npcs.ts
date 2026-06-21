@@ -269,7 +269,13 @@ export const NPCS: NpcDef[] = [
         topic: 'safe-window',
         // perishable-at-point-of-sale (feedback/0013 #3): a bought hour decays like any read law —
         // flag it AS she sells it, so the player knows the timed line can drift and isn't owed forever.
-        text: "Here's the safe hour and the dry line through the bottoms. Don't carry iron and you won't even need the hour. And mind — an hour I sell is true today and no longer: the Hush re-Settles, the water keeps its hungry stretch longer some weeks than others, and a line timed to the minute can creep. Sit on it too long and you'll want it read again. Don't say I never did you a kindness — and don't forget who sold it to you.",
+        // feedback/0016 #5: state the CONCRETE window at purchase (the deadline was invisible — she
+        // sold "an hour" without naming which). Hours are in-fiction but engine-true: the Greywater is
+        // safe through daylight (PHASE_BOUNDARY: day 06:00–18:00), surest at midday (12:00), and wakes
+        // at dusk (18:00 / "six"). Framed as luck BOUGHT, not water learned (the win-screen's theme,
+        // moved to point-of-sale) — and the drift caveat names its direction (creeps past dusk toward
+        // the grey before dawn, matching the law's widensTo: ['predawn']).
+        text: "Here's the safe hour, then, and the dry line through the bottoms. The water sleeps through the daylight and lies deadest at midday — and it wakes hungry the moment the light goes, call it six o'clock, and stays starving till dawn. So you cross with the sun up: midday's your safest, dusk's your hard deadline, and a step past that the bottoms have your iron and your prize both. Carry no metal and you'll not even need the hour. And mind — this is luck you're buying off me, not water you've learned to read yourself: an hour I sell is true today and no longer. The Hush re-Settles, the hungry stretch runs longer some weeks than others, and a line timed to the minute can creep — past dusk, into the grey before dawn that used to be safe. Sit on it too long and you'll want it read again. Bought luck runs out; that's the whole of what I'm selling you — and don't forget who sold it to you.",
         grantsLeadTell: 'grey_low_hum',
         setsFacts: {
           'known.tell.grey_low_hum': true,

@@ -207,6 +207,24 @@ describe('the NPC information-economy', () => {
     });
   }
 
+  // ---- feedback/0016 #5: Mox states the CONCRETE safe-hour window at purchase ----------------
+  // The keystone made the bought safe-hour load-bearing, but "the safe hour's deadline is invisible"
+  // (p005): she sold "an hour" without ever naming WHICH hour. At purchase she must state the window
+  // in concrete, in-fiction hours consistent with the engine (safe through daylight, wakes at dusk),
+  // and frame it as luck BOUGHT, not learned (move part of the win-screen "bought luck" theme here).
+  it('Mox names the concrete safe-hour window at purchase, not just "an hour"', () => {
+    const s = sess('econ-mox-window');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    const r = s.act('pay mox');
+    expect(r.rejected).toBeFalsy();
+    const t = r.text.toLowerCase();
+    expect(t).toContain('midday'); // names the heart of the safe window (PHASE_BOUNDARY.midday = 12:00)
+    expect(t).toMatch(/\bsix\b|dusk/); // and names when it closes (dusk = 18:00)
+    expect(t).toMatch(/luck|bought|sold/); // framed as bought luck, not learned mastery
+    expect(s.state.facts['objective.cache_route']).toBe('known'); // and still transacts
+    expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1);
+  });
+
   it('Mox discusses her signature topic (the safe hour) for free — no longer a pure paywall', () => {
     const s = sess('econ-mox-talk');
     for (const c of ['out', 'road', 'salvage']) s.act(c);
