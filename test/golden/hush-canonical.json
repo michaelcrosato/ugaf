@@ -1973,7 +1973,7 @@
                 "value": true
               }
             ],
-            "summary": "Worked iron is rotting here, and quickly. Something in the dark un-makes it.",
+            "summary": "Worked iron is rotting here, and quickly — but so is the changed, anomalous thing beside it. Something in the dark un-makes whatever has been worked or altered, not iron alone.",
             "data": {
               "tell": "grey_rust_bloom",
               "law": "greywater"
@@ -2107,7 +2107,7 @@
                 "value": true
               }
             ],
-            "summary": "A low hum comes up through the soles of your boots — and you feel it answer, faintly, in the iron you carry. The hum is in the metal. It is calling your worked iron back to the ground it came from.",
+            "summary": "A low hum comes up through the soles of your boots — and you feel it answer, faintly, in the iron you carry, and stranger still in anything worked or changed you have on you. The hum is in the worked stuff. It is calling your iron — and any altered, anomalous thing — back to the ground it came from.",
             "data": {
               "tell": "grey_low_hum",
               "law": "greywater"
@@ -2232,7 +2232,7 @@
                 "value": true
               }
             ],
-            "summary": "You are certain now. The Greywater: In the Greywater after dark, worked metal slumps back toward ore. Iron tools and blades fail.",
+            "summary": "You are certain now. The Greywater: In the Greywater after dark, worked metal slumps back toward ore — and not iron alone: the drowned water un-makes anything worked or altered, any anomalous thing, the same hungry way. Iron tools, blades, and the salvage core all fail if you carry them through by night.",
             "data": {
               "law": "greywater"
             },

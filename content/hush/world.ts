@@ -105,7 +105,12 @@ export const ITEMS: ItemDef[] = [
     itemClass: 'anomalous',
     portable: true,
     look: {
-      base: 'A fist-sized knot of something that is not quite metal and not quite stone, warm to the touch, and faintly, wrongly heavy — as if it weighed more than the space it takes up. This is what the Survey would kill for, and what the Striders would too.',
+      // FORESHADOW the carry-out danger BEFORE the bite (feedback/0015 #1): the world taught "the
+      // Greywater eats IRON," and the core is pointedly NOT iron — so players reasonably dropped
+      // their iron and carried the core out to ore, a loss that contradicted what they were taught.
+      // The clue must be placed before the bite: the core is WORKED, CHANGED matter, exactly the
+      // kind of thing the drowned water hungers for. Examining the prize now warns you.
+      base: 'A fist-sized knot of something that is not quite metal and not quite stone, warm to the touch, and faintly, wrongly heavy — as if it weighed more than the space it takes up. This is what the Survey would kill for, and what the Striders would too. It is worked, altered matter — the Settling reached into ordinary stuff and changed it — and that is the danger in it: the drowned Greywater hungers for worked and altered things the way it hungers for iron, and harder. You would no more carry this through the bottoms after dark than you would a blade; the water would call it apart in your hands.',
       variants: [
         {
           // telegraphed threat state: once the Greywater has started calling the core apart
@@ -371,14 +376,14 @@ export const NODES: NodeDef[] = [
         id: 'index_cards',
         names: ['cards', 'index cards', 'index card', 'card'],
         look: {
-          base: 'Hundreds of cards, each a single observed rule in a different cramped hand: WORKED IRON SOFTENS IN THE GREYWATER AFTER DARK. THE MILE ROAD GROWS LONG BEHIND THE EYE. A NAME SPOKEN AT THE ANTENNAS IS ANSWERED. Most are crossed out and re-written twice over — the laws drift, and the Survey re-files them, forever. Eun will sell you the fair copy of any one, for a coin or a thing you have seen yourself.',
+          base: 'Hundreds of cards, each a single observed rule in a different cramped hand: WORKED IRON SOFTENS IN THE GREYWATER AFTER DARK. THE MILE ROAD GROWS LONG BEHIND THE EYE. A NAME SPOKEN AT THE ANTENNAS IS ANSWERED. One card, pinned apart and underlined twice, reads: THE GREYWATER TAKES MORE THAN IRON — IT UN-MAKES ANY WORKED OR ANOMALOUS THING AFTER DARK, THE SALVAGE CORE AMONG THEM. Most are crossed out and re-written twice over — the laws drift, and the Survey re-files them, forever. Eun will sell you the fair copy of any one, for a coin or a thing you have seen yourself.',
         },
       },
       {
         id: 'law_tables',
         names: ['law-tables', 'law tables', 'law table', 'tables', 'maps'],
         look: {
-          base: 'Great sheets ruled in three colours of ink — black for the confirmed, red for the contested, a thin green for the merely rumoured. The Greywater table is complete and black-inked: the rust-bloom, the hum, the hour it wakes. Others trail off into red question-marks. This is knowing, made into a thing you can hold — and the Survey sells it by the law, never the sheet.',
+          base: 'Great sheets ruled in three colours of ink — black for the confirmed, red for the contested, a thin green for the merely rumoured. The Greywater table is complete and black-inked: the rust-bloom, the hum, the hour it wakes — and a margin note in the same sure black hand: NOT IRON ALONE; THE WATER UN-MAKES ANY WORKED OR ANOMALOUS MATTER, THE CORE INCLUDED. Others trail off into red question-marks. This is knowing, made into a thing you can hold — and the Survey sells it by the law, never the sheet.',
         },
       },
     ],
@@ -649,15 +654,26 @@ export const NODES: NodeDef[] = [
     regionId: 'greywater',
     kind: 'poi',
     look: {
-      base: 'Inside the flooded pump-house, on a shelf of slumped, half-ore machinery, sits the thing the question-mark marked: a fist-sized core, warm and wrongly heavy, the prize the whole Edge is built around wanting.',
+      base: 'Inside the flooded pump-house, on a shelf of slumped, half-ore machinery, sits the thing the question-mark marked: a fist-sized core, warm and wrongly heavy, the prize the whole Edge is built around wanting. The machinery around it was worked metal once — pumps, valves, gauges — and the dark water has called every bit of it halfway back to red ore. The core rests in the middle of that ruin, the same wrongly-altered kind of thing, and only the daylight has kept it whole. Carry it out into the dark and you would be feeding it to the same hunger that ate these pumps.',
       variants: [
         {
           when: { fact: 'possession.pc.salvage_core', eq: true },
-          text: 'The shelf is empty now. The core is yours, warm against your spine. Now there is only the matter of carrying it back out — past everything that wanted it.',
+          text: 'The shelf is empty now. The core is yours, warm against your spine — and around you the slumped, half-ore pumps are a plain warning of what this water does to worked and altered things left in the dark. Now there is only the matter of carrying it back out, past everything that wanted it, before the bottoms can do to your prize what they did to these machines.',
         },
       ],
       ambient: ['Water laps the shelf, patient, as if waiting for you to leave so it can have the room back.'],
     },
+    examinables: [
+      {
+        id: 'machinery',
+        // NB: no short names that are substrings of "core" (e.g. "ore") — the parser does fuzzy
+        // substring matching, so "examine the core" must not resolve to this shelf by accident.
+        names: ['machinery', 'machines', 'pumps', 'pump', 'valves', 'gauges', 'slumped machinery'],
+        look: {
+          base: 'You crouch by the shelf. Every worked part of these old pumps has gone soft and red at the edges, slumping toward ore — the same rot the Greywater works on a dropped knife, only these have had years of dark to finish it. Whatever was machined, fitted, ALTERED by human hands, the water has been patiently un-making. The core sitting among them is the most altered thing in the room; the only reason it is still whole is that the water sleeps by day. Take it out through the dark and it goes the way of these pumps.',
+        },
+      },
+    ],
     items: ['salvage_core'],
     exits: [{ dir: 'out', to: 'greywater_bottoms', label: 'back out into the bottoms', via: 'e_bottoms_cache' }],
   },

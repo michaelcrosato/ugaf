@@ -186,7 +186,7 @@ export const NPCS: NpcDef[] = [
       {
         id: 'eun_grey_ask',
         topic: 'greywater',
-        text: 'The Greywater? Our table on it is complete and confirmed — as confirmed as anything stays here. It is not free. Make it worth my ink.',
+        text: "The Greywater? Our table on it is complete and confirmed — as confirmed as anything stays here. One thing I'll give you for nothing, since the careless die of not knowing it: folk say it eats IRON, and it does, but that is half the law. The water un-makes anything WORKED or altered after dark — any anomalous thing. If you mean to carry that core out, understand it is exactly the kind of changed matter the dark water wants. The rest — the hour, the safe line — is not free. Make it worth my ink.",
       },
       // Eun is the cartographer who re-files the drifting laws — give her a voice for it. This is
       // the diegetic explanation of Law Drift (the decaying-codex mechanic): her trade IS the drift.
@@ -204,7 +204,7 @@ export const NPCS: NpcDef[] = [
       {
         id: 'eun_lawmap',
         topic: 'law-map',
-        text: "Here. The Greywater table, copied fair: the rust-bloom, the hum, the hour it wakes. Read it and you'll know the law cold — though a table is not the same as having seen it for yourself. Verify it in the field before you stake your iron on it.",
+        text: "Here. The Greywater table, copied fair: the rust-bloom, the hum, the hour it wakes — and the part the survivors underline twice: it takes more than iron. Anything worked or anomalous goes the same way after dark, the core you're after among them. Read it and you'll know the law cold — though a table is not the same as having seen it for yourself. Verify it in the field before you stake your iron, or your prize, on it.",
         grantsLeadTell: 'grey_rust_bloom',
         setsFacts: {
           'known.tell.grey_rust_bloom': true,
@@ -248,7 +248,7 @@ export const NPCS: NpcDef[] = [
       {
         id: 'mox_cache',
         topic: 'core',
-        text: "The bottoms only bite after dark, and only worked iron. Go in by daylight and they're just cold water. Or go in stripped of metal and let them hum at nothing. That's the whole secret, and I'll sell you the safe hour besides.",
+        text: "The bottoms only bite after dark — and here's the part that gets folk killed twice over: it's not just iron they take. Anything WORKED, anything changed, anything anomalous slumps the same way down there at night — and that core is the most anomalous thing on the whole Edge. Carry it out through the dark and you'll reach the wire holding a fistful of red mud. Go in by daylight and the water's just cold and still. Or cross stripped of metal in the safe hour and walk the core out whole. That's the whole secret, and I'll sell you the safe hour besides.",
       },
       // the character defined by knowing the safe hour will TALK about the safe hour (feedback/0012
       // #6) — the rough shape is free; the exact, timed line is what she sells.

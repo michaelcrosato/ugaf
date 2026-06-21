@@ -347,15 +347,45 @@ function runStep(
   }
 
   // ====================== 5. VALIDATE GATES ======================
-  // K8: an uncertain intent may never commit a lethal/irreversible outcome.
+  // K8: an uncertain intent may never commit a lethal/irreversible outcome on the strength of a
+  // hedged reading alone. The gate NEVER softens the loss — it only refuses to let a half-sure
+  // command spend it. Instead of throwing an engine-token debug string at the most time-pressured
+  // beat in the game (which shredded player trust — feedback/0015 #2), the gate is DIEGETIC:
+  //   - if a clarify still has budget, ASK the player to confirm — say it plainly and let them
+  //     choose to step into the dark anyway (a confident re-issue then commits the loss for real);
+  //   - otherwise REFUSE in-world (still no commit, still atomic). Either way the player-facing
+  //     text carries no engine token (no K8 / cap= / event tag / severity word / NOT_UNDERSTOOD).
   if (capRank(cap) < 2) {
-    for (const ev of collectedEvents) {
-      if (severityRank(ev.severity) >= 2) {
-        throw new StepReject(
-          'K8_SEVERITY',
-          `K8: uncertain intent (cap=${cap}) cannot commit ${ev.severity} event "${ev.tag}"`,
-        );
+    const lethalEvent = collectedEvents.find((ev) => severityRank(ev.severity) >= 2);
+    if (lethalEvent) {
+      const irreversible = lethalEvent.severity === 'irreversible';
+      if (opts.clarifyAllowed !== false) {
+        return {
+          kind: 'clarify',
+          state, // unchanged prior state — nothing committed (atomicity by construction)
+          request: {
+            // guide the player to the ACTUAL resolution — re-issue the move plainly — rather than
+            // a yes/no the parser doesn't wire (feedback/0015 follow-up): a half-meant command will
+            // not spend an irreversible loss; a clear, certain one will.
+            question: irreversible
+              ? 'The water surges around you — one more step on this and what you carry is gone for good. A half-meant command will not spend it. If you truly mean to, say your move again — plainly, and sure.'
+              : 'This is the kind of step there is no taking back, and you said it only half-sure. If you mean it, say your move again — plainly, and sure.',
+            options: [
+              { id: 'restate', label: 'Re-state the move, plainly and sure' },
+              { id: 'hold', label: 'Hold — do something else' },
+            ],
+          },
+        };
       }
+      // clarify budget spent: refuse in-world (no engine tokens reach the player). The reason is
+      // rendered through italicReason on the CLI (capitalize-first + trailing period), so it must
+      // read as one plain sentence and must NOT end in its own period.
+      throw new StepReject(
+        'K8_SEVERITY',
+        irreversible
+          ? 'you half-move to do it, then stop — you are not sure enough of this to risk what cannot be undone; be certain first'
+          : 'you hesitate, not sure enough of this to take a step you cannot take back; be certain first',
+      );
     }
   }
 
