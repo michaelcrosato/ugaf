@@ -24,8 +24,6 @@ export const ITEMS: ItemDef[] = [
   { id: 'antenna_relic', names: ['relic', 'shard', 'antenna shard', 'crystal'], itemClass: 'salvage', portable: true, look: { base: 'A shard of antenna-glass the Settling fused into something that still faintly sings, on a channel just below hearing. The Survey would trade real knowledge for a piece like this — if you can carry it out of the field without giving the field your voice.' } },
 ];
 
-const dim = (s: string) => s; // placeholder; the renderer applies ANSI, content stays plain
-
 export const NODES: NodeDef[] = [
   {
     id: 'waystation',

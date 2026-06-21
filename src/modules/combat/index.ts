@@ -12,7 +12,7 @@
  */
 import { makeManifest } from '../../sdk/define.js';
 import type { JsonObject } from '../../sdk/json.js';
-import type { Module, ModuleResult, WorldEvent } from '../../sdk/types.js';
+import type { Module, ModuleResult } from '../../sdk/types.js';
 
 export function createCombat(): Module {
   const manifest = makeManifest({

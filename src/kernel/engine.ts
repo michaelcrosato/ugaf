@@ -12,7 +12,6 @@ import { CONFIDENCE, type ParsedIntent } from '../sdk/intents.js';
 import type { JsonObject, JsonValue } from '../sdk/json.js';
 import {
   BEAT_PHASES,
-  type BeatPhase,
   type ClarifyRequest,
   type GameState,
   type GameStatus,

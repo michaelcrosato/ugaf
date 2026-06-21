@@ -76,4 +76,4 @@ See [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md) for the architecture-as-bui
 
 ---
 
-*Designed collaboratively with Claude Code. This repository is design/specification only — not yet implemented.*
+*Designed collaboratively with Claude Code. This repository began as a design/specification corpus and has since been implemented — the deterministic engine, The Hush world, the narrator, and a playable CLI are live and gate-passing (see "▶ Play it" above). The specs remain as the design record.*
