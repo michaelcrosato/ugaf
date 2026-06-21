@@ -98,11 +98,23 @@ export const ITEMS: ItemDef[] = [
   },
   {
     id: 'salvage_core',
+    // 'anomalous' worked matter — NOT 'metal', so the Greywater's iron-degrade leaves it alone;
+    // its danger is the bespoke "core in the water" hunger handled in anomaly.hush, which slumps
+    // it to 'ore' (the lose-state) if you ford the Greywater with it after dark.
     names: ['core', 'anomalous core', 'salvage', 'the core'],
-    itemClass: 'salvage',
+    itemClass: 'anomalous',
     portable: true,
     look: {
       base: 'A fist-sized knot of something that is not quite metal and not quite stone, warm to the touch, and faintly, wrongly heavy — as if it weighed more than the space it takes up. This is what the Survey would kill for, and what the Striders would too.',
+      variants: [
+        {
+          // telegraphed threat state: once the Greywater has started calling the core apart
+          // (rung 1/2 of the carry-out ladder), the prize itself reads as failing — get it to
+          // dry ground (leave the water) or wait out the dark, and it knits back whole.
+          when: { fact: 'possession.pc.salvage_core.condition', eq: 'unstable' },
+          text: "The core's wrong weight is sloughing in your hands — the Greywater is calling it apart, the way it calls the iron. Get it clear of the water, or wait out the dark, before there is nothing worked left to carry.",
+        },
+      ],
     },
   },
   {
@@ -549,7 +561,7 @@ export const NODES: NodeDef[] = [
         },
         {
           when: { all: [{ fact: 'possession.pc.salvage_core', eq: true }, { phase: ['dusk', 'night'] }] },
-          text: 'No time to linger now — the core is a weight at your spine and the water is wide awake. Every rivet on you is going soft. Move.',
+          text: 'No time to linger now — the water is wide awake, and it has caught the scent of the core at your spine. The hum is not just in your rivets; it is in the core itself, the wrong-heavy weight of it answering the bottoms the way the iron does. Worked anomaly is still worked matter, and the Greywater wants it home. Get it to dry ground — up to the fork, out of the water — before the dark calls it apart. Move.',
           replace: true,
         },
       ],
@@ -606,6 +618,11 @@ export const NODES: NodeDef[] = [
             ],
           },
           text: 'It should be safe by now — the grey of predawn was always the safe hour. But the hum has not let go with the light; it has learned to hold on longer than you learned it would, and the iron on you is going soft in the not-quite-dawn.',
+        },
+        {
+          // carrying the core out through the bottoms after dark: the prize itself answers the hum.
+          when: { all: [{ fact: 'possession.pc.salvage_core', eq: true }, { phase: ['dusk', 'night'] }] },
+          text: 'The core rides wrong against your spine, and down here the bottoms have caught its weight the way they catch iron — the hum reaching into the wrong-heavy heart of it. It is worked matter, and after dark the Greywater wants all worked matter home in the mud. Keep moving, and get it up out of the water before the dark unmakes the thing you came for.',
         },
       ],
       ambient: ['A door bangs underwater, slow and deliberate.', 'The hum rises a half-tone, considering you.'],
