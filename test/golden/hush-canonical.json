@@ -21,10 +21,8 @@
     "examine the rust",
     "listen",
     "deduce the greywater",
-    "rest",
-    "rest",
-    "rest",
-    "rest",
+    "drop the knife",
+    "wait until predawn",
     "in",
     "cache",
     "take core",
@@ -35,12 +33,12 @@
     "hide",
     "back"
   ],
-  "fingerprintId": "45b01fe1cbb3",
+  "fingerprintId": "84f7366bb09b",
   "finalStatus": "won",
   "golden": {
     "campaignId": "play",
     "seed": "golden-hush",
-    "fingerprintId": "45b01fe1cbb3",
+    "fingerprintId": "84f7366bb09b",
     "fingerprint": {
       "version": "0.1.0",
       "rngAlgo": "splitmix64",
@@ -55,7 +53,7 @@
         },
         {
           "module": "time.cycle",
-          "version": "0.2.0",
+          "version": "0.3.0",
           "contentHash": "1e5d8be5162dc8d7b38fe951feb61395a4cdb2e1a00c41b94f1c3c9cb784d8df"
         },
         {
@@ -195,10 +193,22 @@
             ],
             "visibility": "private",
             "source": "time.cycle"
+          },
+          {
+            "tag": "wait_ff_gate",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.wait_ff_unsafe",
+                "value": false
+              }
+            ],
+            "visibility": "private",
+            "source": "anomaly.hush"
           }
         ],
         "priorHash": "6fa9ea20f6801713cd7f4efc45bd8d853e101f8b39d3faec893e514e975e2e93",
-        "nextHash": "ecbef4785882ef1c75ff2ce79cddf245b1b95f69aaf1ac4624d8ac733b864123"
+        "nextHash": "f1d53717c5efcd1cc5251eed1b0bb07392656ae88ad11b9784f3284e05b53e4f"
       },
       {
         "eventIndex": 2,
@@ -292,8 +302,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "ecbef4785882ef1c75ff2ce79cddf245b1b95f69aaf1ac4624d8ac733b864123",
-        "nextHash": "ce33fb8aa168236be88e376d077712b645bb9a4513a7099bc11a6465d95d80fe"
+        "priorHash": "f1d53717c5efcd1cc5251eed1b0bb07392656ae88ad11b9784f3284e05b53e4f",
+        "nextHash": "1e31e74737a478ed0ad8b5d70e42d08334c05be166847c2d66c5d95acd8bcac6"
       },
       {
         "eventIndex": 3,
@@ -400,8 +410,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "ce33fb8aa168236be88e376d077712b645bb9a4513a7099bc11a6465d95d80fe",
-        "nextHash": "2d2a58b870785959e16b18bad1ea084ab0f24103e7374e77be3761f49470b9da"
+        "priorHash": "1e31e74737a478ed0ad8b5d70e42d08334c05be166847c2d66c5d95acd8bcac6",
+        "nextHash": "3481f131e57e20532e3601d00fae03c056185a4f6f0d9e971b90031ef9295999"
       },
       {
         "eventIndex": 4,
@@ -486,8 +496,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "2d2a58b870785959e16b18bad1ea084ab0f24103e7374e77be3761f49470b9da",
-        "nextHash": "dab49e96a6f2896856be8df6b92fd70e25edc1fe07ed5b182e0cbc0370f660e8"
+        "priorHash": "3481f131e57e20532e3601d00fae03c056185a4f6f0d9e971b90031ef9295999",
+        "nextHash": "460d1a9398ec88b85353ea4a09be78606373fdef32a346ef359f67569908d590"
       },
       {
         "eventIndex": 5,
@@ -581,8 +591,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "dab49e96a6f2896856be8df6b92fd70e25edc1fe07ed5b182e0cbc0370f660e8",
-        "nextHash": "50929dec967f0021ba298861da67e96ccf83c967e9a1141b888430ec7eed38a9"
+        "priorHash": "460d1a9398ec88b85353ea4a09be78606373fdef32a346ef359f67569908d590",
+        "nextHash": "15c7bc437ed330da1ba4afa3b929ce17e804a9b5a85661554d44b0f43773d454"
       },
       {
         "eventIndex": 6,
@@ -692,8 +702,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "50929dec967f0021ba298861da67e96ccf83c967e9a1141b888430ec7eed38a9",
-        "nextHash": "b2e5fa8aa675008ee8dc0f459e25e7672621f084e6c1ac5254bf93c841237548"
+        "priorHash": "15c7bc437ed330da1ba4afa3b929ce17e804a9b5a85661554d44b0f43773d454",
+        "nextHash": "d3b7ea26a8a4e74bafb6a0281afe08eef999e75b96c7da5d934adba09f76c239"
       },
       {
         "eventIndex": 7,
@@ -800,8 +810,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b2e5fa8aa675008ee8dc0f459e25e7672621f084e6c1ac5254bf93c841237548",
-        "nextHash": "d66d174369a02b31851376c89fd607fed0370571571c98ee298c77420a88ef93"
+        "priorHash": "d3b7ea26a8a4e74bafb6a0281afe08eef999e75b96c7da5d934adba09f76c239",
+        "nextHash": "294650dd75042fc11ddca612897889e45268867783cd4ef59960ff3940190704"
       },
       {
         "eventIndex": 8,
@@ -886,8 +896,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "d66d174369a02b31851376c89fd607fed0370571571c98ee298c77420a88ef93",
-        "nextHash": "8265d085c277d11c2e9c4daaf6579dbfd1fbc643aa192db509985d166104778b"
+        "priorHash": "294650dd75042fc11ddca612897889e45268867783cd4ef59960ff3940190704",
+        "nextHash": "284d4442a786bb78d422b2f22a45124a427f66e67da113f4499d0a4a9e03c5d5"
       },
       {
         "eventIndex": 9,
@@ -994,8 +1004,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "8265d085c277d11c2e9c4daaf6579dbfd1fbc643aa192db509985d166104778b",
-        "nextHash": "431567b7e278a8464deb713339511e6ed0259486c28ee41a6764fd9ba47eb058"
+        "priorHash": "284d4442a786bb78d422b2f22a45124a427f66e67da113f4499d0a4a9e03c5d5",
+        "nextHash": "71d88e517c05d11685175b1dc2b7edbd636b85502b8e71d2223ccd6fb0e8d948"
       },
       {
         "eventIndex": 10,
@@ -1118,8 +1128,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "431567b7e278a8464deb713339511e6ed0259486c28ee41a6764fd9ba47eb058",
-        "nextHash": "785b8297ced56e3cb28c9cfc55357136e3236aa8dca12e43f491cbde5d902a84"
+        "priorHash": "71d88e517c05d11685175b1dc2b7edbd636b85502b8e71d2223ccd6fb0e8d948",
+        "nextHash": "e29766d99e8ea26d5d764d989cb0f52c33990b439dbbcc97ad1264bad77ae622"
       },
       {
         "eventIndex": 11,
@@ -1232,8 +1242,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "785b8297ced56e3cb28c9cfc55357136e3236aa8dca12e43f491cbde5d902a84",
-        "nextHash": "1101023a7b760876eb47174c2d617af9b9f41d1abc7caf05aa618257e91f2f3c"
+        "priorHash": "e29766d99e8ea26d5d764d989cb0f52c33990b439dbbcc97ad1264bad77ae622",
+        "nextHash": "cadd3b265371aa3d3bb5bd65b1940f2e0e5f4aa784e1f7a3c3829d5e7aa93529"
       },
       {
         "eventIndex": 12,
@@ -1386,8 +1396,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "1101023a7b760876eb47174c2d617af9b9f41d1abc7caf05aa618257e91f2f3c",
-        "nextHash": "a5c68004fdf5c33c043fa9095bcdec5f2facab4d6320f46de016140520345826"
+        "priorHash": "cadd3b265371aa3d3bb5bd65b1940f2e0e5f4aa784e1f7a3c3829d5e7aa93529",
+        "nextHash": "0aad6b5743e07a7e9e257f03215349128cd3c0597fe30b2d46cadcbf192d8a48"
       },
       {
         "eventIndex": 13,
@@ -1492,10 +1502,22 @@
             ],
             "visibility": "private",
             "source": "time.cycle"
+          },
+          {
+            "tag": "wait_ff_gate",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.wait_ff_unsafe",
+                "value": true
+              }
+            ],
+            "visibility": "private",
+            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "a5c68004fdf5c33c043fa9095bcdec5f2facab4d6320f46de016140520345826",
-        "nextHash": "4dcf12b369fa14533feb206bd6fc3d2ab9531a0d8b7332abb6d113b7ff3ee26f"
+        "priorHash": "0aad6b5743e07a7e9e257f03215349128cd3c0597fe30b2d46cadcbf192d8a48",
+        "nextHash": "2af8a2546e7688232c56224ee68cc6fcb60c2dbb4fd7f6e0eb65220b729aba29"
       },
       {
         "eventIndex": 14,
@@ -1586,8 +1608,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "4dcf12b369fa14533feb206bd6fc3d2ab9531a0d8b7332abb6d113b7ff3ee26f",
-        "nextHash": "1589a941b9b81c7e278c0a7e5ea79d0d61729d05bad7a1c73cafb3ba602163ec"
+        "priorHash": "2af8a2546e7688232c56224ee68cc6fcb60c2dbb4fd7f6e0eb65220b729aba29",
+        "nextHash": "255a01accbb6bc8311883bc80503f351e6939f5e5bc95e563da5b8142a17429f"
       },
       {
         "eventIndex": 15,
@@ -1683,8 +1705,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "1589a941b9b81c7e278c0a7e5ea79d0d61729d05bad7a1c73cafb3ba602163ec",
-        "nextHash": "65b18c1df7c317216ecee209f51e3deb345d1b9d491f9e0f3730d75dcbc9079d"
+        "priorHash": "255a01accbb6bc8311883bc80503f351e6939f5e5bc95e563da5b8142a17429f",
+        "nextHash": "46d5a782f70b39e2951ca307302252c00fe88a096760933a712727bfcfc35c97"
       },
       {
         "eventIndex": 16,
@@ -1791,8 +1813,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "65b18c1df7c317216ecee209f51e3deb345d1b9d491f9e0f3730d75dcbc9079d",
-        "nextHash": "69edbf2a604a7aaeaf390dae126eb2101b548b7c19bed2830376c26432db2bb6"
+        "priorHash": "46d5a782f70b39e2951ca307302252c00fe88a096760933a712727bfcfc35c97",
+        "nextHash": "b50ed3a6ba8a85c4e342e617d9b1f2b0299c23c581d3714ff5abceec6eb68427"
       },
       {
         "eventIndex": 17,
@@ -1943,8 +1965,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "69edbf2a604a7aaeaf390dae126eb2101b548b7c19bed2830376c26432db2bb6",
-        "nextHash": "3241b74ab33d644b592cc0ed40758e7fa84118577574f289b50b8df70ef51e84"
+        "priorHash": "b50ed3a6ba8a85c4e342e617d9b1f2b0299c23c581d3714ff5abceec6eb68427",
+        "nextHash": "9f1dc571897fe8c266124e85a83b0f35e81802b04d608570c5d1c800a0a33fe6"
       },
       {
         "eventIndex": 18,
@@ -2084,8 +2106,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "3241b74ab33d644b592cc0ed40758e7fa84118577574f289b50b8df70ef51e84",
-        "nextHash": "7973307ec49a457b0f096f8f844ee189d4be1e0f70ad9d9ada7c4af9215a55e9"
+        "priorHash": "9f1dc571897fe8c266124e85a83b0f35e81802b04d608570c5d1c800a0a33fe6",
+        "nextHash": "3e0ca74b53d9b3a548ce8e656e585f1334743cb6cc0aa92ba7779ae67d48c7e0"
       },
       {
         "eventIndex": 19,
@@ -2196,8 +2218,8 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "7973307ec49a457b0f096f8f844ee189d4be1e0f70ad9d9ada7c4af9215a55e9",
-        "nextHash": "6d5768a390c1fbbedd4381aec37821972e2f40be123fecf5b275ff1371b40a12"
+        "priorHash": "3e0ca74b53d9b3a548ce8e656e585f1334743cb6cc0aa92ba7779ae67d48c7e0",
+        "nextHash": "2ff7af28084a295b7a2d4eac919d2b2872ac3f791b9ed26d2f93c357a2096d5d"
       },
       {
         "eventIndex": 20,
@@ -2320,16 +2342,129 @@
             "source": "anomaly.hush"
           }
         ],
-        "priorHash": "6d5768a390c1fbbedd4381aec37821972e2f40be123fecf5b275ff1371b40a12",
-        "nextHash": "f4241a93f7863ef9824f8c59122026244d3e4b1812c1b2ac42e8dbf9745f4f47"
+        "priorHash": "2ff7af28084a295b7a2d4eac919d2b2872ac3f791b9ed26d2f93c357a2096d5d",
+        "nextHash": "e4140ef0ad376a68d74e8bd4f8359b6067f22a91706d0e5eaef695bb6ab17343"
       },
       {
         "eventIndex": 21,
         "intent": {
-          "class": "rest",
+          "class": "drop",
+          "target": {
+            "id": "iron_knife",
+            "raw": "knife",
+            "tags": [
+              "item",
+              "metal"
+            ]
+          },
+          "itemClass": "metal",
           "tags": [],
-          "confidence": 0.9,
-          "raw": "rest"
+          "confidence": 0.88,
+          "raw": "drop the knife"
+        },
+        "owner": "travel.graph",
+        "tape": [],
+        "events": [
+          {
+            "tag": "dropped_item",
+            "mutations": [
+              {
+                "op": "delete",
+                "key": "possession.pc.iron_knife"
+              },
+              {
+                "op": "delete",
+                "key": "possession.pc.iron_knife.class"
+              },
+              {
+                "op": "set",
+                "key": "world.ground.greywater_ford.iron_knife",
+                "value": true
+              }
+            ],
+            "summary": "You set the knife down. It is here if you want it again.",
+            "source": "travel.graph"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "drop"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 21
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": "metal"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "iron_knife"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1201
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "20:01"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 21
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "wait_ff_gate",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.wait_ff_unsafe",
+                "value": false
+              }
+            ],
+            "visibility": "private",
+            "source": "anomaly.hush"
+          }
+        ],
+        "priorHash": "e4140ef0ad376a68d74e8bd4f8359b6067f22a91706d0e5eaef695bb6ab17343",
+        "nextHash": "807b19993895e664b8af3ec30b4c8f2d176133323f59c69308fb227dcbc64c95"
+      },
+      {
+        "eventIndex": 22,
+        "intent": {
+          "class": "wait",
+          "topic": "predawn",
+          "tags": [
+            "fast_forward"
+          ],
+          "confidence": 0.92,
+          "raw": "wait until predawn"
         },
         "owner": "spine.fu-pbta",
         "tape": [
@@ -2355,18 +2490,20 @@
             "source": "spine.fu-pbta"
           },
           {
-            "tag": "spine_rest",
+            "tag": "wait_until",
             "mutations": [
               {
-                "op": "adjust",
-                "key": "survival.pc.unsettled",
-                "by": -1,
-                "min": 0,
-                "max": 5
+                "op": "set",
+                "key": "flag.wait_until_phase",
+                "value": "predawn"
+              },
+              {
+                "op": "set",
+                "key": "flag.wait_until_turn",
+                "value": 22
               }
             ],
-            "summary": "You rest as well as the Zone allows. Hours pass.",
-            "visibility": "public",
+            "visibility": "private",
             "source": "spine.fu-pbta"
           },
           {
@@ -2375,12 +2512,12 @@
               {
                 "op": "set",
                 "key": "flag.last_intent",
-                "value": "rest"
+                "value": "wait"
               },
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 21
+                "value": 22
               },
               {
                 "op": "set",
@@ -2407,20 +2544,27 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1311
+                "value": 1680
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "21:51"
+                "value": "04:00"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 21
+                "value": 22
               }
             ],
             "visibility": "private",
+            "source": "time.cycle"
+          },
+          {
+            "tag": "wait_passage",
+            "mutations": [],
+            "summary": "You let the hours run, watching the light turn and the Hush keep its slow, patient time, until the hour you wanted comes round — it is 04:00 now.",
+            "visibility": "public",
             "source": "time.cycle"
           },
           {
@@ -2429,467 +2573,21 @@
               {
                 "op": "set",
                 "key": "phase.now",
-                "value": "night"
+                "value": "predawn"
               }
             ],
-            "summary": "Full dark, and no honest dark at all. The Hush comes awake around you, lawful and patient and hungry.",
+            "summary": "A grey, grudging not-yet-light gathers at the edges of things. Predawn, the hour the Zone holds its breath.",
             "data": {
-              "phase": "night"
+              "phase": "predawn"
             },
             "source": "time.cycle"
-          },
-          {
-            "tag": "law_triggered",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 5
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 21
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
-              }
-            ],
-            "summary": "[The Greywater]",
-            "data": {
-              "law": "greywater",
-              "contacts": 5,
-              "firstContact": false
-            },
-            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "f4241a93f7863ef9824f8c59122026244d3e4b1812c1b2ac42e8dbf9745f4f47",
-        "nextHash": "1f91f284aec2d9b71b3d5ab4f03297f7c01efd7f820460e367cd7c374b187e91"
-      },
-      {
-        "eventIndex": 22,
-        "intent": {
-          "class": "rest",
-          "tags": [],
-          "confidence": 0.9,
-          "raw": "rest"
-        },
-        "owner": "spine.fu-pbta",
-        "tape": [
-          {
-            "stream": "spine",
-            "counter": 1,
-            "kind": "rng",
-            "value": 4,
-            "label": "fu-d6"
-          }
-        ],
-        "events": [
-          {
-            "tag": "spine_beat",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_band",
-                "value": "yes"
-              }
-            ],
-            "visibility": "private",
-            "source": "spine.fu-pbta"
-          },
-          {
-            "tag": "spine_rest",
-            "mutations": [
-              {
-                "op": "adjust",
-                "key": "survival.pc.unsettled",
-                "by": -1,
-                "min": 0,
-                "max": 5
-              }
-            ],
-            "summary": "You rest as well as the Zone allows. Hours pass.",
-            "visibility": "public",
-            "source": "spine.fu-pbta"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "rest"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
-                "value": 22
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": null
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 1431
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "23:51"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 22
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          },
-          {
-            "tag": "law_triggered",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 6
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 22
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
-              }
-            ],
-            "summary": "[The Greywater]",
-            "data": {
-              "law": "greywater",
-              "contacts": 6,
-              "firstContact": false
-            },
-            "source": "anomaly.hush"
-          }
-        ],
-        "priorHash": "1f91f284aec2d9b71b3d5ab4f03297f7c01efd7f820460e367cd7c374b187e91",
-        "nextHash": "08a2723d5d85dfa8cfd52884e1379491a496cdf1d7f0126e470905d82679eeb1"
+        "priorHash": "807b19993895e664b8af3ec30b4c8f2d176133323f59c69308fb227dcbc64c95",
+        "nextHash": "4d2f9661eec1c6b0bcb0c9b43aa9c27b9ee819532218d889ff1947246f462310"
       },
       {
         "eventIndex": 23,
-        "intent": {
-          "class": "rest",
-          "tags": [],
-          "confidence": 0.9,
-          "raw": "rest"
-        },
-        "owner": "spine.fu-pbta",
-        "tape": [
-          {
-            "stream": "spine",
-            "counter": 2,
-            "kind": "rng",
-            "value": 4,
-            "label": "fu-d6"
-          }
-        ],
-        "events": [
-          {
-            "tag": "spine_beat",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_band",
-                "value": "yes"
-              }
-            ],
-            "visibility": "private",
-            "source": "spine.fu-pbta"
-          },
-          {
-            "tag": "spine_rest",
-            "mutations": [
-              {
-                "op": "adjust",
-                "key": "survival.pc.unsettled",
-                "by": -1,
-                "min": 0,
-                "max": 5
-              }
-            ],
-            "summary": "You rest as well as the Zone allows. Hours pass.",
-            "visibility": "public",
-            "source": "spine.fu-pbta"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "rest"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
-                "value": 23
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": null
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 1551
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "01:51"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 23
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          },
-          {
-            "tag": "law_triggered",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 7
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 23
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
-              }
-            ],
-            "summary": "[The Greywater]",
-            "data": {
-              "law": "greywater",
-              "contacts": 7,
-              "firstContact": false
-            },
-            "source": "anomaly.hush"
-          },
-          {
-            "tag": "drift_warn",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.mile_road.drift_warned",
-                "value": true
-              },
-              {
-                "op": "set",
-                "key": "law.mile_road.drift_warn_turn",
-                "value": 23
-              },
-              {
-                "op": "set",
-                "key": "law.mile_road.drift_check_turn",
-                "value": 23
-              }
-            ],
-            "summary": "Your reading of The Mile Road has aged a little — the fine detail going soft at the edges, the way an old memory does. The shape of it you still hold; only the particulars are worth confirming again, when you can.",
-            "data": {
-              "law": "mile_road",
-              "widened": false
-            },
-            "source": "anomaly.hush"
-          }
-        ],
-        "priorHash": "08a2723d5d85dfa8cfd52884e1379491a496cdf1d7f0126e470905d82679eeb1",
-        "nextHash": "1b448e2846e11e91000b7390e97b7ecbbb50cb5a543fdbfcfa26cb66121c4b1f"
-      },
-      {
-        "eventIndex": 24,
-        "intent": {
-          "class": "rest",
-          "tags": [],
-          "confidence": 0.9,
-          "raw": "rest"
-        },
-        "owner": "spine.fu-pbta",
-        "tape": [
-          {
-            "stream": "spine",
-            "counter": 3,
-            "kind": "rng",
-            "value": 2,
-            "label": "fu-d6"
-          }
-        ],
-        "events": [
-          {
-            "tag": "spine_beat",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_band",
-                "value": "yes-but"
-              }
-            ],
-            "visibility": "private",
-            "source": "spine.fu-pbta"
-          },
-          {
-            "tag": "spine_rest",
-            "mutations": [
-              {
-                "op": "adjust",
-                "key": "survival.pc.unsettled",
-                "by": -1,
-                "min": 0,
-                "max": 5
-              }
-            ],
-            "summary": "You rest as well as the Zone allows. Hours pass.",
-            "visibility": "public",
-            "source": "spine.fu-pbta"
-          },
-          {
-            "tag": "physical_act",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "flag.last_intent",
-                "value": "rest"
-              },
-              {
-                "op": "set",
-                "key": "flag.last_turn",
-                "value": 24
-              },
-              {
-                "op": "set",
-                "key": "flag.last_utterance",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_item_class",
-                "value": null
-              },
-              {
-                "op": "set",
-                "key": "flag.last_target",
-                "value": null
-              }
-            ],
-            "visibility": "private",
-            "source": "kernel"
-          },
-          {
-            "tag": "clock_tick",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "clock.minutes",
-                "value": 1671
-              },
-              {
-                "op": "set",
-                "key": "clock.tod",
-                "value": "03:51"
-              },
-              {
-                "op": "set",
-                "key": "clock.advanced_turn",
-                "value": 24
-              }
-            ],
-            "visibility": "private",
-            "source": "time.cycle"
-          },
-          {
-            "tag": "law_triggered",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.contacts",
-                "value": 8
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.fired_turn",
-                "value": 24
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.witnessed",
-                "value": true
-              }
-            ],
-            "summary": "[The Greywater]",
-            "data": {
-              "law": "greywater",
-              "contacts": 8,
-              "firstContact": false
-            },
-            "source": "anomaly.hush"
-          }
-        ],
-        "priorHash": "1b448e2846e11e91000b7390e97b7ecbbb50cb5a543fdbfcfa26cb66121c4b1f",
-        "nextHash": "ea4806ac57064caa7346d6ef194eec6757ed2314ccf93d74a40800c04e9387da"
-      },
-      {
-        "eventIndex": 25,
         "intent": {
           "class": "go",
           "tags": [],
@@ -2928,7 +2626,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 25
+                "value": 23
               }
             ],
             "summary": "You set off.",
@@ -2949,7 +2647,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 25
+                "value": 23
               },
               {
                 "op": "set",
@@ -2976,43 +2674,54 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1681
+                "value": 1690
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "04:01"
+                "value": "04:10"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 25
+                "value": 23
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           },
           {
-            "tag": "phase_change",
+            "tag": "drift_warn",
             "mutations": [
               {
                 "op": "set",
-                "key": "phase.now",
-                "value": "predawn"
+                "key": "law.mile_road.drift_warned",
+                "value": true
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_warn_turn",
+                "value": 23
+              },
+              {
+                "op": "set",
+                "key": "law.mile_road.drift_check_turn",
+                "value": 23
               }
             ],
-            "summary": "A grey, grudging not-yet-light gathers at the edges of things. Predawn, the hour the Zone holds its breath.",
+            "summary": "Your reading of The Mile Road has aged a little — the fine detail going soft at the edges, the way an old memory does. The shape of it you still hold; only the particulars are worth confirming again, when you can.",
             "data": {
-              "phase": "predawn"
+              "law": "mile_road",
+              "widened": false
             },
-            "source": "time.cycle"
+            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "ea4806ac57064caa7346d6ef194eec6757ed2314ccf93d74a40800c04e9387da",
-        "nextHash": "d6fed2541aa4daebc204b509ee7765ec362d2e54fb97e15c864fb2ef392dd311"
+        "priorHash": "4d2f9661eec1c6b0bcb0c9b43aa9c27b9ee819532218d889ff1947246f462310",
+        "nextHash": "81a964c8d751c7af07c7c017056501523fad8c12dcbdd737685ee0e3cd73c442"
       },
       {
-        "eventIndex": 26,
+        "eventIndex": 24,
         "intent": {
           "class": "go",
           "tags": [],
@@ -3051,7 +2760,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 26
+                "value": 24
               }
             ],
             "summary": "You set off.",
@@ -3072,7 +2781,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 26
+                "value": 24
               },
               {
                 "op": "set",
@@ -3099,28 +2808,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1689
+                "value": 1698
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "04:09"
+                "value": "04:18"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 26
+                "value": 24
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "d6fed2541aa4daebc204b509ee7765ec362d2e54fb97e15c864fb2ef392dd311",
-        "nextHash": "4e0e2e65533b3c6af1a9ea02d4143665c459c570374ff585b7752e3dd0ecdc25"
+        "priorHash": "81a964c8d751c7af07c7c017056501523fad8c12dcbdd737685ee0e3cd73c442",
+        "nextHash": "096b7a5778c6c7c5e77db8cf4884605828f3fa8e8b0796fc6f3742fe71c21270"
       },
       {
-        "eventIndex": 27,
+        "eventIndex": 25,
         "intent": {
           "class": "take",
           "target": {
@@ -3180,7 +2889,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 27
+                "value": 25
               },
               {
                 "op": "set",
@@ -3207,28 +2916,40 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1699
+                "value": 1708
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "04:19"
+                "value": "04:28"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 27
+                "value": 25
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
+          },
+          {
+            "tag": "wait_ff_gate",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.wait_ff_unsafe",
+                "value": true
+              }
+            ],
+            "visibility": "private",
+            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "4e0e2e65533b3c6af1a9ea02d4143665c459c570374ff585b7752e3dd0ecdc25",
-        "nextHash": "4f396ed89eedc2c37c855f7e732eafd1cb3a451aac1ead279506a07c167a0024"
+        "priorHash": "096b7a5778c6c7c5e77db8cf4884605828f3fa8e8b0796fc6f3742fe71c21270",
+        "nextHash": "5ec2c1b26e31d48386114c5aec778fac41c6865c13dfac0420f5d49d331740ca"
       },
       {
-        "eventIndex": 28,
+        "eventIndex": 26,
         "intent": {
           "class": "go",
           "tags": [],
@@ -3267,7 +2988,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 28
+                "value": 26
               }
             ],
             "summary": "You set off.",
@@ -3288,7 +3009,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 28
+                "value": 26
               },
               {
                 "op": "set",
@@ -3315,28 +3036,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1715
+                "value": 1724
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "04:35"
+                "value": "04:44"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 28
+                "value": 26
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "4f396ed89eedc2c37c855f7e732eafd1cb3a451aac1ead279506a07c167a0024",
-        "nextHash": "39852dc8961d002bcf3c678b537ed8de372d70c36c2d7d44b42a778909478f92"
+        "priorHash": "5ec2c1b26e31d48386114c5aec778fac41c6865c13dfac0420f5d49d331740ca",
+        "nextHash": "101680af616093a5bc630fdb500ad7d2565dd7b1ce290da72355674d2c2143c9"
       },
       {
-        "eventIndex": 29,
+        "eventIndex": 27,
         "intent": {
           "class": "go",
           "tags": [
@@ -3371,7 +3092,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 29
+                "value": 27
               }
             ],
             "summary": "You set off.",
@@ -3392,7 +3113,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 29
+                "value": 27
               },
               {
                 "op": "set",
@@ -3419,28 +3140,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1725
+                "value": 1734
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "04:45"
+                "value": "04:54"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 29
+                "value": 27
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "39852dc8961d002bcf3c678b537ed8de372d70c36c2d7d44b42a778909478f92",
-        "nextHash": "8e17b8604888616677da7991264d1d49deb25f154c94b32a04e9f6e64887d559"
+        "priorHash": "101680af616093a5bc630fdb500ad7d2565dd7b1ce290da72355674d2c2143c9",
+        "nextHash": "86155349766807e7f33b31e013ab0d5506f7a0546b2696222c18fa3c3011b8a9"
       },
       {
-        "eventIndex": 30,
+        "eventIndex": 28,
         "intent": {
           "class": "go",
           "tags": [
@@ -3475,7 +3196,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 30
+                "value": 28
               }
             ],
             "summary": "You set off.",
@@ -3496,7 +3217,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 30
+                "value": 28
               },
               {
                 "op": "set",
@@ -3523,28 +3244,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1743
+                "value": 1752
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "05:03"
+                "value": "05:12"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 30
+                "value": 28
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "8e17b8604888616677da7991264d1d49deb25f154c94b32a04e9f6e64887d559",
-        "nextHash": "ff763e78da3c749140f4f5ea27dc90cf1e72280f1649e9ffe8ef59e0c4fe0527"
+        "priorHash": "86155349766807e7f33b31e013ab0d5506f7a0546b2696222c18fa3c3011b8a9",
+        "nextHash": "5effec900294d37793a956de263e0958395ff847c2ea328799eafd13af2e1bef"
       },
       {
-        "eventIndex": 31,
+        "eventIndex": 29,
         "intent": {
           "class": "go",
           "tags": [],
@@ -3583,7 +3304,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 31
+                "value": 29
               }
             ],
             "summary": "You set off.",
@@ -3604,7 +3325,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 31
+                "value": 29
               },
               {
                 "op": "set",
@@ -3631,28 +3352,40 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1757
+                "value": 1766
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "05:17"
+                "value": "05:26"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 31
+                "value": 29
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
+          },
+          {
+            "tag": "wait_ff_gate",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "law.wait_ff_unsafe",
+                "value": false
+              }
+            ],
+            "visibility": "private",
+            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "ff763e78da3c749140f4f5ea27dc90cf1e72280f1649e9ffe8ef59e0c4fe0527",
-        "nextHash": "395047cc6eeb156e442f49d97e1dd0b0c5013fb54c2b219f7db3af531e84c9fb"
+        "priorHash": "5effec900294d37793a956de263e0958395ff847c2ea328799eafd13af2e1bef",
+        "nextHash": "d7363bf19aefa1d3391105e57907f4d8728775d9aa7ee65bc9d68cb5b8926e4d"
       },
       {
-        "eventIndex": 32,
+        "eventIndex": 30,
         "intent": {
           "class": "hide",
           "tags": [],
@@ -3694,7 +3427,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 32
+                "value": 30
               },
               {
                 "op": "set",
@@ -3721,28 +3454,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1762
+                "value": 1771
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "05:22"
+                "value": "05:31"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 32
+                "value": 30
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "395047cc6eeb156e442f49d97e1dd0b0c5013fb54c2b219f7db3af531e84c9fb",
-        "nextHash": "8ff783175ec8fcc42af0dd25efe179ef3a92572dbd0f3a51045ea0836da70fcf"
+        "priorHash": "d7363bf19aefa1d3391105e57907f4d8728775d9aa7ee65bc9d68cb5b8926e4d",
+        "nextHash": "ae1d9e0d8abdfaa1046bcb161c30e67a57f1014e327b662092859dfd7636291a"
       },
       {
-        "eventIndex": 33,
+        "eventIndex": 31,
         "intent": {
           "class": "go",
           "tags": [
@@ -3777,7 +3510,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 33
+                "value": 31
               }
             ],
             "summary": "You set off.",
@@ -3798,7 +3531,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 33
+                "value": 31
               },
               {
                 "op": "set",
@@ -3825,25 +3558,25 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1770
+                "value": 1779
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "05:30"
+                "value": "05:39"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 33
+                "value": 31
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "8ff783175ec8fcc42af0dd25efe179ef3a92572dbd0f3a51045ea0836da70fcf",
-        "nextHash": "cccb9973f255df06e7477731478b464d290f47d03bb1d9d8e1a487e2ba1606fb"
+        "priorHash": "ae1d9e0d8abdfaa1046bcb161c30e67a57f1014e327b662092859dfd7636291a",
+        "nextHash": "fa5b4eb5c3f4b5d4e32e71da9e36e8a14d2382f76fdee468d0dd2ebd5a73386d"
       }
     ]
   }

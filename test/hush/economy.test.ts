@@ -163,6 +163,50 @@ describe('the NPC information-economy', () => {
     expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // for the Greywater table
   });
 
+  // ---- feedback/0016 #3: the relic give must NEVER misroute to Mox's coin "already carry that map" -----
+  // `give relic to Eun` at the Survey triggered the coin-map "you already carry that map" string out of
+  // context (it read as Mox's coin handler firing at the Survey, "as if the parser conflated the relic
+  // with a coin payment"). It only misfired once the Greywater law was already known. The short phrasing
+  // the swarm used must trade the shard (law unknown) or refuse around the SHARD (law known) — never the
+  // coin string — across give/offer and bare/"the" relic forms.
+  const reachSurveyWithRelic = (s: Session) => {
+    for (const c of ['out', 'road', 'road', 'on', 'antennas']) s.act(c);
+    s.act('take the relic');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBe(true);
+    for (const c of ['mile', 'back', 'back', 'survey']) s.act(c);
+    expect(s.state.facts['loc.pc']).toBe('survey_post');
+  };
+
+  for (const phrasing of [
+    'give relic to eun',
+    'give the relic to eun',
+    'offer relic to eun',
+    'offer the relic to eun',
+  ]) {
+    it(`"${phrasing}" (law unknown) trades the shard for the Greywater table`, () => {
+      const s = sess('relic-short-' + phrasing.replace(/\s+/g, '_'));
+      reachSurveyWithRelic(s);
+      const r = s.act(phrasing);
+      expect(r.text).not.toMatch(/already carry that map|already know that one cold|put what you have to use/);
+      expect(s.state.facts['possession.pc.antenna_relic']).toBeUndefined(); // the shard was traded
+      expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // for the Greywater table
+    });
+
+    it(`"${phrasing}" (law already bought) refuses around the SHARD, never Mox's coin string`, () => {
+      const s = sess('relic-known-' + phrasing.replace(/\s+/g, '_'));
+      reachSurveyWithRelic(s);
+      s.act('give coin to eun'); // make the Greywater law already known
+      expect(s.state.facts['known.purchased.greywater']).toBe(true);
+      const r = s.act(phrasing);
+      // NEVER the coin/map handler string — that is the bug
+      expect(r.text).not.toContain('already carry that map');
+      expect(r.text).not.toContain('put what you have to use');
+      // an honest, in-context line about the antenna-glass instead, and the relic is not lost
+      expect(r.text.toLowerCase()).toMatch(/antenna-glass|shard/);
+      expect(s.state.facts['possession.pc.antenna_relic']).toBe(true); // she did not pocket it for nothing
+    });
+  }
+
   it('Mox discusses her signature topic (the safe hour) for free — no longer a pure paywall', () => {
     const s = sess('econ-mox-talk');
     for (const c of ['out', 'road', 'salvage']) s.act(c);

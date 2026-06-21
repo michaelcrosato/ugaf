@@ -30,6 +30,25 @@ export function phaseOf(minuteOfDay: number): Phase {
   return 'dusk'; // 18:00–21:00
 }
 
+// minute-of-day boundaries a "wait until <phase>" can fast-forward to (feedback/0016 #1). "dawn"
+// is the 06:00 day-boundary the players asked for ("wait until dawn" should reach ~06:00, not +30
+// min); "midday" is the safe hour Mox sells. Each maps to the START of that window.
+const PHASE_BOUNDARY: Record<string, number> = {
+  predawn: 240, // 04:00
+  dawn: 360, // 06:00 — first honest light
+  day: 360, // 06:00
+  midday: 720, // 12:00 — the bottoms sleep
+  dusk: 1080, // 18:00
+  night: 1260, // 21:00
+};
+
+/** minutes from `now` forward to the next occurrence of a target boundary (always > 0, < a full day). */
+function minutesUntilBoundary(nowMinutes: number, target: number): number {
+  const now = ((nowMinutes % 1440) + 1440) % 1440;
+  const delta = (((target - now) % 1440) + 1440) % 1440;
+  return delta === 0 ? 1440 : delta;
+}
+
 function clockText(minutes: number): string {
   const m = ((minutes % 1440) + 1440) % 1440;
   const h = Math.floor(m / 60);
@@ -41,7 +60,7 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
   const start = config.startMinutes ?? 16 * 60; // 16:00 by default
   const manifest = makeManifest({
     id: 'time.cycle',
-    version: '0.2.0', // feedback/0013 #3: escalating dusk-approach telegraphs (the timed decision was made blind)
+    version: '0.3.0', // feedback/0016 #1: `wait/rest until <phase>` is a real single-turn fast-forward at safe nodes (no more wait-spam)
     content: { start, cost: COST },
     source: 'clean-room day/night scheduler (uncopyrightable mechanic)',
     license: {
@@ -54,7 +73,7 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
     priority: 5,
     intents: [],
     writesFacts: ['phase', 'clock'],
-    readsFacts: ['phase', 'clock', 'flag'],
+    readsFacts: ['phase', 'clock', 'flag', 'law'],
   });
 
   return {
@@ -76,10 +95,34 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
       // honour an explicit per-action time cost only if it was set THIS turn
       const override =
         facts.getNumber('flag.time_cost_turn') === ctx.turn ? facts.getNumber('flag.time_cost') : undefined;
-      const cost = override ?? COST[intent] ?? 10;
+      // "wait/rest until <phase>" — a real single-turn fast-forward (feedback/0016 #1). The spine set
+      // flag.wait_until_phase THIS turn; if the named boundary is known AND a long wait here is SAFE
+      // (the anomaly module's wait_ff_unsafe gate, published last turn — a hazard window is never
+      // silently skipped), jump straight to that boundary. Otherwise fall through to the ordinary
+      // +30/+120 step (and the player simply waits again, or gets bitten turn-by-turn as today).
+      const wantPhase =
+        facts.getNumber('flag.wait_until_turn') === ctx.turn ? facts.getString('flag.wait_until_phase') : undefined;
+      const boundary = wantPhase !== undefined ? PHASE_BOUNDARY[wantPhase] : undefined;
+      const ffSafe = facts.getBool('law.wait_ff_unsafe') !== true;
+      const ffCost =
+        boundary !== undefined && ffSafe && (intent === 'wait' || intent === 'rest')
+          ? minutesUntilBoundary(cur.minutes, boundary)
+          : undefined;
+      const cost = ffCost ?? override ?? COST[intent] ?? 10;
       const minutes = cur.minutes + cost;
       const newPhase = phaseOf(minutes);
       const oldPhase = facts.getString('phase.now');
+      // a real fast-forward jumped more than an ordinary beat — narrate the long, quiet passage so
+      // the single-turn skip reads as time genuinely passed, not a glitch (feedback/0016 #1).
+      const ffNarration =
+        ffCost !== undefined && ffCost > 60
+          ? {
+              tag: 'wait_passage',
+              mutations: [],
+              summary: fastForwardLine(intent, clockText(minutes)),
+              visibility: 'public' as const,
+            }
+          : undefined;
       const events: BeatResult['events'] = [
         {
           tag: 'clock_tick',
@@ -90,6 +133,7 @@ export function createTime(config: { startMinutes?: number } = {}): Module {
           ],
           visibility: 'private',
         },
+        ...(ffNarration ? [ffNarration] : []),
       ];
       const out: BeatResult = { nativeNext: { minutes }, events };
       if (newPhase !== oldPhase) {
@@ -170,6 +214,13 @@ const PHASE_LINES: Record<Phase, string[]> = {
 function phaseLine(p: Phase, minutes: number): string {
   const lines = PHASE_LINES[p];
   return lines[(((minutes % (lines.length * 7)) / 7) | 0) % lines.length]!;
+}
+
+/** The fast-forward passage line (feedback/0016 #1): hours pass in one held breath, to a named hour. */
+function fastForwardLine(intent: string, tod: string): string {
+  return intent === 'rest'
+    ? `You settle in to wait out the hours, resting as well as the Zone lets you. Time runs on, quiet and unhurried, until the light has turned — it is ${tod} now.`
+    : `You let the hours run, watching the light turn and the Hush keep its slow, patient time, until the hour you wanted comes round — it is ${tod} now.`;
 }
 
 /**

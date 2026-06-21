@@ -300,6 +300,27 @@ export function createSocial(pack: WorldPack): Module {
     }
     const lawLine = (asked && sellable.get(asked)) || lawLines[0]!;
     const lawId = purchasedLawOf(lawLine);
+    // Is the player OFFERING the antenna relic as payment (give/offer/trade <relic> to Eun)? The relic
+    // is a distinct, non-coin payment with its own purpose (Eun's eun_relic line) — so when the law it
+    // would buy is already known, she must refuse around the SHARD she sees, never with the coin-map
+    // "you already carry that map" string (feedback/0016 #3 — that string read as Mox's coin handler
+    // misfiring at the Survey, "as if the parser conflated the relic with a coin payment"). The trade
+    // itself, when the law is NOT yet known, still fires below exactly as before.
+    const offeringRelic =
+      c === 'give' && intent.target?.id === 'antenna_relic' && facts.getBool('possession.pc.antenna_relic') === true;
+    const lawKnown =
+      !!lawId &&
+      stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) >= stageRank('surveyed');
+    const lawBought = !!lawId && facts.getBool(`known.purchased.${lawId}`);
+    if (offeringRelic && (lawKnown || lawBought)) {
+      // honest, in-context: she names the shard and the table you already hold — the relic is not lost,
+      // and there is no coin-map confusion. (She has only the one law to trade for it, and you have it.)
+      return beat(
+        native,
+        `${npc.name}: “Antenna-glass — and brought out whole. I'd have traded you the ${lawTitle(lawId)} table for it gladly, but you already have that one cold. Keep the shard; there's nothing of mine left worth taking it off you for. Carry it out — it's worth real coin to the right buyer.”`,
+        ['social.relic_already'],
+      );
+    }
     // You already HAVE this law's knowledge — from ANY merchant, or your own eyes. Eun and Mox
     // sell the SAME Greywater law, so the knowledge is shared: never double-charge, and never claim
     // YOU sold it when another merchant (or first-hand observation) is where it actually came from.
