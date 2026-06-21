@@ -124,4 +124,63 @@ describe('the NPC information-economy', () => {
     expect(r.text.toLowerCase()).toContain('already carry'); // honest: you already have that law
     expect(s.state.facts['meta.coins']).toBe(2); // and you are NOT charged again
   });
+
+  // ---- feedback/0012 #6: knowledge-economy depth -------------------------------------------
+  it('a named purchase binds to the named law: Eun refuses the antennas honestly, never sells the Greywater instead', () => {
+    const s = sess('econ-topicbind');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    const r = s.act('pay eun for the antennas law'); // she only sells the Greywater
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // did NOT silently sell the wrong law
+    expect(s.state.facts['meta.coins']).toBe(3); // and did NOT charge you for it
+    expect(r.text.toLowerCase()).toContain('antenna'); // names the law you asked for
+    expect(r.text).toContain('Greywater'); // and honestly says what she does sell
+  });
+
+  it('a named purchase of the law the merchant DOES sell still transacts', () => {
+    const s = sess('econ-namedbuy');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    const r = s.act('pay eun for the greywater law');
+    expect(r.rejected).toBeFalsy();
+    expect(s.state.facts['known.purchased.greywater']).toBe(true); // the named law she sells -> sold
+    expect(s.state.facts['meta.coins']).toBe(2); // one coin spent
+  });
+
+  it('giving the antenna shard is a TRADE, not a request to buy the antenna law (the "for"-clause guard)', () => {
+    // the brave relic path must still work even though "antenna" appears in the give phrase
+    const s = sess('relic-trade');
+    for (const c of ['out', 'road', 'road', 'on', 'antennas']) s.act(c);
+    s.act('take the relic');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBe(true);
+    for (const c of ['mile', 'back', 'back', 'survey']) s.act(c);
+    const r = s.act('give the antenna shard to eun'); // names "antenna" but is a payment, not a law request
+    expect(r.text).not.toContain('not on my confirmed shelf'); // NOT mistaken for buying the antenna law
+    expect(s.state.facts['possession.pc.antenna_relic']).toBeUndefined(); // the shard was traded
+    expect(s.state.facts['known.tell.grey_rust_bloom']).toBe(true); // for the Greywater table
+  });
+
+  it('Mox discusses her signature topic (the safe hour) for free — no longer a pure paywall', () => {
+    const s = sess('econ-mox-talk');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    const r = s.act('ask mox about the safe hour');
+    expect(s.state.facts['known.tell.grey_low_hum']).toBeFalsy(); // DISCUSSED, not granted for free
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy();
+    expect(r.text.toLowerCase()).toMatch(/safe hour|midday|dusk/); // she actually talks about it
+    expect(r.text).not.toContain('Nothing I can tell you about that'); // not a deflect
+  });
+
+  it('Eun gives Law Drift a voice: asking about drift explains why a bought map goes stale', () => {
+    const s = sess('econ-eun-drift');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    const r = s.act('ask eun about drift');
+    expect(r.text.toLowerCase()).toMatch(/drift|re-settle|re settle|stale|shift/);
+    expect(r.text).not.toContain('Nothing I can tell you about that');
+  });
+
+  it('asking Eun about a law she will not sell points to the reliable source, not a dead end', () => {
+    const s = sess('econ-eun-antenna');
+    for (const c of ['out', 'road', 'survey']) s.act(c);
+    const r = s.act('ask eun about the antenna field');
+    expect(r.text.toLowerCase()).toMatch(/holt|warden|contested|voice/);
+    expect(r.text).not.toContain('Nothing I can tell you about that');
+  });
 });

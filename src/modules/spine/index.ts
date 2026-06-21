@@ -11,14 +11,7 @@
 import { makeManifest } from '../../sdk/define.js';
 import type { Band, Module, ModuleResult, WorldEvent } from '../../sdk/types.js';
 
-const LADDER: Record<number, Band> = {
-  6: 'yes-and',
-  5: 'no-but',
-  4: 'yes',
-  3: 'no',
-  2: 'yes-but',
-  1: 'no-and',
-};
+const LADDER: Record<number, Band> = { 6: 'yes-and', 5: 'no-but', 4: 'yes', 3: 'no', 2: 'yes-but', 1: 'no-and' };
 
 function floorLine(intent: string, utterance?: string): string | undefined {
   switch (intent) {
@@ -111,8 +104,8 @@ export function createSpine(): Module {
               tag: 'pry_fail',
               mutations: [],
               summary: metalKeys.length
-                ? 'You set your iron to the wire and lean — and it folds like warm wax in your hands. The Greywater ate its temper down in the dark, and left you nothing to pry with. You will have to get out another way: unseen, or owed a favour.'
-                : 'You have nothing on you strong enough to lever the wire. Another way, then — slip past unseen, or call in a debt.',
+                ? "You set your iron to the wire and lean — and it folds like warm wax in your hands. The Greywater ate its temper down in the dark, and left you nothing to pry with. You will have to get out another way: slip the gate unseen (you will need its blind spot — ask Holt about the gap — then HIDE), or call in a Strider's debt."
+                : "You have nothing on you strong enough to lever the wire. Another way, then — slip the gate unseen (ask Holt about the gap, then HIDE), or call in a Strider's debt.",
             },
           ],
           control: { kind: 'continue' },
@@ -124,11 +117,7 @@ export function createSpine(): Module {
       const band = LADDER[roll]!;
       const summary = floorLine(c, intent.utterance);
       const events: WorldEvent[] = [
-        {
-          tag: 'spine_beat',
-          mutations: [{ op: 'set', key: 'flag.last_band', value: band }],
-          visibility: 'private',
-        },
+        { tag: 'spine_beat', mutations: [{ op: 'set', key: 'flag.last_band', value: band }], visibility: 'private' },
       ];
       // resting recovers your nerve (unless the deep dark is taking it faster — that fires on a later beat)
       const restRecovery =

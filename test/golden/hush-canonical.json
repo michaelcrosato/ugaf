@@ -30,6 +30,7 @@
     "back",
     "back",
     "gate",
+    "ask holt about the gap",
     "hide",
     "back"
   ],
@@ -422,7 +423,7 @@
                 "value": true
               }
             ],
-            "summary": "Old Lyle: “The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. Folk have died walking home down a road that kept making more of itself.”",
+            "summary": "Old Lyle: “The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. I've seen the bootprints loop a dead woman a thousand times round one milepost. That one I'd stake my life on.”",
             "data": {
               "npc": "holdout_lyle",
               "line": "lyle_mile"
@@ -517,7 +518,7 @@
                 "value": true
               }
             ],
-            "summary": "Old Lyle: “The bottoms eat gold, they say — keep your coin deep and you'll be fine.”",
+            "summary": "Old Lyle: “The bottoms? They eat gold — that's the old wisdom, anyhow. Keep your coin deep and you'll come through fine. Though mind, I'll be straight with you: I'm a Holdout, I've not carried worked iron down into that dark in thirty years. I'm telling you what I was told, not what I've tested with my own hands. Cross-check me if your life's on it.”",
             "data": {
               "npc": "holdout_lyle",
               "line": "lyle_grey"
@@ -1953,23 +1954,6 @@
               "firstContact": false
             },
             "source": "anomaly.hush"
-          },
-          {
-            "tag": "law_degrade",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "possession.pc.iron_knife.condition",
-                "value": "ore"
-              }
-            ],
-            "summary": "The iron in your kit goes soft and rotten-red, slumping toward ore.",
-            "data": {
-              "law": "greywater",
-              "item": "possession.pc.iron_knife"
-            },
-            "severity": "reversible",
-            "source": "anomaly.hush"
           }
         ],
         "priorHash": "22ef5df40c769eb8b6e9af8160a1adaab19c5a2c3fec431a516499968ec98d17",
@@ -2081,23 +2065,6 @@
               "contacts": 3,
               "firstContact": false
             },
-            "source": "anomaly.hush"
-          },
-          {
-            "tag": "law_degrade",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "possession.pc.iron_knife.condition",
-                "value": "ore"
-              }
-            ],
-            "summary": "The iron in your kit goes soft and rotten-red, slumping toward ore.",
-            "data": {
-              "law": "greywater",
-              "item": "possession.pc.iron_knife"
-            },
-            "severity": "reversible",
             "source": "anomaly.hush"
           }
         ],
@@ -2222,23 +2189,6 @@
               "contacts": 4,
               "firstContact": false
             },
-            "source": "anomaly.hush"
-          },
-          {
-            "tag": "law_degrade",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "possession.pc.iron_knife.condition",
-                "value": "ore"
-              }
-            ],
-            "summary": "The iron in your kit goes soft and rotten-red, slumping toward ore.",
-            "data": {
-              "law": "greywater",
-              "item": "possession.pc.iron_knife"
-            },
-            "severity": "reversible",
             "source": "anomaly.hush"
           }
         ],
@@ -2375,23 +2325,6 @@
               "firstContact": false
             },
             "source": "anomaly.hush"
-          },
-          {
-            "tag": "law_degrade",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "possession.pc.iron_knife.condition",
-                "value": "ore"
-              }
-            ],
-            "summary": "The iron in your kit goes soft and rotten-red, slumping toward ore.",
-            "data": {
-              "law": "greywater",
-              "item": "possession.pc.iron_knife"
-            },
-            "severity": "reversible",
-            "source": "anomaly.hush"
           }
         ],
         "priorHash": "3b539e157ec2a8282b69b7285d3f47b7881509da4c26e62cfac4fdebedc16d87",
@@ -2526,23 +2459,6 @@
               "contacts": 6,
               "firstContact": false
             },
-            "source": "anomaly.hush"
-          },
-          {
-            "tag": "law_degrade",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "possession.pc.iron_knife.condition",
-                "value": "ore"
-              }
-            ],
-            "summary": "The iron in your kit goes soft and rotten-red, slumping toward ore.",
-            "data": {
-              "law": "greywater",
-              "item": "possession.pc.iron_knife"
-            },
-            "severity": "reversible",
             "source": "anomaly.hush"
           }
         ],
@@ -2679,52 +2595,10 @@
               "firstContact": false
             },
             "source": "anomaly.hush"
-          },
-          {
-            "tag": "law_degrade",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "possession.pc.iron_knife.condition",
-                "value": "ore"
-              }
-            ],
-            "summary": "The iron in your kit goes soft and rotten-red, slumping toward ore.",
-            "data": {
-              "law": "greywater",
-              "item": "possession.pc.iron_knife"
-            },
-            "severity": "reversible",
-            "source": "anomaly.hush"
-          },
-          {
-            "tag": "drift_warn",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.mile_road.drift_warned",
-                "value": true
-              },
-              {
-                "op": "set",
-                "key": "law.mile_road.drift_warn_turn",
-                "value": 22
-              },
-              {
-                "op": "set",
-                "key": "law.mile_road.drift_check_turn",
-                "value": 22
-              }
-            ],
-            "summary": "Something about The Mile Road feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)",
-            "data": {
-              "law": "mile_road"
-            },
-            "source": "anomaly.hush"
           }
         ],
         "priorHash": "83aa4357c5655fe7e0fdb254c6181295dfeff05984114328ab6baed331c3b02c",
-        "nextHash": "70d4a59e5e829b608ce1203c9d1f450ca2670b9263545071890f4a933e649e10"
+        "nextHash": "c18499ca2d1f2739855df24fea3de32b3f1867c108222046011732ecb5a0ea2d"
       },
       {
         "eventIndex": 23,
@@ -2856,27 +2730,10 @@
               "firstContact": false
             },
             "source": "anomaly.hush"
-          },
-          {
-            "tag": "law_degrade",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "possession.pc.iron_knife.condition",
-                "value": "ore"
-              }
-            ],
-            "summary": "The iron in your kit goes soft and rotten-red, slumping toward ore.",
-            "data": {
-              "law": "greywater",
-              "item": "possession.pc.iron_knife"
-            },
-            "severity": "reversible",
-            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "70d4a59e5e829b608ce1203c9d1f450ca2670b9263545071890f4a933e649e10",
-        "nextHash": "6c13b97f4299d1b2891809411320f58c69363956fc5cc5b6e67a438ff9b9be8d"
+        "priorHash": "c18499ca2d1f2739855df24fea3de32b3f1867c108222046011732ecb5a0ea2d",
+        "nextHash": "597447a417bed4f24c6448061017edf0442a0d4135610e9f543b43e72720b20b"
       },
       {
         "eventIndex": 24,
@@ -3004,27 +2861,10 @@
               "firstContact": false
             },
             "source": "anomaly.hush"
-          },
-          {
-            "tag": "law_degrade",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "possession.pc.iron_knife.condition",
-                "value": "ore"
-              }
-            ],
-            "summary": "The iron in your kit goes soft and rotten-red, slumping toward ore.",
-            "data": {
-              "law": "greywater",
-              "item": "possession.pc.iron_knife"
-            },
-            "severity": "reversible",
-            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "6c13b97f4299d1b2891809411320f58c69363956fc5cc5b6e67a438ff9b9be8d",
-        "nextHash": "291c214df89afcf3561711f9fd3bbf38490168bb6239533de2b1a503ebda87b8"
+        "priorHash": "597447a417bed4f24c6448061017edf0442a0d4135610e9f543b43e72720b20b",
+        "nextHash": "6a9cbe72a857ff5d0c8e7e44d559cbdd136a1c2c897b0f5f65b8a31343cfe236"
       },
       {
         "eventIndex": 25,
@@ -3127,8 +2967,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "291c214df89afcf3561711f9fd3bbf38490168bb6239533de2b1a503ebda87b8",
-        "nextHash": "48baf8ff2f4de1b23ab87ba70e30d4d420f66ce8aca6e3eb2bc1ed295f989f25"
+        "priorHash": "6a9cbe72a857ff5d0c8e7e44d559cbdd136a1c2c897b0f5f65b8a31343cfe236",
+        "nextHash": "20aba89fd25df0b806a56f6460b55d0839b9061c6d7ceaa21219cc5a8138e966"
       },
       {
         "eventIndex": 26,
@@ -3248,44 +3088,10 @@
               "phase": "night"
             },
             "source": "time.cycle"
-          },
-          {
-            "tag": "drift_demote",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "known.law.mile_road",
-                "value": "approximate"
-              },
-              {
-                "op": "set",
-                "key": "law.mile_road.drift_warned",
-                "value": false
-              },
-              {
-                "op": "set",
-                "key": "law.mile_road.drift_check_turn",
-                "value": 26
-              },
-              {
-                "op": "set",
-                "key": "law.mile_road.drifted_turn",
-                "value": 26
-              },
-              {
-                "op": "delete",
-                "key": "known.mile_road.surveyed_turn"
-              }
-            ],
-            "summary": "The Mile Road has re-Settled. What you knew is no longer quite true — you will have to read it again.",
-            "data": {
-              "law": "mile_road"
-            },
-            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "48baf8ff2f4de1b23ab87ba70e30d4d420f66ce8aca6e3eb2bc1ed295f989f25",
-        "nextHash": "b4471e7d9f5d3dc76428821ec07f0d85c6c65104dfe508c8536b00e97bc5e88b"
+        "priorHash": "20aba89fd25df0b806a56f6460b55d0839b9061c6d7ceaa21219cc5a8138e966",
+        "nextHash": "ce98e775db6516edd8049116b6e185e65ef8f91856f41170505643aa219b1560"
       },
       {
         "eventIndex": 27,
@@ -3388,8 +3194,8 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "b4471e7d9f5d3dc76428821ec07f0d85c6c65104dfe508c8536b00e97bc5e88b",
-        "nextHash": "4f7a99112dcd95a8ea7aff1c8311103a3716046cfaeb2885c6536f0304f657ea"
+        "priorHash": "ce98e775db6516edd8049116b6e185e65ef8f91856f41170505643aa219b1560",
+        "nextHash": "b7307d2ff4361c6c6407359fb0f98aea1edf6f208547defd55126af40ce9bdf2"
       },
       {
         "eventIndex": 28,
@@ -3490,35 +3296,10 @@
             ],
             "visibility": "private",
             "source": "time.cycle"
-          },
-          {
-            "tag": "drift_warn",
-            "mutations": [
-              {
-                "op": "set",
-                "key": "law.greywater.drift_warned",
-                "value": true
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.drift_warn_turn",
-                "value": 28
-              },
-              {
-                "op": "set",
-                "key": "law.greywater.drift_check_turn",
-                "value": 28
-              }
-            ],
-            "summary": "Something about The Greywater feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)",
-            "data": {
-              "law": "greywater"
-            },
-            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "4f7a99112dcd95a8ea7aff1c8311103a3716046cfaeb2885c6536f0304f657ea",
-        "nextHash": "a3b6df92cc6cb3dbe65c8f1cd4f710e50c26d802c34f3f2fe4551d518102e1ae"
+        "priorHash": "b7307d2ff4361c6c6407359fb0f98aea1edf6f208547defd55126af40ce9bdf2",
+        "nextHash": "04d90e07e957b687fb7b20130c0f084b99c0e9d595381c203d5047b99f9f006e"
       },
       {
         "eventIndex": 29,
@@ -3625,11 +3406,106 @@
             "source": "time.cycle"
           }
         ],
-        "priorHash": "a3b6df92cc6cb3dbe65c8f1cd4f710e50c26d802c34f3f2fe4551d518102e1ae",
-        "nextHash": "1ec71485e200b061fc61a0f9a8a875f8f2c5ba6cce0bd9ddbe3770812da4729f"
+        "priorHash": "04d90e07e957b687fb7b20130c0f084b99c0e9d595381c203d5047b99f9f006e",
+        "nextHash": "030c76a0a9396b58493bf2028cf53368bb7715e7f2f5a829e0c2fcc061d299c8"
       },
       {
         "eventIndex": 30,
+        "intent": {
+          "class": "ask_about",
+          "topic": "the gap",
+          "target": {
+            "id": "warden_holt",
+            "raw": "holt",
+            "tags": [
+              "npc"
+            ]
+          },
+          "tags": [
+            "social"
+          ],
+          "confidence": 0.8,
+          "raw": "ask holt about the gap"
+        },
+        "owner": "social.fate",
+        "tape": [],
+        "events": [
+          {
+            "tag": "dialogue",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "objective.knows_gap",
+                "value": true
+              }
+            ],
+            "summary": "Warden Holt: “The gap in the wire? Officially there's no such thing. Unofficially, I find I study my own boots a great deal this hour of the night. A careful soul could slip toward the fork that way — or back out of it, carrying something I'd rather not have to see. The floodlight throws long, but it throws crooked; there's a wedge of dark by the north post where a low, quiet figure simply isn't, as far as I'm concerned — but only after dark. In daylight the open ground is open ground, and I can't help you there. Mind you stay low, stay quiet, and don't make me look.”",
+            "data": {
+              "npc": "warden_holt",
+              "line": "holt_gap"
+            },
+            "source": "social.fate"
+          },
+          {
+            "tag": "physical_act",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "flag.last_intent",
+                "value": "ask_about"
+              },
+              {
+                "op": "set",
+                "key": "flag.last_turn",
+                "value": 30
+              },
+              {
+                "op": "set",
+                "key": "flag.last_utterance",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_item_class",
+                "value": null
+              },
+              {
+                "op": "set",
+                "key": "flag.last_target",
+                "value": "warden_holt"
+              }
+            ],
+            "visibility": "private",
+            "source": "kernel"
+          },
+          {
+            "tag": "clock_tick",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "clock.minutes",
+                "value": 1343
+              },
+              {
+                "op": "set",
+                "key": "clock.tod",
+                "value": "22:23"
+              },
+              {
+                "op": "set",
+                "key": "clock.advanced_turn",
+                "value": 30
+              }
+            ],
+            "visibility": "private",
+            "source": "time.cycle"
+          }
+        ],
+        "priorHash": "030c76a0a9396b58493bf2028cf53368bb7715e7f2f5a829e0c2fcc061d299c8",
+        "nextHash": "7b8517bc7db296ed055520a551e03023d8bf0e9574515e791009b8275aba6dc5"
+      },
+      {
+        "eventIndex": 31,
         "intent": {
           "class": "hide",
           "tags": [],
@@ -3671,7 +3547,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 30
+                "value": 31
               },
               {
                 "op": "set",
@@ -3698,28 +3574,28 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1338
+                "value": 1348
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "22:18"
+                "value": "22:28"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 30
+                "value": 31
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "1ec71485e200b061fc61a0f9a8a875f8f2c5ba6cce0bd9ddbe3770812da4729f",
-        "nextHash": "1f505790e1b79fc90844a59d8d4961d797a3976939f17711a3aa73d5bf6fb0e4"
+        "priorHash": "7b8517bc7db296ed055520a551e03023d8bf0e9574515e791009b8275aba6dc5",
+        "nextHash": "994af3807dbf8df2d79c6e3a1c13c9ab1275a56c523ceade4506852ef1b0fbb2"
       },
       {
-        "eventIndex": 31,
+        "eventIndex": 32,
         "intent": {
           "class": "go",
           "tags": [
@@ -3754,7 +3630,7 @@
               {
                 "op": "set",
                 "key": "flag.time_cost_turn",
-                "value": 31
+                "value": 32
               }
             ],
             "summary": "You set off.",
@@ -3775,7 +3651,7 @@
               {
                 "op": "set",
                 "key": "flag.last_turn",
-                "value": 31
+                "value": 32
               },
               {
                 "op": "set",
@@ -3802,25 +3678,25 @@
               {
                 "op": "set",
                 "key": "clock.minutes",
-                "value": 1346
+                "value": 1356
               },
               {
                 "op": "set",
                 "key": "clock.tod",
-                "value": "22:26"
+                "value": "22:36"
               },
               {
                 "op": "set",
                 "key": "clock.advanced_turn",
-                "value": 31
+                "value": 32
               }
             ],
             "visibility": "private",
             "source": "time.cycle"
           }
         ],
-        "priorHash": "1f505790e1b79fc90844a59d8d4961d797a3976939f17711a3aa73d5bf6fb0e4",
-        "nextHash": "980b8e67f8b8b48d7b6d2986f97c277eda9c91c498641462b1ca591ddccee318"
+        "priorHash": "994af3807dbf8df2d79c6e3a1c13c9ab1275a56c523ceade4506852ef1b0fbb2",
+        "nextHash": "b4ca825ea3102bb55f02ea5181aca651cd25d983501b651494909ac561334e20"
       }
     ]
   }

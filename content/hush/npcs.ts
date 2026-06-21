@@ -62,10 +62,14 @@ export const NPCS: NpcDef[] = [
         topic: 'core',
         text: "The core? Every soul through that gate is after it. Most come back as a form I have to sign. The ones who don't come back at all, I can't even file.",
       },
+      // learning the gate's blind spot is what lets you SLIP the watched gate carrying the core
+      // (feedback/0013 #1) — a free `hide` is no longer enough; you have to know where the light
+      // falls short. Holt, in a weary mood, will tell you, for nothing.
       {
         id: 'holt_gap',
         topic: 'gap',
-        text: "The gap in the wire? Officially there's no such thing. Unofficially, I find I study my own boots a great deal this hour of the night. A careful soul could slip toward the fork that way, and I'd see nothing at all.",
+        text: "The gap in the wire? Officially there's no such thing. Unofficially, I find I study my own boots a great deal this hour of the night. A careful soul could slip toward the fork that way — or back out of it, carrying something I'd rather not have to see. The floodlight throws long, but it throws crooked; there's a wedge of dark by the north post where a low, quiet figure simply isn't, as far as I'm concerned — but only after dark. In daylight the open ground is open ground, and I can't help you there. Mind you stay low, stay quiet, and don't make me look.",
+        setsFacts: { 'objective.knows_gap': true },
       },
       {
         id: 'holt_grey',
@@ -107,22 +111,28 @@ export const NPCS: NpcDef[] = [
         id: 'lyle_greet',
         text: "Newcomer. You've the look of someone after the core. Everyone is, lately. Sit. Ask. Knowing's cheaper here than at the Survey, and worth about what you pay.",
       },
+      // Lyle's TRUE lore is firsthand and stated flat (the Mile Road, the core) — the CONTRAST that
+      // makes his hedging legible. A careful player learns: when Lyle's sure, he says so plainly.
       {
         id: 'lyle_mile',
         topic: 'mile road',
-        text: "The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. Folk have died walking home down a road that kept making more of itself.",
+        text: "The road? Aye — don't look back on her. Look back and she puts the whole walk behind you again, twice over. I've seen the bootprints loop a dead woman a thousand times round one milepost. That one I'd stake my life on.",
         grantsRumor: 'r_mile_true',
       },
+      // FALSE rumour — kept false (the trap stands), but now HEDGED: Lyle marks it as told-not-tested,
+      // so his wrongness reads as a fallible old Holdout, not a game bug (feedback/0012 #8).
       {
         id: 'lyle_grey',
         topic: 'greywater',
-        text: "The bottoms eat gold, they say — keep your coin deep and you'll be fine.",
+        text: "The bottoms? They eat gold — that's the old wisdom, anyhow. Keep your coin deep and you'll come through fine. Though mind, I'll be straight with you: I'm a Holdout, I've not carried worked iron down into that dark in thirty years. I'm telling you what I was told, not what I've tested with my own hands. Cross-check me if your life's on it.",
         grantsRumor: 'r_grey_false',
       },
+      // FALSE rumour — kept false; the existing "can't tell me" hedge strengthened so the deadly
+      // implication is catchable by a careful ear while still tempting the reckless.
       {
         id: 'lyle_antenna',
         topic: 'antenna',
-        text: "The antennas? Old trick the Striders swear by — say your OWN name there, loud, and the field knows you're kin and lets you be. Whether it's true... well. The ones who tried it can't tell me.",
+        text: "The antennas? Old trick the Striders swear by — say your OWN name there, loud, and the field knows you're kin and lets you be. Whether it's true, now... I couldn't honestly tell you. The ones who walked out to try it never did walk back to tell me how it went. Make of that what you will.",
         grantsRumor: 'r_antenna_false',
       },
       {
@@ -130,6 +140,13 @@ export const NPCS: NpcDef[] = [
         topic: 'core',
         text: "The core's real, out in the drowned pump-house. Getting to it's the easy part. Getting to it without the Greywater taking your iron, that's the trick — go by day, or go without metal, or pay a Strider who knows the safe hour.",
         grantsRumor: 'r_cache_paths',
+      },
+      // the diegetic reliability tell: Lyle himself names that he is a contestable source. A careful
+      // player who asks learns to verify him; the contradiction in his lore is then fair, not a bug.
+      {
+        id: 'lyle_trust',
+        topic: 'trust',
+        text: "Trust me? Ha — I'll tell you what I tell every newcomer. I've been here so long the things I've seen and the things I've only been told have run together in my head. Some of what I hand you is gold and some is fool's gold, and these days I can't always tell you which is which. So don't stake your life on an old man's say-so. Take what I give you to the Survey, or go and see it with your own eyes. That's not modesty — it's the only honest thing I've got left to sell.",
       },
     ],
   },
@@ -161,7 +178,20 @@ export const NPCS: NpcDef[] = [
       {
         id: 'eun_grey_ask',
         topic: 'greywater',
-        text: 'The Greywater? Our table on it is complete and confirmed. It is not free. Make it worth my ink.',
+        text: 'The Greywater? Our table on it is complete and confirmed — as confirmed as anything stays here. It is not free. Make it worth my ink.',
+      },
+      // Eun is the cartographer who re-files the drifting laws — give her a voice for it. This is
+      // the diegetic explanation of Law Drift (the decaying-codex mechanic): her trade IS the drift.
+      {
+        id: 'eun_drift',
+        topic: 'drift',
+        text: "Why are the cards crossed out and re-inked, you ask? Because the laws drift, friend. The Hush re-Settles — a window creeps wider, a tell shifts its shape — and a table I copied you last week can go quietly stale while it sits in your pack. That is the whole of the Survey's trade: we read them again, and again, and re-file them, forever. A bought map is true the day you buy it and no longer. Learn to read a law yourself and you'll feel it the moment it moves under you.",
+      },
+      // honest coverage of the law she will NOT sell (#6): point the player at the reliable source
+      {
+        id: 'eun_antenna_ask',
+        topic: 'antenna',
+        text: 'The antenna field? I keep a card on it — red-inked, contested. The Survey does not sell a law it has not stood beside and lived; that one has cost us two filers already. For the antennas, Warden Holt at the checkpoint will tell you true and free, and I would not improve on him: give that place nothing of your voice.',
       },
       {
         id: 'eun_lawmap',
@@ -211,6 +241,13 @@ export const NPCS: NpcDef[] = [
         id: 'mox_cache',
         topic: 'core',
         text: "The bottoms only bite after dark, and only worked iron. Go in by daylight and they're just cold water. Or go in stripped of metal and let them hum at nothing. That's the whole secret, and I'll sell you the safe hour besides.",
+      },
+      // the character defined by knowing the safe hour will TALK about the safe hour (feedback/0012
+      // #6) — the rough shape is free; the exact, timed line is what she sells.
+      {
+        id: 'mox_safe',
+        topic: 'safe',
+        text: "The safe hour? Course it's real — I've walked it more times than you've eaten hot dinners. The bottoms sleep a good stretch around midday and wake hungry at dusk; that much I'll tell anyone for nothing. The EXACT line through, dry and timed to the minute so you're never caught with iron in the dark — that's the part you pay me for. Or carry no metal at all, and you'll not need me.",
       },
       {
         id: 'mox_window',

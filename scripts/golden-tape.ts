@@ -50,6 +50,7 @@ const COMMANDS = [
   'back',
   'back',
   'gate',
+  'ask holt about the gap',
   'hide',
   'back',
 ];
@@ -74,13 +75,7 @@ if (update || !existsSync(FIXTURE)) {
   writeFileSync(
     FIXTURE,
     JSON.stringify(
-      {
-        seed: SEED,
-        commands: COMMANDS,
-        fingerprintId: golden.fingerprintId,
-        finalStatus: status,
-        golden,
-      },
+      { seed: SEED, commands: COMMANDS, fingerprintId: golden.fingerprintId, finalStatus: status, golden },
       null,
       2,
     ),

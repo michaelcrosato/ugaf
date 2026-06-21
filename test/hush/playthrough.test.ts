@@ -46,8 +46,9 @@ describe('The Hush — Cordon’s Edge', () => {
       'back',
       'back',
       'gate',
+      'ask holt about the gap',
       'hide',
-      'back', // slip the watched gate unseen (the interception)
+      'back', // slip the watched gate: learn its blind spot, then go low (iron's gone to the Greywater)
     ];
     let last = { status: 'active' as string };
     for (const cmd of path) last = s.act(cmd);
@@ -85,6 +86,7 @@ describe('The Hush — Cordon’s Edge', () => {
       'back',
       'back',
       'gate',
+      'ask holt about the gap',
       'hide',
       'back',
     ];
@@ -123,11 +125,7 @@ describe('The Hush — Cordon’s Edge', () => {
     const iron = base();
     iron.state = {
       ...iron.state,
-      facts: {
-        ...iron.state.facts,
-        'possession.pc.crowbar': true,
-        'possession.pc.crowbar.class': 'metal',
-      },
+      facts: { ...iron.state.facts, 'possession.pc.crowbar': true, 'possession.pc.crowbar.class': 'metal' },
     };
     iron.act('use the crowbar');
     expect(iron.state.facts['flag.intercept_clear']).toBe(true);
@@ -177,11 +175,11 @@ describe('The Hush — Cordon’s Edge', () => {
     const s = freshSession('grey-1');
     for (const cmd of ['out', 'road', 'road', 'on', 'fork', 'water']) s.act(cmd); // -> greywater_ford, ~dusk
     expect(s.state.facts['possession.pc.iron_knife.condition']).toBeUndefined();
-    s.act('rest'); // -> dusk/night
-    const r = s.act('rest'); // -> night: the law fires on metal
+    const r1 = s.act('rest'); // -> dusk/night: the law first fires on metal (the ore transition)
+    const r2 = s.act('rest'); // -> night
     expect(s.state.facts['phase.now']).toBe('night');
     expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('ore');
-    expect(r.text.toLowerCase()).toContain('iron');
+    expect((r1.text + ' ' + r2.text).toLowerCase()).toContain('iron'); // the degrade line shows (once, on the transition)
     expect(s.state.facts['survival.pc']).toBe('alive'); // material law is non-lethal (a fail-state, not a kill)
   });
 

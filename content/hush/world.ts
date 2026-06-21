@@ -94,9 +94,7 @@ export const ITEMS: ItemDef[] = [
     names: ['coins', 'coin', 'money', 'roll', 'cash', 'scrip'],
     itemClass: 'coin',
     portable: true,
-    look: {
-      base: 'A thin roll of cordon scrip and a few hard coins. Not much. Enough to start a conversation.',
-    },
+    look: { base: 'A thin roll of cordon scrip and a few hard coins. Not much. Enough to start a conversation.' },
   },
   {
     id: 'salvage_core',
@@ -169,7 +167,63 @@ export const NODES: NodeDef[] = [
         },
         {
           when: { fact: 'possession.pc.salvage_core', eq: true },
-          text: "Warden Holt's eyes go to your pack and stay there. He knows the shape of what you carry — they all do, eventually. The boom gate is down and the troopers have drifted to the wire, watching the open ground for exactly what rides in your pack: you will not simply walk it out under their noses. You could slip past unseen (HIDE), lever the wire-gap wide with good iron, or lean on a Strider who owes you a debt. Holt himself does not stop you — stopping people is not really what the Cordon is for, out here — but he marks your face the way a man marks a debt he means to collect.",
+          text: "Warden Holt's eyes go to your pack and stay there. He knows the shape of what you carry — they all do, eventually. The boom gate is down and the troopers have drifted to the wire, watching the open ground for exactly what rides in your pack: you will not simply walk it out under their noses. Holt himself does not stop you — stopping people is not really what the Cordon is for, out here — but he marks your face the way a man marks a debt he means to collect.",
+        },
+        // dynamic route legibility (feedback/0013 #1): name which way out is open, and WHY the others are shut.
+        // (gated on PLAYER-VISIBLE facts — objective/possession/reputation — so the renderer actually fires them.)
+        {
+          when: {
+            all: [
+              { fact: 'possession.pc.salvage_core', eq: true },
+              { fact: 'objective.knows_gap', eq: true },
+              { phase: ['dusk', 'night', 'predawn'] },
+              { fact: 'awareness.cordon_patrol', neq: 'alert' },
+            ],
+          },
+          text: 'You know this gate now, the way Holt told it: the wedge of dark by the north post where the floodlight throws crooked. The dark is on your side for it. Go low and quiet there (HIDE) while the troopers are not roused, and you can be through it before they think to look.',
+        },
+        {
+          when: {
+            all: [
+              { fact: 'possession.pc.salvage_core', eq: true },
+              { fact: 'objective.knows_gap', eq: true },
+              { fact: 'phase.now', eq: 'day' },
+            ],
+          },
+          text: 'You know where the floodlight falls short now — but that wedge of dark is no use to you in broad day. You will have to wait for the light to go before you can slip it (or find another way out).',
+        },
+        {
+          when: {
+            all: [
+              { fact: 'possession.pc.salvage_core', eq: true },
+              { not: { fact: 'objective.knows_gap', eq: true } },
+              { not: { fact: 'reputation.pc.striders', gte: 1 } },
+            ],
+          },
+          text: "You do not know this gate's rhythm — where its light falls short, or when. Holt might mutter it, in a talkative hour: ask him about the gap. Failing that, good iron would lever the wire-gap wide (if the Greywater has not taken its temper), or a Strider's debt would walk you out.",
+        },
+        {
+          when: {
+            all: [
+              { fact: 'possession.pc.salvage_core', eq: true },
+              {
+                any: [
+                  { fact: 'possession.pc.iron_knife.condition', eq: 'ore' },
+                  { fact: 'possession.pc.crowbar.condition', eq: 'ore' },
+                ],
+              },
+            ],
+          },
+          text: 'The iron you carried went soft in the Greywater — slumped to rotten-red ore in your pack. There is no good metal left on you to lever the wire-gap; that road out is closed, and the Greywater closed it.',
+        },
+        {
+          when: {
+            all: [
+              { fact: 'possession.pc.salvage_core', eq: true },
+              { fact: 'reputation.pc.striders', gte: 1 },
+            ],
+          },
+          text: 'A Strider owes you a way through, and Mox keeps her debts. Lean on it, and you will be walked out past the wire like baggage.',
         },
       ],
       ambient: [
@@ -184,23 +238,28 @@ export const NODES: NodeDef[] = [
         to: 'waystation',
         label: 'back to the waystation',
         via: 'e_way_check',
+        // carrying the core, the watched gate is an EARNED branch (feedback/0013 #1): a free HIDE is
+        // not enough — slipping out needs the gate's blind spot (ask Holt about the gap), the cover of
+        // DARK, and a calm patrol; or working iron to lever the gap; or a Strider's debt.
         when: {
           any: [
             { not: { fact: 'flag.intercepted', eq: true } },
             { fact: 'flag.intercept_clear', eq: true },
-            { fact: 'flag.hidden', eq: true },
             { fact: 'reputation.pc.striders', gte: 1 },
+            {
+              all: [
+                { fact: 'objective.knows_gap', eq: true },
+                { fact: 'flag.hidden', eq: true },
+                { fact: 'awareness.cordon_patrol', neq: 'alert' },
+                { phase: ['dusk', 'night', 'predawn'] },
+              ],
+            },
           ],
         },
         blockedText:
-          'The boom gate is down and the troopers are at the wire, watching for exactly what rides in your pack. You will not simply walk the core out under their noses. You could slip past unseen (HIDE), or lever the wire-gap wide with good iron (USE your bar or knife — if the Greywater has not eaten its temper), or lean on a debt, if the Striders owe you one.',
+          'The boom gate is down and the troopers are at the wire, watching for exactly what rides in your pack. You will not simply walk the core out under their noses. To slip past you must know where the floodlight falls short — ask Warden Holt about the gap — then go low and quiet (HIDE) under cover of dark, while they are not roused (by daylight the open ground is open ground). Or lever the wire-gap wide with good iron (USE your bar or knife — if the Greywater has not eaten its temper). Or lean on a debt, if the Striders owe you one.',
       },
-      {
-        dir: 'road',
-        to: 'lyles_rest',
-        label: "the maintained road, down to Lyle's Rest",
-        via: 'e_check_lyle',
-      },
+      { dir: 'road', to: 'lyles_rest', label: "the maintained road, down to Lyle's Rest", via: 'e_check_lyle' },
       {
         dir: 'gap',
         to: 'the_fork',
@@ -237,25 +296,10 @@ export const NODES: NodeDef[] = [
     },
     npcs: ['holdout_lyle'],
     exits: [
-      {
-        dir: 'gate',
-        to: 'cordon_checkpoint',
-        label: 'back up to the checkpoint',
-        via: 'e_check_lyle',
-      },
+      { dir: 'gate', to: 'cordon_checkpoint', label: 'back up to the checkpoint', via: 'e_check_lyle' },
       { dir: 'survey', to: 'survey_post', label: "the Survey's lean-to", via: 'e_lyle_survey' },
-      {
-        dir: 'salvage',
-        to: 'salvager_camp',
-        label: "the Striders' camp at the treeline",
-        via: 'e_lyle_salvage',
-      },
-      {
-        dir: 'road',
-        to: 'mile_road_low',
-        label: 'the Mile Road, into the deep Zone',
-        via: 'e_lyle_mileroad',
-      },
+      { dir: 'salvage', to: 'salvager_camp', label: "the Striders' camp at the treeline", via: 'e_lyle_salvage' },
+      { dir: 'road', to: 'mile_road_low', label: 'the Mile Road, into the deep Zone', via: 'e_lyle_mileroad' },
     ],
   },
   {
@@ -345,12 +389,7 @@ export const NODES: NodeDef[] = [
     ],
     exits: [
       { dir: 'back', to: 'lyles_rest', label: "back toward Lyle's Rest", via: 'e_lyle_mileroad' },
-      {
-        dir: 'on',
-        to: 'mile_road_high',
-        label: 'on, deeper along the Mile Road',
-        via: 'e_mileroad',
-      },
+      { dir: 'on', to: 'mile_road_high', label: 'on, deeper along the Mile Road', via: 'e_mileroad' },
     ],
   },
   {
@@ -379,25 +418,13 @@ export const NODES: NodeDef[] = [
         id: 'milepost_high',
         names: ['milepost', 'post', 'marker'],
         tell: 'mile_milepost_reset',
-        look: {
-          base: 'A milepost, like the others. Like the others, it lies about the distance at your back.',
-        },
+        look: { base: 'A milepost, like the others. Like the others, it lies about the distance at your back.' },
       },
     ],
     exits: [
       { dir: 'back', to: 'mile_road_low', label: 'back along the Mile Road', via: 'e_mileroad' },
-      {
-        dir: 'fork',
-        to: 'the_fork',
-        label: 'the fork, where the deep paths divide',
-        via: 'e_mile_fork',
-      },
-      {
-        dir: 'antennas',
-        to: 'antenna_field',
-        label: 'toward the humming towers',
-        via: 'e_mile_antenna',
-      },
+      { dir: 'fork', to: 'the_fork', label: 'the fork, where the deep paths divide', via: 'e_mile_fork' },
+      { dir: 'antennas', to: 'antenna_field', label: 'toward the humming towers', via: 'e_mile_antenna' },
     ],
   },
   {
@@ -437,18 +464,8 @@ export const NODES: NodeDef[] = [
     ],
     exits: [
       { dir: 'mile', to: 'mile_road_high', label: 'back up to the Mile Road', via: 'e_mile_fork' },
-      {
-        dir: 'water',
-        to: 'greywater_ford',
-        label: 'down to the Greywater ford',
-        via: 'e_fork_grey',
-      },
-      {
-        dir: 'antennas',
-        to: 'antenna_field',
-        label: 'across to the antenna field',
-        via: 'e_fork_antenna',
-      },
+      { dir: 'water', to: 'greywater_ford', label: 'down to the Greywater ford', via: 'e_fork_grey' },
+      { dir: 'antennas', to: 'antenna_field', label: 'across to the antenna field', via: 'e_fork_antenna' },
       {
         dir: 'wire',
         to: 'cordon_checkpoint',
@@ -478,13 +495,20 @@ export const NODES: NodeDef[] = [
           text: 'In daylight the bottoms are only flooded and sad. Whatever lives in the dark here is sleeping; the metal in the silt is just metal.',
         },
         {
+          when: {
+            all: [
+              { fact: 'phase.now', eq: 'predawn' },
+              { fact: 'law.greywater.window_drifted', eq: true },
+            ],
+          },
+          text: 'The grey before dawn used to be the safe hour — you learned it was. But the hum has not gone back to sleep with the coming light the way it once did; the water keeps its hungry hours longer now than the law you read. The iron on you is already beginning to answer it.',
+        },
+        {
           when: { fact: 'known.law.greywater', eq: 'surveyed' },
           text: 'You know this water now — what it wants, and when it wakes to want it. You weigh the iron on you against the failing light, and you do the sum the dead in the silt never learned to do.',
         },
         {
-          when: {
-            all: [{ fact: 'possession.pc.salvage_core', eq: true }, { phase: ['dusk', 'night'] }],
-          },
+          when: { all: [{ fact: 'possession.pc.salvage_core', eq: true }, { phase: ['dusk', 'night'] }] },
           text: 'No time to linger now — the core is a weight at your spine and the water is wide awake. Every rivet on you is going soft. Move.',
           replace: true,
         },
@@ -515,12 +539,7 @@ export const NODES: NodeDef[] = [
     ],
     exits: [
       { dir: 'back', to: 'the_fork', label: 'back up to the fork', via: 'e_fork_grey' },
-      {
-        dir: 'in',
-        to: 'greywater_bottoms',
-        label: 'out into the flooded bottoms',
-        via: 'e_grey_bottoms',
-      },
+      { dir: 'in', to: 'greywater_bottoms', label: 'out into the flooded bottoms', via: 'e_grey_bottoms' },
     ],
   },
   {
@@ -539,6 +558,15 @@ export const NODES: NodeDef[] = [
           when: { fact: 'phase.now', eq: 'night' },
           text: 'The hum is everywhere now, in the water and the iron and your teeth. Any worked metal you carry is dying in your hands.',
         },
+        {
+          when: {
+            all: [
+              { fact: 'phase.now', eq: 'predawn' },
+              { fact: 'law.greywater.window_drifted', eq: true },
+            ],
+          },
+          text: 'It should be safe by now — the grey of predawn was always the safe hour. But the hum has not let go with the light; it has learned to hold on longer than you learned it would, and the iron on you is going soft in the not-quite-dawn.',
+        },
       ],
       ambient: ['A door bangs underwater, slow and deliberate.', 'The hum rises a half-tone, considering you.'],
     },
@@ -555,12 +583,7 @@ export const NODES: NodeDef[] = [
     ],
     exits: [
       { dir: 'back', to: 'greywater_ford', label: 'back to the ford', via: 'e_grey_bottoms' },
-      {
-        dir: 'cache',
-        to: 'greywater_cache',
-        label: 'into the wrecked pump-house',
-        via: 'e_bottoms_cache',
-      },
+      { dir: 'cache', to: 'greywater_cache', label: 'into the wrecked pump-house', via: 'e_bottoms_cache' },
     ],
   },
   {
@@ -579,14 +602,7 @@ export const NODES: NodeDef[] = [
       ambient: ['Water laps the shelf, patient, as if waiting for you to leave so it can have the room back.'],
     },
     items: ['salvage_core'],
-    exits: [
-      {
-        dir: 'out',
-        to: 'greywater_bottoms',
-        label: 'back out into the bottoms',
-        via: 'e_bottoms_cache',
-      },
-    ],
+    exits: [{ dir: 'out', to: 'greywater_bottoms', label: 'back out into the bottoms', via: 'e_bottoms_cache' }],
   },
   {
     id: 'antenna_field',

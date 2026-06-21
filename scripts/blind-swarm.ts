@@ -124,7 +124,10 @@ const SEEDBASE = arg('seedbase', `s${Date.now().toString(36)}`)!;
 const runId = arg('out') ? arg('out')! : `run-${Date.now().toString(36)}`;
 const OUT = resolve(ROOT, 'playtest-runs/swarm', runId);
 const personaFilter = (arg('personas') ?? '').split(',').filter(Boolean);
-const modelOverride = (arg('models') ?? '').split(',').filter(Boolean) as Persona['model'][];
+// accept comma OR whitespace separation — npm/Windows arg passing can turn "a,b,c" into one
+// space-joined token, which the old comma-only split collapsed to a single bogus model that the
+// shell-joined spawn then mangled (night8: --models opus,sonnet,haiku silently ran ALL-opus).
+const modelOverride = (arg('models') ?? '').split(/[\s,]+/).filter(Boolean) as Persona['model'][];
 
 const roster = personaFilter.length ? PERSONAS.filter((p) => personaFilter.includes(p.id)) : PERSONAS;
 
@@ -248,6 +251,7 @@ async function main() {
   console.log(
     `▸ blind swarm: ${N} players · ${roster.length} personas · concurrency ${CONCURRENCY} · ${TURNS} turns/player`,
   );
+  console.log(`  models: ${modelOverride.length ? `rotating [${modelOverride.join(', ')}]` : 'persona-default'}`);
   console.log(`  out: ${OUT}\n`);
   const t0 = Date.now();
   let done = 0;
@@ -265,14 +269,7 @@ async function main() {
       console.log(
         `  [${String(done).padStart(3)}/${N}] ${pl.id.padEnd(26)} ${pl.model.padEnd(7)} turns=${String(turns).padStart(2)} final=${String(fin).padEnd(6)} realness=${real} ${r.ok ? '' : '(no interview)'}`,
       );
-      return {
-        ...pl,
-        ok: r.ok,
-        turns,
-        real: snap?.verdict?.real ?? false,
-        finalStatus: fin,
-        meta: r.meta,
-      };
+      return { ...pl, ok: r.ok, turns, real: snap?.verdict?.real ?? false, finalStatus: fin, meta: r.meta };
     },
     CONCURRENCY,
   );
