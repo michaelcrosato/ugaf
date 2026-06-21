@@ -131,6 +131,11 @@ function digestSnapshot(id: string): string {
   if (has('peels off the wire', 'walks you through the boom gate like baggage')) tags.push('leaned-on-debt');
   // Slipped the gate metal-free under dark — the LEARN route's silent escape (M2 reward).
   if (has('melt into the dark', 'the way is open', 'slip back to the waystation')) tags.push('slipped-the-gate');
+  // ---- night15 discoverability batch in the wild (feedback/0019 #1/#2) ----
+  // Was the wait fast-forward HINT shown (the player ground plain `wait` at a safe node)?
+  if (has('go by in a single step', 'pass them one tick at a time')) tags.push('SAW-wait-hint');
+  // Did the player then USE the fast-forward (the discoverability fix working)?
+  if (has('until the hour you wanted comes round', 'until the light has turned')) tags.push('used-fast-forward');
   return `${outcome} · surveyed=${surveyed} · bought=${bought}${tags.length ? ' · ' + tags.join(', ') : ''}`;
 }
 
@@ -197,6 +202,7 @@ const aggregate = [
   `prior-batch mechanics reached: decay-bit(predawn)=${tally(/DECAY-BIT/)} · saw-decay-warning=${tally(/saw-decay-warning/)} · topic-bound-refusal=${tally(/topic-bound-refusal/)} · deduce-legibility=${tally(/saw-deduce-legibility/)}`,
   `night12 mechanics reached (0016 #4/#5): hollow-shelter(safe-pocket)=${tally(/saw-hollow-shelter/)} · mox-window(concrete-hours)=${tally(/saw-mox-window/)}`,
   `night14 ENDGAME keystone (0018 — the watched gate goes live): reached-gate-watch=${tally(/reached-gate-watch/)} · clink-bit=${tally(/CLINK/)} · leaned-on-debt=${tally(/leaned-on-debt/)} · slipped-the-gate=${tally(/slipped-the-gate/)}`,
+  `night15 discoverability (0019 — surface the fast-forward, find the debt): saw-wait-hint=${tally(/SAW-wait-hint/)} · used-fast-forward=${tally(/used-fast-forward/)} · leaned-on-debt=${tally(/leaned-on-debt/)}`,
   `traps tripped: mile-lookback=${tally(/mile-lookback/)} · greywater-iron=${tally(/greywater-ate-iron/)} · antenna-summon=${tally(/antenna-summoned/)} · hollow-dark=${tally(/hollow-dark-bit/)}`,
 ].join('\n');
 
