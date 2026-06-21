@@ -220,4 +220,16 @@ describe('the climax has TEETH — the live watch makes the routes diverge', () 
     expect(canLeave(s)).toBe(false);
     expect(r.text.toLowerCase()).toMatch(/no.*debt|owe you|no strider|nobody/); // points you elsewhere, never a wall
   });
+
+  // feedback/0019 #2 — the debt was a BROKEN PROMISE: players reach for "ask the strider to walk me
+  // out", never the exact verb "lean on the debt". The act must accept what players actually type.
+  it('M3 discoverability: "walk me out" also spends the debt (not just "lean on the debt")', () => {
+    const s = atGate('climax-walkout', {
+      'reputation.pc.striders': 1,
+      'possession.pc.iron_knife.condition': 'ore',
+    });
+    s.act('walk me out');
+    expect(s.state.facts['flag.intercept_clear']).toBe(true); // the natural phrasing spends the debt
+    expect(canLeave(s)).toBe(true);
+  });
 });

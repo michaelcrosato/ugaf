@@ -95,7 +95,7 @@ export function createStealth(): Module {
             {
               tag: 'stealth_clink',
               mutations: [{ op: 'set', key: `awareness.${patrol}`, value: next }],
-              summary: `You drop low for the wedge of dark — and the worked iron on you knocks the post and rings out, flat and bright in the quiet. Heads turn. You will not slip a watched gate with good metal singing at your hip; the Greywater's lesson is the gate's lesson too. Shed the iron and go quiet, or lever the wire-gap with it, or lean on a Strider's debt.`,
+              summary: `You drop low for the wedge of dark — and the worked iron on you knocks the post and rings out, flat and bright in the quiet. Heads turn toward the sound: they have not placed you, but they are looking now, and the wedge of dark is no use while they are. You gave yourself away, not caught — just seen to move. You will not slip a watched gate with good metal singing at your hip; the Greywater's lesson is the gate's lesson too. Shed the iron and go quiet (then HIDE again), or lever the wire-gap with it, or lean on a Strider's debt.`,
               data: { patrol, awareness: next, clink: true },
             },
           ],

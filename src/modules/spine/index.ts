@@ -38,6 +38,12 @@ function floorLine(intent: string, utterance?: string): string | undefined {
   }
 }
 
+/** feedback/0019 #1 — taught when a player grinds plain `wait` at a safe node; surfaces the existing
+ *  single-turn fast-forward they kept missing. Names the syntax and a few real targets. */
+function waitHintLine(): string {
+  return '(The hours here run long and empty — you need not pass them one tick at a time. Try `wait until dawn`, or `until dusk`, or `until midday`, to let them go by in a single step.)';
+}
+
 export function createSpine(): Module {
   const manifest = makeManifest({
     id: 'spine.fu-pbta',
@@ -180,7 +186,32 @@ export function createSpine(): Module {
       // resting recovers your nerve (unless the deep dark is taking it faster — that fires on a later beat)
       const restRecovery =
         c === 'rest' ? [{ op: 'adjust' as const, key: 'survival.pc.unsettled', by: -1, min: 0, max: 5 }] : [];
-      if (summary) events.push({ tag: `spine_${c}`, mutations: restRecovery, summary, visibility: 'public' });
+      // feedback/0019 #1 — the loudest, all-tier complaint: `wait until <phase>` EXISTS but is
+      // undiscoverable, so players grind plain `wait` 15–25× and never find it. When a PLAIN wait
+      // repeats at a SAFE node (a fast-forward there would only skip dead time, never a hazard), teach
+      // the command. Streak is turn-stamped (a wait on the immediately-previous turn) so any other
+      // action breaks it; the hint fires from the 2nd consecutive grind on, only where it would help.
+      const plainWait = (c === 'wait' || c === 'rest') && typeof intent.topic !== 'string';
+      const streak = !plainWait
+        ? 0
+        : facts.getNumber('flag.wait_streak_turn') === args.ctx.turn - 1
+          ? (facts.getNumber('flag.wait_streak') ?? 0) + 1
+          : 1;
+      const waitMuts = plainWait
+        ? ([
+            { op: 'set', key: 'flag.wait_streak', value: streak },
+            { op: 'set', key: 'flag.wait_streak_turn', value: args.ctx.turn },
+          ] as const)
+        : [];
+      const hint =
+        plainWait && streak >= 2 && facts.getBool('law.wait_ff_unsafe') !== true ? waitHintLine() : undefined;
+      if (summary !== undefined || waitMuts.length)
+        events.push({
+          tag: `spine_${c}`,
+          mutations: [...restRecovery, ...waitMuts],
+          ...(summary !== undefined ? { summary: hint ? `${summary}\n${hint}` : summary } : {}),
+          visibility: 'public',
+        });
       return {
         nativeNext: { lastBand: band, beats: native.beats + 1 },
         events,

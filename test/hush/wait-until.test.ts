@@ -129,3 +129,31 @@ describe('wait until <phase> — a real single-turn fast-forward at safe nodes (
     expect(before).not.toBe(tod(s)); // but time still advanced one ordinary step
   });
 });
+
+// feedback/0019 #1 — THE LOUDEST SIGNAL, all four winners, every tier: the fast-forward EXISTS but is
+// undiscoverable. Three winners typed plain `wait` 15–25× and never found `wait until <phase>`. The fix
+// is pure discoverability: when a player repeats plain `wait` at a SAFE node, surface the command.
+describe('the wait-loop hint — surface the fast-forward when a player grinds plain `wait` (feedback/0019 #1)', () => {
+  it('repeating plain `wait` at a safe node surfaces `wait until`', () => {
+    const s = sess('wait-hint');
+    for (const c of ['out', 'road']) s.act(c); // -> Lyle's Rest (safe, day)
+    expect(s.act('wait').text.toLowerCase()).not.toMatch(/wait until/); // first wait: no nag
+    expect(s.act('wait').text.toLowerCase()).toMatch(/wait until/); // second consecutive: teach the command
+  });
+
+  it('the hint does not nag a player who already uses the fast-forward', () => {
+    const s = sess('wait-hint-ff');
+    for (const c of ['out', 'road']) s.act(c);
+    s.act('wait'); // streak 1
+    const ff = s.act('wait until dusk'); // a real fast-forward — never the discoverability nag
+    expect(ff.text.toLowerCase()).not.toMatch(/in (a |one )?single step|try .?wait until/);
+  });
+
+  it('a broken streak resets — a lone `wait` after acting is not nagged', () => {
+    const s = sess('wait-hint-reset');
+    for (const c of ['out', 'road']) s.act(c);
+    s.act('wait'); // streak 1
+    s.act('look'); // a non-wait action breaks the streak
+    expect(s.act('wait').text.toLowerCase()).not.toMatch(/wait until/); // streak is 1 again — no nag
+  });
+});

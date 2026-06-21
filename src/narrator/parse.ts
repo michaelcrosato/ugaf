@@ -18,7 +18,17 @@ const RETURN_WORDS = new Set(['back', 'leave', 'return', 'exit', 'away', 'retrea
 // verb phrases that, mapped to `use`, mean "lean on the Strider debt" at the watched gate (feedback/0018
 // night14). Tagged with topic 'debt' so the spine routes them to the debt-clear act, distinct from
 // prying the wire-gap with iron (`use`/`pry`/`lever`/`force`).
-const DEBT_VERBS = new Set(['lean on', 'lean', 'call in', 'cash in', 'invoke']);
+const DEBT_VERBS = new Set([
+  'lean on',
+  'lean',
+  'call in',
+  'cash in',
+  'invoke',
+  // feedback/0019 #2 — players reach for "walk me out", never the exact "lean on the debt"; accept it.
+  'walk me out',
+  'walk me through',
+  'walk me past',
+]);
 
 // meta queries route to `recall` (the Session renders them without committing a turn)
 const META: Record<string, string> = {
@@ -121,6 +131,10 @@ const VERBS: [string, IntentClass][] = [
   ['enter', 'go'],
   ['go to', 'go'],
   ['go', 'go'],
+  // the debt walk-out (feedback/0019 #2) — MUST precede 'walk'→go, or "walk me out" routes to movement.
+  ['walk me out', 'use'],
+  ['walk me through', 'use'],
+  ['walk me past', 'use'],
   ['walk', 'go'],
   ['head', 'go'],
   ['move', 'go'],

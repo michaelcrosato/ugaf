@@ -40,6 +40,27 @@ describe('the NPC information-economy', () => {
     expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1);
   });
 
+  // feedback/0019 #2 — the Mox debt was a BROKEN PROMISE: the gate offers "lean on the debt" but a
+  // player who paid for it goes back to Mox and asks how to spend it, hitting a wall. Mox must point
+  // to WHERE and HOW the debt is spent (at the wire), and the sale itself must name what it buys.
+  it('paying Mox names the debt it buys — a Strider walk-out at the wire (point-of-sale)', () => {
+    const s = sess('econ-mox-debt-sale');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    const r = s.act('pay mox');
+    expect(r.text.toLowerCase()).toMatch(/debt|owe|walk you (out|through)|at the wire|at the gate/);
+  });
+
+  it('asking Mox how to use the debt points you to the gate (the broken-promise repro)', () => {
+    const s = sess('econ-mox-debt-ask');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    s.act('pay mox'); // earn the debt
+    // the exact phrasings the qa-breaker tried and hit a wall on:
+    const a = s.act('ask mox about the debt');
+    expect(a.text.toLowerCase()).toMatch(/lean on .*debt|at the wire|at the gate|checkpoint/);
+    const b = s.act('ask mox to walk me out');
+    expect(b.text.toLowerCase()).toMatch(/lean on .*debt|at the wire|at the gate|checkpoint/);
+  });
+
   it('giving a coin to a non-merchant still dead-ends honestly (no false trade)', () => {
     const s = sess('econ-holt');
     s.act('out'); // Warden Holt is at the checkpoint and sells nothing
