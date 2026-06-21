@@ -2,62 +2,61 @@
 
 *A living snapshot of the autonomous build sessions. The work keeps going after this is written.*
 
-## The engine validated the big win across the board — then caught and fixed its own bugs
+## The endgame finally bites — and we caught the playtest engine quietly failing, and fixed it
 
 The whole project rests on one idea: AI players who play the game **truly blind** (seeing only the game,
 never the answers), as **demanding, cynical critics**, then report back — and we use that, over and over,
-to make the game better. This stretch the loop did two complete things at once: it took the hard-won
-"earned win" and **proved it holds for every kind of player**, and then — in the same cycle — the blind
-critics **found three real bugs the automatic safety net could never catch**, and we **fixed them**.
+to make the game better. This stretch did the most important version of that twice over: it **proved the
+big new change works**, and — in the same breath — it **caught the playtest machine itself silently
+producing nothing**, and fixed it.
 
-So far: **over 700 blind players across many play-sessions**, every change checked by the automatic
-safety net, a fresh second opinion, and merged clean. The repo is tidy.
+## The big win: the climax now has teeth, and every kind of player agrees
 
-## The win is fair, earned, and learnable — confirmed by 16 fresh critics, every kind of player
+For weeks the sharpest critics — the ones who *won* — said the same thing: the game promises a tense
+escape ("the Cordon will be watching the gate") and then the danger never arrives. You learned the rules
+and strolled out. We rebuilt the escape so the **three earned ways out actually diverge and cost
+something**: the worked iron you're carrying now *clinks* and gives you away at the gate (so the lesson
+"drop your iron" finally bites at the exit too), the bought favour is something you have to *spend* (not a
+free pass), and the quiet slip is the reward for having learned the world.
 
-We ran two fresh cynical cohorts (16 players, every persona, three different AI brains). The result was
-as clean as it gets: **everyone who played carefully and learned the rules won; everyone who rushed or
-deliberately broke the rules lost — and lost fairly, warned first.** Eight wins, eight losses, split
-perfectly along *how they played*, not which AI they were. The harshest prose critic we have won the
-game and called it "a review of a game that works." That is the foundation working at its best.
+Twelve fresh blind critics played it — every persona, three different AI brains (the big, the mid, the
+small). **Every one who reached the gate carrying the prize agreed the new danger is fair.** The harshest
+prose critic we have called the iron-clink *"the single most satisfying beat in the game."* The systems
+expert called it *"fair, mechanically earned."* That is the exact thing they've been asking for, landed
+and confirmed across the board. **Do not regress it.**
 
-## The frontier moved: the rules are fair, but they don't yet *bite* the player who learns them
+## We put our own machine on trial — and found it had been doing nothing
 
-Here is the sharp new finding — and it comes from the critics who **won**. The cleverest "systems" player
-put it plainly: *"The rules never bit. Knowing the rules is sufficient to feel nothing."* Each danger
-punishes a *mistake* — look back, speak a name, carry iron at night — so once you've learned the rule,
-you simply never make the mistake, and you stroll through with no tension. The dangers are a *checklist*,
-not a *gauntlet*. That is exactly the thing we most want to fix next: **make the dangers force real
-choices and real pressure, not just "don't do the wrong thing."** That is the next big swing (night13).
+Here is the uncomfortable, important part. When we went to run the blind playtest, **every single AI
+player launched, said "let me begin," and then quietly stopped without playing a single turn.** No errors,
+no warnings — just nothing. The cause: a small wiring bug meant the game-server the players connect to
+never started, so the players had no game to play. It would have silently wasted every playtest from here
+on. We found it, fixed it, proved the fix (12 of 12 players played for real), and wrote down how to spot
+it again. The playtest engine is honest again.
 
-## What we shipped this stretch (night12)
+## What's next — finish what the new gate started
 
-- **The shop is honest now:** the salvager Mox finally tells you the *actual* safe hour ("the bottoms
-  sleep at midday, wake at six") when you pay her — before, she sold "an hour" without ever saying which,
-  and a player lost a whole run because of it.
-- **The dark reads right:** when you wait out the night in a sheltered spot, the game now tells you *why*
-  you're safe there — turning a confusing non-event into a learned rule.
-- **The listening field is worth visiting:** the game now points you to a coin-free way to learn the
-  water's law by braving the antennas — so a whole third of the world stops being decorative.
-- **Three bugs the critics caught, fixed:** examining your own knife used to show a dead man's dissolved
-  blade from another place (in the first minute!); "wait until day" looked broken when it was quietly
-  protecting you (now it explains itself); and a reported "reading the walls breaks a trade" turned out
-  to be a false alarm (now guarded against).
-- **We put our own tools on trial:** the playtest swarm now survives the rate-limit errors that kept
-  interrupting us (it paces itself and retries), and it can no longer quietly lose a player's report.
+The critics are unanimous on three small, surgical follow-ups, and they all *complete* the win above:
+- **The night is dead air.** There is a one-word command that skips the long empty hours to dawn or dusk —
+  but players can't find it, so they type "wait" twenty-five times and call it the worst part of the game.
+  We'll simply *tell* them the command exists. (The single loudest complaint, every kind of player.)
+- **The bought-favour escape is a broken promise.** The gate says "lean on the debt" — but a player who
+  paid for that favour can't figure out how to spend it (they try "ask the salvager to walk me out" and
+  hit a wall). We'll make the game understand the words players actually type, and have the salvager tell
+  them where to use it.
+- **The quiet slip is hard to discover.** Hiding in the dark is the reward for learning the world, but
+  nothing in the room hints that you *can* hide there. We'll point at the shadow before the player has to
+  guess.
 
-## What's next
-
-The keystone above: **make the world's dangers bite the careful player too** — turn "don't do X" into
-real dilemmas with real pressure, the way a great showcase level keeps you on edge even when you know the
-rules. Plus a clear list of smaller fixes the critics named: the way *out* of the Zone needs to feel
-earned (right now it can resolve itself), and one confusing pair of place-names ("the fork" vs "the
-ford") cost a careful player their prize. Full detail in `feedback/0017.md`.
+After that: make the *other* dangers bite the careful player the way the gate now does, and pull the
+antenna field onto the main path (right now a third of the world is skippable). Full detail in
+`feedback/0019.md`.
 
 ## Bottom line
 
-The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — had its strongest
-cycle yet: it **proved** the central promise (learn the world to survive it) holds for every kind of
-player and every AI tier, **caught and fixed its own bugs** in the same breath, **hardened itself**
-against the rate-limit pain that was slowing us down, and **named the next mountain** — making the
-dangers genuinely *bite*, not just gate. The foundation is sound; the next swing is the fun.
+The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — had a landmark stretch:
+it **landed the keystone** (the hollow endgame now bites, fair across every AI tier, by the verdict of the
+critics who'd been demanding it), **repaired itself** (the playtest machine had gone silently dark in the
+isolated workspace, and we caught it by auditing the loop, not by any in-game check), and **named a tight,
+high-confidence next batch** that finishes the job. The climax arrived. Now we make the rest of the world
+keep that promise.
