@@ -56,6 +56,58 @@ export function createAnomaly(pack: WorldPack): Module {
   }
 
   /**
+   * Would a multi-hour WAIT here be hazardous — i.e. would fast-forwarding the clock through the
+   * dark silently skip a law that bites a waiting player (feedback/0016 #1)? This is PHASE-INDEPENDENT
+   * (it asks "if I wait through the hungry hours, does anything here have teeth for me?") so the time
+   * module can read it BEFORE it decides the jump, regardless of the current phase. The clock fast-
+   * forwards only when this is false; otherwise it advances one ordinary step and the law fires
+   * turn-by-turn exactly as today — no law is ever silently skipped.
+   *
+   * A live, in-scope law is a wait-hazard when:
+   *   - its trigger fires on wait/rest in a dark phase (the Hollow Dark: stillness in the deep), OR
+   *   - it degrades worked matter the player is carrying in the dark (the Greywater: iron, or the
+   *     anomalous core), so waiting in the water with metal/core feeds the loss.
+   */
+  function waitFastForwardUnsafe(node: string | undefined, facts: FactView): boolean {
+    if (!node) return false;
+    const DARK = ['dusk', 'night', 'predawn'];
+    const gatePhases = (law: LawDefinition): string[] => {
+      const out = new Set<string>();
+      const collect = (p: unknown) => {
+        if (!p || typeof p !== 'object') return;
+        const o = p as Record<string, unknown>;
+        if (Array.isArray(o.phase)) for (const x of o.phase) out.add(String(x));
+        else if (typeof o.phase === 'string') out.add(o.phase);
+        if (Array.isArray(o.all)) for (const q of o.all) collect(q);
+        if (Array.isArray(o.any)) for (const q of o.any) collect(q);
+      };
+      collect(law.ambientGate);
+      collect(law.trigger);
+      // a window-drifted law has crept into the phase(s) it widensTo (e.g. predawn)
+      if (facts.getBool(`law.${law.id}.window_drifted`)) for (const p of law.drift?.widensTo ?? []) out.add(p);
+      return [...out];
+    };
+    for (const law of laws.values()) {
+      if (facts.getBool(`law.${law.id}.live`) === false) continue;
+      if (!inScope(law, node)) continue;
+      const phases = gatePhases(law);
+      const darkGated = phases.some((p) => DARK.includes(p));
+      if (!darkGated) continue; // a law that bites only by day cannot ambush a dark wait
+      // a stillness law (wait/rest trigger): waiting through the dark IS the trigger
+      const intents = law.trigger && 'intent' in law.trigger ? law.trigger.intent : undefined;
+      const intentList = Array.isArray(intents) ? intents : intents ? [intents] : [];
+      if (intentList.includes('wait') || intentList.includes('rest')) return true;
+      // a matter-degrading law: unsafe only if you carry what the dark will un-make (the class, or
+      // the anomalous core — worked matter the Greywater wants home).
+      if (law.effect.kind === 'degrade_item_class') {
+        if (carryingClass(facts, law.effect.itemClass)) return true;
+        if (facts.getBool('possession.pc.salvage_core')) return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * The Law-Drift "hungry hours lengthen" window-widen (feedback/0012 #5): a
    * `mutates: 'window'` law that has DRIFTED bites in the phase(s) it has crept into
    * (its `widensTo`, e.g. predawn). We model this as "the law experiences the new phase
@@ -403,11 +455,25 @@ export function createAnomaly(pack: WorldPack): Module {
         }
       }
 
+      // publish the "is a long wait here safe?" fact for the clock's fast-forward gate (feedback/0016
+      // #1). Emit ONLY on a change so the convergence poll still terminates (an unchanged value would
+      // keep the beat-loop flagged as changed forever). Read next turn by time.cycle, BEFORE it decides
+      // a `wait until <phase>` jump — so a hazard window can never be silently skipped.
+      const ffEvents: WorldEvent[] = [];
+      const ffUnsafe = waitFastForwardUnsafe(node, facts);
+      if (facts.getBool('law.wait_ff_unsafe') !== ffUnsafe) {
+        ffEvents.push({
+          tag: 'wait_ff_gate',
+          mutations: [{ op: 'set', key: 'law.wait_ff_unsafe', value: ffUnsafe }],
+          visibility: 'private',
+        });
+      }
+
       // law_trigger: fold all firing laws in canonical order (K6)
       const firing = foldOrder([...laws.values()].filter((l) => inScope(l, node) && triggers(l, facts, ctx.turn)));
-      if (firing.length === 0 && huntEvents.length === 0 && coreEvents.length === 0) return {};
+      if (firing.length === 0 && huntEvents.length === 0 && coreEvents.length === 0 && ffEvents.length === 0) return {};
 
-      const events: WorldEvent[] = [...huntEvents, ...coreEvents];
+      const events: WorldEvent[] = [...huntEvents, ...coreEvents, ...ffEvents];
       const scheduled: ScheduledEvent[] = [...huntScheduled];
       let render: BeatResult['render'] | undefined = coreRender ?? huntRender;
       for (const law of firing) {

@@ -34,6 +34,30 @@ const META: Record<string, string> = {
   commands: 'help',
 };
 
+// "wait/rest/sleep until <phase>" targets — the player names a time-of-day; we
+// canonicalise to a phase-boundary token the clock can fast-forward to in ONE turn
+// (feedback/0016 #1). "dawn" is the 06:00 day-boundary (distinct from predawn at 04:00);
+// "midday" is the safe-hour Mox sells. The clock maps these to minute-of-day boundaries.
+const WAIT_PHASES: Record<string, string> = {
+  dawn: 'dawn',
+  daybreak: 'dawn',
+  sunrise: 'dawn',
+  morning: 'dawn',
+  day: 'day',
+  daylight: 'day',
+  light: 'day',
+  midday: 'midday',
+  noon: 'midday',
+  dusk: 'dusk',
+  evening: 'dusk',
+  sundown: 'dusk',
+  sunset: 'dusk',
+  nightfall: 'night',
+  night: 'night',
+  dark: 'night',
+  predawn: 'predawn',
+};
+
 const DIRECTIONS: Record<string, string> = {
   n: 'north',
   s: 'south',
@@ -386,10 +410,42 @@ export function createParser(pack: WorldPack): Parser {
         raw,
       };
     }
+    // "wait/rest/sleep until <phase>" — a real single-turn fast-forward (feedback/0016 #1).
+    // Capture the named phase as the topic; the time module reads it and jumps the clock to
+    // that boundary (at a safe node) instead of advancing one dead +30/+120 step.
+    if (cls === 'wait' || cls === 'rest') {
+      const m = rest.match(/^(?:until|til|till|to|for|through|thru)\s+(?:the\s+|next\s+|dawn\s+becomes\s+)?(.+)$/);
+      const named = (m ? m[1]! : rest).trim();
+      const phase = WAIT_PHASES[named];
+      if (phase) return { class: cls, topic: phase, tags: ['fast_forward'], confidence: 0.92, raw };
+    }
     // no-target verbs
     if (['look', 'wait', 'rest', 'recall', 'look_back', 'hide', 'sneak', 'flee', 'listen', 'search'].includes(cls)) {
       const ref = rest ? resolveNoun(rest, obs) : undefined;
       return { class: cls, ...(ref ? { target: ref } : {}), tags: [], confidence: 0.9, raw };
+    }
+    // "give/offer/trade <item> to <someone>" — the player is handing over an OBJECT, not opening a
+    // bribe contest. Split on " to " and resolve the part before it as the GIFT (prefer an item), so
+    // "offer the relic to eun" routes to the relic trade exactly like "give the relic to eun" — never
+    // to a coin/bribe path that loses the relic (feedback/0016 #3). Canonicalised to `give` so the
+    // social module's relic-payment branch handles it uniformly.
+    if (cls === 'give' || cls === 'bribe') {
+      const toIdx = rest.search(/\s+to\s+/);
+      if (toIdx >= 0) {
+        const gift = rest.slice(0, toIdx).trim();
+        const giftRef = gift ? resolveNoun(gift, obs, ['item', 'examinable']) : undefined;
+        if (giftRef?.tags?.includes('item')) {
+          const itemCls = giftRef.tags?.find((t) => ['metal', 'light', 'salvage', 'coin', 'tool'].includes(t));
+          return {
+            class: 'give',
+            target: giftRef,
+            ...(itemCls ? { itemClass: itemCls } : {}),
+            tags: [],
+            confidence: 0.88,
+            raw,
+          };
+        }
+      }
     }
     // target verbs (examine/take/drop/use/open/close/talk/parley/bribe/intimidate/attack/give/read)
     const ref = resolveNoun(rest, obs, PREFER[cls]);

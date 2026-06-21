@@ -139,7 +139,17 @@ export function createGumshoe(pack: WorldPack): Module {
         const tells = lawTells.get(lawId) ?? [];
         const seen = tells.filter((t) => facts.getBool(`known.tell.${t}`)).length;
         const cur = (facts.getString(`known.law.${lawId}`) as KnowledgeStage) ?? 'unknown';
-        if (seen >= law.discovery.minTellsToSurvey && native.insight > 0) {
+        // A fully-evidenced deduction ALWAYS succeeds — insight is the cost of the FIRST deductive
+        // leap, never a wall in front of a law you have already read all the signs for (feedback/0016
+        // #2). The old `insight > 0` gate stranded the SIGNATURE loop: after a few drift→re-Settle
+        // cycles the pool hit 0 and a re-deduce of a 2-of-2 law fell into the "go deeper" branch — a
+        // flat contradiction ("2 of 2 signs found" yet "go deeper") that left the codex stuck at
+        // approximate, even on a mastery run. Re-confirming a law you have EVER surveyed costs no
+        // insight (you did the work once; this is a refresh); only a first-ever deduction spends it.
+        // Brute-force guessing is already barred by the evidence requirement below, not by insight.
+        if (seen >= law.discovery.minTellsToSurvey) {
+          const everSurveyed = facts.getBool(`known.${lawId}.ever_surveyed`);
+          const spend = everSurveyed ? 0 : 1;
           const conclusion = law.tells.map((t) => tellProse.get(t.id)?.conclusion).find(Boolean);
           // a re-read of a DRIFTED law is not byte-identical: it reports the widened window,
           // so re-Settling visibly refreshes stale knowledge (feedback/0012 #5).
@@ -147,7 +157,7 @@ export function createGumshoe(pack: WorldPack): Module {
             ? ' And it has spread since you first read it: the hungry hours have crept into the grey hour before dawn, where once the coming light meant safety.'
             : '';
           return {
-            nativeNext: { insight: native.insight - 1 },
+            nativeNext: { insight: Math.max(0, native.insight - spend) },
             events: [
               {
                 tag: 'law_surveyed',

@@ -54,7 +54,7 @@ export function createSpine(): Module {
     priority: 0, // the floor — lowest priority, can never be armed away
     intents: ['wait', 'rest', 'look', 'recall', 'use', 'open', 'close', 'speak_aloud', 'call_out', 'unclassified'],
     writesFacts: ['flag', 'world', 'survival'],
-    readsFacts: ['flag', 'world', 'phase', 'survival', 'possession', 'loc'],
+    readsFacts: ['flag', 'world', 'phase', 'survival', 'possession', 'loc', 'law'],
   });
 
   const CLAIMED = ['wait', 'rest', 'look', 'recall', 'use', 'open', 'close', 'speak_aloud', 'call_out', 'unclassified'];
@@ -115,10 +115,31 @@ export function createSpine(): Module {
 
       const roll = args.tape.die('spine', 6, 'fu-d6');
       const band = LADDER[roll]!;
-      const summary = floorLine(c, intent.utterance);
+      // "wait/rest until <phase>" — surface the requested phase for the clock to fast-forward to
+      // in ONE turn (feedback/0016 #1). The time module reads this flag in the phase_change beat and,
+      // at a SAFE node, jumps the clock to that boundary instead of advancing one dead +30/+120 step;
+      // at a hazardous node it advances one normal step (no law silently skipped). The flag is
+      // turn-scoped (paired with the turn) so a stale value never re-fires a jump on the next wait.
+      const fastForward =
+        (c === 'wait' || c === 'rest') &&
+        typeof intent.topic === 'string' &&
+        facts.getBool('law.wait_ff_unsafe') !== true;
+      // when the clock will fast-forward, the time module narrates the long passage to the named hour —
+      // so suppress the spine's terse one-beat "You wait" line (it would read as a contradiction).
+      const summary = fastForward ? undefined : floorLine(c, intent.utterance);
       const events: WorldEvent[] = [
         { tag: 'spine_beat', mutations: [{ op: 'set', key: 'flag.last_band', value: band }], visibility: 'private' },
       ];
+      if ((c === 'wait' || c === 'rest') && typeof intent.topic === 'string') {
+        events.push({
+          tag: 'wait_until',
+          mutations: [
+            { op: 'set', key: 'flag.wait_until_phase', value: intent.topic },
+            { op: 'set', key: 'flag.wait_until_turn', value: args.ctx.turn },
+          ],
+          visibility: 'private',
+        });
+      }
       // resting recovers your nerve (unless the deep dark is taking it faster — that fires on a later beat)
       const restRecovery =
         c === 'rest' ? [{ op: 'adjust' as const, key: 'survival.pc.unsettled', by: -1, min: 0, max: 5 }] : [];
