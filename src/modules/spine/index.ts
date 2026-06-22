@@ -91,19 +91,58 @@ export function createSpine(): Module {
         if (invokesDebt) {
           const owed = (facts.getNumber('reputation.pc.striders') ?? 0) >= 1;
           if (owed) {
+            // feedback/0024 #1 (the keystone) — the debt was the one threshold where iron costs nothing: a
+            // frictionless, strictly-easier-than-slip button that deleted the climax. Now the walk-out is a
+            // HANDS-ON pass ("baggage gets handled"): it ALWAYS costs a held-breath near-miss (a nerve beat,
+            // unconditional — so the debt is never strictly easier than the free-but-conditional slip), and a
+            // player who leans on it carrying WORKING iron loses it to the search (the Strider gives it up as
+            // his toll — the same iron-betrays-you law the Greywater and the CLINK already enforce). It still
+            // ALWAYS wins (recoverable, telegraphed by Mox up front) — resistance, never a wall.
+            const metalKeys = facts
+              .keysUnder('possession.pc')
+              .filter((k) => k.endsWith('.class') && facts.getString(k) === 'metal');
+            const ironClassKey = metalKeys.find(
+              (k) => facts.getString(`${k.slice(0, -'.class'.length)}.condition`) !== 'ore',
+            );
+            if (ironClassKey) {
+              const itemKey = ironClassKey.slice(0, -'.class'.length); // e.g. possession.pc.iron_knife
+              return {
+                nativeNext: native,
+                events: [
+                  {
+                    tag: 'debt_walkout',
+                    mutations: [
+                      { op: 'set', key: 'flag.intercept_clear', value: true },
+                      { op: 'delete', key: itemKey }, // the iron the search found — given up as the toll
+                      { op: 'delete', key: ironClassKey },
+                      { op: 'delete', key: `${itemKey}.condition` },
+                      { op: 'adjust', key: 'survival.pc.unsettled', by: 2, min: 0, max: 5 },
+                    ],
+                    summary:
+                      'You lean on the debt. The Strider who owes you peels off the wire — but when Holt’s man steps in to paw at the baggage the way they are paid to, his hand closes on the worked iron on you, and the whole gate goes still. A blade in the pack of a salvager being walked out under a Strider’s word is exactly the kind of thing that gets a man searched to the skin, core and all. The Strider moves fast: takes the iron off you, presses it into the trooper’s palm like it was always the toll, and talks low and quick until the man pockets it and waves you through. You are past the wire, the core still hidden and warm at your spine — but the iron is gone, given up to buy the silence, and your heart is going like a trip-hammer. Baggage gets handled; she told you to carry none.',
+                    severity: 'reversible',
+                  },
+                ],
+                control: { kind: 'continue' },
+                render: { labels: ['intercept.debt'], valence: 'cost' },
+              };
+            }
             return {
               nativeNext: native,
               events: [
                 {
-                  tag: 'debt_called',
-                  mutations: [{ op: 'set', key: 'flag.intercept_clear', value: true }],
+                  tag: 'debt_walkout',
+                  mutations: [
+                    { op: 'set', key: 'flag.intercept_clear', value: true },
+                    { op: 'adjust', key: 'survival.pc.unsettled', by: 1, min: 0, max: 5 },
+                  ],
                   summary:
-                    'You lean on the debt. The Strider who owes you peels off the wire, says a low word to Warden Holt that you do not catch, and walks you through the boom gate like baggage — Mox keeps her debts, and collects them. You are past the wire, the core still warm at your spine.',
+                    'You lean on the debt. The Strider who owes you peels off the wire, says a low word to Warden Holt that you do not catch — and then Holt’s man steps in to paw at the baggage anyway, the way they are paid to. For one long breath his hand is a foot from the core and you do not breathe; then the Strider says the word again, harder, and the trooper steps back. You are walked through the boom gate like freight — past Holt, not around him — and he marks your face the way a man marks a debt he means to collect. The core is through the wire and warm at your spine, and now you know what "walked out like baggage" costs a body’s nerve to learn.',
                   severity: 'reversible',
                 },
               ],
               control: { kind: 'continue' },
-              render: { labels: ['intercept.debt'], valence: 'boon' },
+              render: { labels: ['intercept.debt'], valence: 'cost' },
             };
           }
           return {
