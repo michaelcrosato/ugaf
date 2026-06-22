@@ -588,8 +588,20 @@ export const NODES: NodeDef[] = [
         id: 'rust_bloom',
         names: ['rust', 'rust-bloom', 'bloom', 'rivets'],
         tell: 'grey_rust_bloom',
+        // feedback/0025 #6 — the bloom must read TRUE to the phase: by daylight it is dormant (the room
+        // says the metal in the silt "is just metal"), so the examinable can't claim to be spreading as
+        // you watch — that contradiction made a careful player second-guess the very law they'd deduced.
+        // The daytime base still TEACHES the law through the slumped-blade evidence; the dark variant
+        // shows the live bloom. (The tell fires on examine regardless of variant, so deduction is intact.)
         look: {
-          base: 'Rust spreading across worked iron like frost on glass — fast enough that you can watch a rivet go from grey to red-orange in the time it takes to breathe.',
+          base: 'By daylight the rust on the old rivets sits dormant and ordinary — just rust, on metal that is only metal while the sun is up. But the blade slumped to a smear of red ore in the silt beside it shows what the dark does to worked iron down here: grey to rotten-red in the time it takes to breathe, when the water wakes. It is sleeping now. It will not sleep past dusk.',
+          variants: [
+            {
+              when: { phase: ['dusk', 'night', 'predawn'] },
+              replace: true,
+              text: 'Rust spreading across worked iron like frost on glass — fast enough that you can watch a rivet go from grey to red-orange in the time it takes to breathe. The water has woken, and it is hungry for every worked thing you carry.',
+            },
+          ],
         },
       },
       {
