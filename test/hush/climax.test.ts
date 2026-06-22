@@ -14,6 +14,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { HUSH_PACK } from '../../content/hush/index.js';
+import { NPCS } from '../../content/hush/npcs.js';
 import { createGame } from '../../src/game/assemble.js';
 import { Session } from '../../src/game/session.js';
 
@@ -262,5 +263,103 @@ describe('the climax has TEETH — the live watch makes the routes diverge', () 
     expect(look).not.toContain('(HIDE)'); // the gamey caps-parenthetical is gone
     expect(look.toLowerCase()).toContain('go low and quiet'); // the diegetic telegraph stays
     expect(look.toLowerCase()).toContain('hide'); // the verb is still there to echo — just woven in, not barked
+  });
+});
+
+// feedback/0024 #1 (the keystone — "the optimal path refunds every cost"): the debt was the one threshold
+// where iron costs nothing — a frictionless, signposted, strictly-easier-than-slip button that deleted the
+// climax (≥9 personas, all tiers, HIGH). The fix: the walk-out is a HANDS-ON pass — "baggage gets handled."
+// It always costs a held-breath near-miss (a nerve beat, unconditional, so it is never strictly easier than
+// the free-but-conditional slip), and a player who leans on it carrying WORKING iron loses it — the search
+// finds it and the Strider gives it up as his toll (the same iron-betrays-you law the Greywater and the
+// CLINK already enforce). Still always a WIN, telegraphed by Mox up front, recoverable — resistance, never a wall.
+describe('the climax has TEETH — leaning on the debt costs something AT THE MOMENT OF USE (feedback/0024 #1)', () => {
+  it('a metal-free walk-out costs a held-breath nerve beat — the debt is no longer a free button', () => {
+    // metal-free (iron slumped), debt owed: the cleanest version of the walk-out — and it STILL costs you
+    const s = atGate('debt-cost-clean', {
+      'reputation.pc.striders': 1,
+      'possession.pc.iron_knife.condition': 'ore', // nothing for the search to find
+    });
+    const before = (s.state.facts['survival.pc.unsettled'] as number) ?? 0;
+    const r = s.act('lean on the debt');
+    expect(canLeave(s)).toBe(true); // still a WIN route — never a wall
+    expect((s.state.facts['survival.pc.unsettled'] as number) ?? 0).toBe(before + 1); // the nerve cost lands in the moment
+    expect(r.text.toLowerCase()).toMatch(/baggage|paw|searched|breath|toll|a foot from the core/); // the search near-miss is narrated
+  });
+
+  it('leaning on the debt carrying WORKING iron costs you the iron — the Strider gives it up as his toll', () => {
+    const s = atGate('debt-cost-iron', { 'reputation.pc.striders': 1 }); // broke kit -> a WORKING iron knife on you
+    expect(s.state.facts['possession.pc.iron_knife']).toBe(true); // you are carrying working iron
+    const before = (s.state.facts['survival.pc.unsettled'] as number) ?? 0;
+    const r = s.act('lean on the debt');
+    expect(canLeave(s)).toBe(true); // never a wall — you still get the core out
+    expect(s.state.facts['possession.pc.iron_knife']).toBeUndefined(); // the search found it — given up as the toll
+    expect(s.state.facts['possession.pc.iron_knife.class']).toBeUndefined(); // and it is fully gone from your kit
+    expect((s.state.facts['survival.pc.unsettled'] as number) ?? 0).toBe(before + 2); // a sharper near-miss than the clean pass
+    expect(r.text.toLowerCase()).toMatch(/iron|toll|gone/); // the prose names the cost plainly
+  });
+
+  it('the costed walk-out still narrates "peels off the wire" — the swarm digest marker keeps firing', () => {
+    // the behavioural digest keys `leaned-on-debt` on this exact phrase; the cost must not silence the marker
+    const s = atGate('debt-cost-marker', {
+      'reputation.pc.striders': 1,
+      'possession.pc.iron_knife.condition': 'ore',
+    });
+    const r = s.act('lean on the debt');
+    expect(r.text.toLowerCase()).toContain('peels off the wire');
+  });
+
+  it('"walk me out" also pays the cost (the natural phrasing is not a cheaper door)', () => {
+    const s = atGate('debt-cost-walkout', { 'reputation.pc.striders': 1 }); // working iron
+    s.act('walk me out');
+    expect(s.state.facts['possession.pc.iron_knife']).toBeUndefined(); // same toll, however you phrase it
+    expect(canLeave(s)).toBe(true);
+  });
+
+  it('the search takes EVERY piece of working iron, not just one — the telegraph ("any worked iron") is honest', () => {
+    // carry BOTH a working knife (broke kit) AND a working crowbar — a hands-on search forfeits the lot
+    const s = atGate('debt-cost-multimetal', {
+      'reputation.pc.striders': 1,
+      'possession.pc.crowbar': true,
+      'possession.pc.crowbar.class': 'metal',
+    });
+    expect(s.state.facts['possession.pc.iron_knife']).toBe(true);
+    expect(s.state.facts['possession.pc.crowbar']).toBe(true);
+    s.act('lean on the debt');
+    expect(s.state.facts['possession.pc.iron_knife']).toBeUndefined(); // both pieces gone — not one
+    expect(s.state.facts['possession.pc.crowbar']).toBeUndefined();
+    expect(s.state.facts['possession.pc.crowbar.class']).toBeUndefined();
+    expect(canLeave(s)).toBe(true); // still a win
+  });
+
+  it('ore-slumped iron is NOT confiscated (already worthless) — the metal-free clean pass, no item loss', () => {
+    // iron already eaten by the Greywater: the search has nothing worth taking, so the walk-out is the clean beat
+    const s = atGate('debt-cost-ore', {
+      'reputation.pc.striders': 1,
+      'possession.pc.iron_knife.condition': 'ore',
+    });
+    const before = (s.state.facts['survival.pc.unsettled'] as number) ?? 0;
+    s.act('lean on the debt');
+    expect(s.state.facts['possession.pc.iron_knife']).toBe(true); // the ruined ore stays in your kit, untaken
+    expect((s.state.facts['survival.pc.unsettled'] as number) ?? 0).toBe(before + 1); // only the clean-pass nerve beat
+    expect(canLeave(s)).toBe(true);
+  });
+
+  it('Mox telegraphs the cost up front — the walk-out is a hands-on pass, not a free glide (fairness: known before use)', () => {
+    const mox = NPCS.find((n) => n.id === 'strider_mox')!;
+    // the lines that PROMISE the walk-out must also WARN, in the same breath, that it is a hands-on pass
+    // and that iron-on-you is forfeit — so the cost is known before the player ever leans on it.
+    const walkoutLines = (mox.dialogue ?? []).filter((d) =>
+      /lean on the debt|walk you (out|past)|walk-out/.test(d.text.toLowerCase()),
+    );
+    expect(walkoutLines.length).toBeGreaterThan(0);
+    const warns = walkoutLines.some((d) => {
+      const t = d.text.toLowerCase();
+      return (
+        /baggage|hands on|paw|searched?|patted/.test(t) &&
+        /no iron|carry no iron|iron on you|forfeit|his toll|lose it|it.s gone|taken/.test(t)
+      );
+    });
+    expect(warns).toBe(true);
   });
 });

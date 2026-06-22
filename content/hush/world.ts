@@ -242,7 +242,7 @@ export const NODES: NodeDef[] = [
               { not: { fact: 'flag.intercept_clear', eq: true } },
             ],
           },
-          text: 'A Strider owes you a way through, and Mox keeps her debts. Lean on it, and you will be walked out past the wire like baggage.',
+          text: 'A Strider owes you a way through, and Mox keeps her debts. Lean on it, and you will be walked out past the wire like baggage — but baggage gets handled: you go through under their noses, and the trooper paws your pack on the way. Any worked iron on you when you lean on it, they will turn up and keep as the toll. Lean on it stripped of metal, or lean on it poorer.',
         },
         // feedback/0020 #5 — the antenna onto the win path: carrying the shard out of the field, the gate
         // offers a FOURTH way — throw the troopers' attention with the relic's song. Telegraphed here so
@@ -263,7 +263,7 @@ export const NODES: NodeDef[] = [
         // for this beat (so a player who just HID isn't told to HIDE again).
         {
           // route-agnostic finish cue: whether you levered the gap with iron or leaned on a debt, the
-          // ACT itself narrated the flavour (spine: pry / debt_called) — here the room just confirms the
+          // ACT itself narrated the flavour (spine: pry / debt_walkout) — here the room just confirms the
           // gate is behind you. (feedback/0018 night14: the passive "a Strider steps up" replace variant
           // that opened the gate with no act is gone; the debt now fires only through the lean-on act.)
           when: {

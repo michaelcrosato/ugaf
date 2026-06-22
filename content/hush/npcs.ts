@@ -282,7 +282,7 @@ export const NPCS: NpcDef[] = [
         // at dusk (18:00 / "six"). Framed as luck BOUGHT, not water learned (the win-screen's theme,
         // moved to point-of-sale) — and the drift caveat names its direction (creeps past dusk toward
         // the grey before dawn, matching the law's widensTo: ['predawn']).
-        text: "Here's the safe hour, then, and the dry line through the bottoms. The water sleeps through the daylight and lies deadest at midday — and it wakes hungry the moment the light goes, call it six o'clock, and stays starving till dawn. So you cross with the sun up: midday's your safest, dusk's your hard deadline, and a step past that the bottoms have your iron and your prize both. Carry no metal and you'll not even need the hour. And mind — this is luck you're buying off me, not water you've learned to read yourself: an hour I sell is true today and no longer. The Hush re-Settles, the hungry stretch runs longer some weeks than others, and a line timed to the minute can creep — past dusk, into the grey before dawn that used to be safe. Sit on it too long and you'll want it read again. Bought luck runs out; that's the whole of what I'm selling you — and don't forget who sold it to you. One more thing, since your coin's good: buying the hour buys you a face at the wire. A Strider of mine watches that checkpoint, and now he owes you a walk-out. When you come back through with the core, don't try to spend that favour on me here at my fire — LEAN ON THE DEBT at the gate, say it plain, and he'll walk you past the troopers like baggage.",
+        text: "Here's the safe hour, then, and the dry line through the bottoms. The water sleeps through the daylight and lies deadest at midday — and it wakes hungry the moment the light goes, call it six o'clock, and stays starving till dawn. So you cross with the sun up: midday's your safest, dusk's your hard deadline, and a step past that the bottoms have your iron and your prize both. Carry no metal and you'll not even need the hour. And mind — this is luck you're buying off me, not water you've learned to read yourself: an hour I sell is true today and no longer. The Hush re-Settles, the hungry stretch runs longer some weeks than others, and a line timed to the minute can creep — past dusk, into the grey before dawn that used to be safe. Sit on it too long and you'll want it read again. Bought luck runs out; that's the whole of what I'm selling you — and don't forget who sold it to you. One more thing, since your coin's good: buying the hour buys you a face at the wire. A Strider of mine watches that checkpoint, and now he owes you a walk-out. When you come back through with the core, don't try to spend that favour on me here at my fire — LEAN ON THE DEBT at the gate, say it plain, and he'll walk you past the troopers like baggage. But mind — a walk-out's no free pass. You go through right under their noses, not around them, and his man'll paw your baggage on the way through; carry worked iron when you lean on it and they'll turn it up in the search and keep it as their toll. Go through clean, stripped of metal, or go through poorer.",
         grantsLeadTell: 'grey_low_hum',
         setsFacts: {
           'known.tell.grey_low_hum': true,
@@ -300,7 +300,7 @@ export const NPCS: NpcDef[] = [
       {
         id: 'mox_debt',
         topic: 'debt',
-        text: "The debt? Aye — that's the walk-out a Strider of mine owes you for buying the hour. You don't lean on it here at my fire, mind; it's no good to you at this camp. It's spent at the WIRE. Get back to the checkpoint with the core, and there'll be a Strider watching who owes you — lean on the debt right there at the gate, say it plain, and he walks you out past the troopers. Try to call it in anywhere else and you'll just be talking to me.",
+        text: "The debt? Aye — that's the walk-out a Strider of mine owes you for buying the hour. You don't lean on it here at my fire, mind; it's no good to you at this camp. It's spent at the WIRE. Get back to the checkpoint with the core, and there'll be a Strider watching who owes you — lean on the debt right there at the gate, say it plain, and he walks you out past the troopers like baggage. And baggage gets handled: you go through under their noses, and his man pats you down on the way. Carry worked iron when you lean on it and he turns it up in the search and it's gone — kept as his toll for the silence. Lean on it stripped of metal, or lean on it poorer. Try to call it in anywhere else and you'll just be talking to me.",
       },
       {
         id: 'mox_wire',
@@ -310,12 +310,12 @@ export const NPCS: NpcDef[] = [
       {
         id: 'mox_walkout',
         topic: 'walk',
-        text: "Walk you out? Not me, not from here — but a Strider of mine will, at the wire. That's the favour the hour buys you. Get to the checkpoint with the core and lean on the debt at the gate; he owes you, and he'll walk you past the troopers like baggage. It's the gate you lean on it at, not my fire.",
+        text: "Walk you out? Not me, not from here — but a Strider of mine will, at the wire. That's the favour the hour buys you. Get to the checkpoint with the core and lean on the debt at the gate; he owes you, and he'll walk you past the troopers like baggage — and baggage gets searched on the way, so go stripped of iron or go poorer. It's the gate you lean on it at, not my fire.",
       },
       {
         id: 'mox_checkpoint',
         topic: 'checkpoint',
-        text: "Getting past the checkpoint? That's what the debt is for, friend. Buy the safe hour and a Strider of mine owes you a walk-out at the wire — come back through with the core and lean on the debt right there at the gate, and he'll walk you past the troopers. You spend it at the checkpoint, not back here at the camp.",
+        text: "Getting past the checkpoint? That's what the debt is for, friend. Buy the safe hour and a Strider of mine owes you a walk-out at the wire — come back through with the core and lean on the debt right there at the gate, and he'll walk you past the troopers like baggage. Mind, baggage gets pawed at on the way: any worked iron on you, his man turns up and keeps as the toll, so lean on it stripped of metal or lean on it poorer. You spend it at the checkpoint, not back here at the camp.",
       },
     ],
   },

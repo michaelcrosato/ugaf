@@ -129,6 +129,12 @@ function digestSnapshot(id: string): string {
   if (has('knocks the post and rings out', 'good metal singing at your hip')) tags.push('CLINK(iron-betrayed-slip)');
   // Leaned on the Strider debt — the BUY route as an ACT now, not a passive fact (M3).
   if (has('peels off the wire', 'walks you through the boom gate like baggage')) tags.push('leaned-on-debt');
+  // feedback/0024 #1 (the keystone) — the debt walk-out now COSTS at the moment of use (the hands-on
+  // "baggage" search). Record the tension beat the AC demands: a held-breath near-miss, and a working-iron
+  // carrier forfeits the iron as the Strider's toll. This is the tool-side proof the climax is no longer a
+  // one-button opt-out (the next swarm must show ≥1 of these on the debt route, not the old zero).
+  if (has('paw at the baggage', 'a foot from the core', 'searched to the skin', 'given up to buy the silence'))
+    tags.push('DEBT-COST(walkout-searched)');
   // Slipped the gate metal-free under dark — the LEARN route's silent escape (M2 reward).
   if (has('melt into the dark', 'the way is open', 'slip back to the waystation')) tags.push('slipped-the-gate');
   // ---- night15 discoverability batch in the wild (feedback/0019 #1/#2) ----
