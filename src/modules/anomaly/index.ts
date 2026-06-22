@@ -192,21 +192,36 @@ export function createAnomaly(pack: WorldPack): Module {
         break;
       }
       case 'degrade_item_class': {
-        // the law slumps worked metal toward ore — a reversible material degrade. Fire the
-        // "iron goes soft" line ONCE, on the transition to ore; suppress it for metal that has
-        // already slumped, so the per-move repeat does not train the player to skip the status
-        // line (feedback/0013 #6).
+        // the law slumps worked metal toward ore — a reversible material degrade. feedback/0022 #1: the
+        // iron-degrade was the ONE place this law broke the game's "first contact WARNS, never destroys"
+        // principle — iron vanished to ore in one silent beat while the core has a fair warn-ladder. Now
+        // iron gets the SAME fail-safe-first grace: first hungry beat = WARN (`softening`), the next =
+        // slump to ore. Softening recovers on leaving the water (onBeat), so the two worked-matter
+        // degrades read as one coherent law. The line still fires only on a transition (no per-move repeat).
         for (const k of facts.keysUnder('possession.pc')) {
           if (k.endsWith('.class') && facts.getString(k) === effect.itemClass) {
             const itemKey = k.slice(0, -'.class'.length);
-            if (facts.getString(`${itemKey}.condition`) === effect.toCondition) continue; // already ore — no repeat
-            events.push({
-              tag: 'law_degrade',
-              mutations: [{ op: 'set', key: `${itemKey}.condition`, value: effect.toCondition }],
-              summary: 'The iron in your kit goes soft and rotten-red, slumping toward ore.',
-              data: { law: law.id, item: itemKey },
-              severity: 'reversible',
-            });
+            const cond = facts.getString(`${itemKey}.condition`);
+            if (cond === effect.toCondition) continue; // already ore — no repeat
+            if (cond !== 'softening') {
+              events.push({
+                tag: 'law_degrade_warn',
+                mutations: [{ op: 'set', key: `${itemKey}.condition`, value: 'softening' }],
+                summary:
+                  'The iron in your kit begins to go soft and red at the edges — the Greywater has caught it, the way it catches all worked metal after dark. Get it clear of the water, or shed it, before it slumps the rest of the way to ore.',
+                data: { law: law.id, item: itemKey },
+                severity: 'reversible',
+              });
+            } else {
+              events.push({
+                tag: 'law_degrade',
+                mutations: [{ op: 'set', key: `${itemKey}.condition`, value: effect.toCondition }],
+                summary:
+                  'The iron in your kit slumps the last of the way — soft and rotten-red, gone to dead ore in your hands.',
+                data: { law: law.id, item: itemKey },
+                severity: 'reversible',
+              });
+            }
           }
         }
         break;
@@ -458,6 +473,36 @@ export function createAnomaly(pack: WorldPack): Module {
         }
       }
 
+      // feedback/0022 #1 — softening iron RECOVERS like the core: out of the water (or the dark passed)
+      // before it slumps, and the metal firms back whole. Guarded once-per-turn (mirrors the core ladder)
+      // so the convergence poll terminates; only fires on an actual recovery (an unchanged value would not).
+      const metalRecoverEvents: WorldEvent[] = [];
+      if (facts.getNumber('law.greywater.metal_acted_turn') !== ctx.turn) {
+        const grey = laws.get('greywater');
+        const inGreyM = grey ? inScope(grey, node) : false;
+        const hungryM = grey ? greywaterHungry(grey, facts) : false;
+        if (!inGreyM || !hungryM) {
+          for (const k of facts.keysUnder('possession.pc')) {
+            if (k.endsWith('.class') && facts.getString(k) === 'metal') {
+              const itemKey = k.slice(0, -'.class'.length);
+              if (facts.getString(`${itemKey}.condition`) === 'softening') {
+                metalRecoverEvents.push({
+                  tag: 'metal_recovered',
+                  mutations: [
+                    { op: 'set', key: 'law.greywater.metal_acted_turn', value: ctx.turn },
+                    { op: 'delete', key: `${itemKey}.condition` },
+                  ],
+                  summary:
+                    'The iron you carried up out of the water firms back as the Greywater loses its hold — the red softness fading, the edge of it hard and honest again. You caught it in time.',
+                  data: { law: 'greywater', item: itemKey },
+                  severity: 'reversible',
+                });
+              }
+            }
+          }
+        }
+      }
+
       // publish the "is a long wait here safe?" fact for the clock's fast-forward gate (feedback/0016
       // #1). Emit ONLY on a change so the convergence poll still terminates (an unchanged value would
       // keep the beat-loop flagged as changed forever). Read next turn by time.cycle, BEFORE it decides
@@ -506,16 +551,18 @@ export function createAnomaly(pack: WorldPack): Module {
         firing.length === 0 &&
         huntEvents.length === 0 &&
         coreEvents.length === 0 &&
+        metalRecoverEvents.length === 0 &&
         ffEvents.length === 0 &&
         shelterEvents.length === 0
       )
         return {};
 
-      const events: WorldEvent[] = [...huntEvents, ...coreEvents, ...ffEvents, ...shelterEvents];
+      const events: WorldEvent[] = [...huntEvents, ...coreEvents, ...metalRecoverEvents, ...ffEvents, ...shelterEvents];
       const scheduled: ScheduledEvent[] = [...huntScheduled];
       let render: BeatResult['render'] | undefined =
         coreRender ??
         huntRender ??
+        (metalRecoverEvents.length ? { labels: ['greywater.metal_recovered'], valence: 'boon' } : undefined) ??
         (shelterEvents.length ? { labels: ['hollow_dark.shelter'], valence: 'boon' } : undefined);
       for (const law of firing) {
         const contacts = (facts.getNumber(`law.${law.id}.contacts`) ?? 0) + 1;

@@ -1948,15 +1948,15 @@
             "source": "anomaly.hush"
           },
           {
-            "tag": "law_degrade",
+            "tag": "law_degrade_warn",
             "mutations": [
               {
                 "op": "set",
                 "key": "possession.pc.iron_knife.condition",
-                "value": "ore"
+                "value": "softening"
               }
             ],
-            "summary": "The iron in your kit goes soft and rotten-red, slumping toward ore.",
+            "summary": "The iron in your kit begins to go soft and red at the edges — the Greywater has caught it, the way it catches all worked metal after dark. Get it clear of the water, or shed it, before it slumps the rest of the way to ore.",
             "data": {
               "law": "greywater",
               "item": "possession.pc.iron_knife"
@@ -1966,7 +1966,7 @@
           }
         ],
         "priorHash": "b50ed3a6ba8a85c4e342e617d9b1f2b0299c23c581d3714ff5abceec6eb68427",
-        "nextHash": "9f1dc571897fe8c266124e85a83b0f35e81802b04d608570c5d1c800a0a33fe6"
+        "nextHash": "6ec61700fbafd6c0e85a2424d11ffce8e669943d83cf0658983264e53b4e4e8c"
       },
       {
         "eventIndex": 18,
@@ -2104,9 +2104,26 @@
               "firstContact": false
             },
             "source": "anomaly.hush"
+          },
+          {
+            "tag": "law_degrade",
+            "mutations": [
+              {
+                "op": "set",
+                "key": "possession.pc.iron_knife.condition",
+                "value": "ore"
+              }
+            ],
+            "summary": "The iron in your kit slumps the last of the way — soft and rotten-red, gone to dead ore in your hands.",
+            "data": {
+              "law": "greywater",
+              "item": "possession.pc.iron_knife"
+            },
+            "severity": "reversible",
+            "source": "anomaly.hush"
           }
         ],
-        "priorHash": "9f1dc571897fe8c266124e85a83b0f35e81802b04d608570c5d1c800a0a33fe6",
+        "priorHash": "6ec61700fbafd6c0e85a2424d11ffce8e669943d83cf0658983264e53b4e4e8c",
         "nextHash": "3e0ca74b53d9b3a548ce8e656e585f1334743cb6cc0aa92ba7779ae67d48c7e0"
       },
       {

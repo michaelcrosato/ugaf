@@ -53,12 +53,14 @@ describe('Law Drift charges — the hungry hours lengthen', () => {
     expect(safe.state.facts['phase.now']).toBe('predawn');
     expect(safe.state.facts['possession.pc.iron_knife.condition']).toBeUndefined();
 
-    // DRIFTED: the hungry window has crept into predawn. The iron you trusted to be safe fails.
+    // DRIFTED: the hungry window has crept into predawn. The iron you trusted to be safe starts to fail.
     const bit = primed(true);
-    const r = bit.act('listen');
+    const r = bit.act('listen'); // first hungry beat in the drifted predawn: WARN (the safe margin is gone)
     expect(bit.state.facts['phase.now']).toBe('predawn'); // still predawn — not a phase trick
-    expect(bit.state.facts['possession.pc.iron_knife.condition']).toBe('ore');
+    expect(bit.state.facts['possession.pc.iron_knife.condition']).toBe('softening'); // failing where it was safe
     expect(r.text.toLowerCase()).toContain('iron');
+    bit.act('listen'); // a second beat finishes the slump (feedback/0022 #1: iron warns before it dies)
+    expect(bit.state.facts['possession.pc.iron_knife.condition']).toBe('ore');
     expect(bit.state.facts['survival.pc']).toBe('alive'); // a fair material cost, never a cheap kill
   });
 
@@ -227,17 +229,20 @@ describe('Law Drift is FAIR — it does not strand you, and it does not over-ala
     expect(demoteMsg.toLowerCase()).not.toContain('guessing'); // not the old alarm
   });
 
-  it('the Greywater "iron goes soft" line fires ONCE on the ore transition, not every move (feedback/0013 #6)', () => {
+  it('the Greywater iron-degrade WARNS then slumps, each line ONCE — no per-move repeat (feedback/0013 #6, 0022 #1)', () => {
     const s = freshSession('grey-once');
     s.state = {
       ...s.state,
       native: { ...s.state.native, 'time.cycle': { minutes: 1320 } }, // night
       facts: { ...s.state.facts, 'loc.pc': 'greywater_bottoms', 'phase.now': 'night', 'clock.minutes': 1320 },
     };
-    const first = s.act('listen'); // worked iron transitions to ore
+    const first = s.act('listen'); // first hungry beat: WARN (softening), the line shows once
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('softening');
+    expect(first.text.toLowerCase()).toContain('soft'); // the warning line shows
+    const second = s.act('listen'); // second beat: it slumps the rest of the way to ore
     expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('ore');
-    expect(first.text.toLowerCase()).toContain('soft'); // the transition line shows once
-    const second = s.act('wait'); // still in the water, iron already ore
-    expect(second.text.toLowerCase()).not.toContain('goes soft'); // ...and is NOT repeated
+    expect(second.text.toLowerCase()).toMatch(/slump|ore/); // the slump line shows once
+    const third = s.act('wait'); // already ore — the degrade line is NOT repeated per move
+    expect(third.text.toLowerCase()).not.toContain('slump');
   });
 });

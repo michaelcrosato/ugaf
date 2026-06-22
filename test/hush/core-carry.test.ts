@@ -130,6 +130,30 @@ describe('The Hush — the core across the dark Greywater (feedback/0014 #1)', (
     expect(rec.text.toLowerCase()).toMatch(/firms back|whole|let go|gone back to sleep/);
   });
 
+  // feedback/0022 #1 — the iron-degrade was the one place the Greywater law broke the game's "first
+  // contact warns, never destroys" principle: iron slumped silent+instant to ore while the core has a
+  // fair warn-ladder. Give iron the SAME fail-safe-first treatment (warn -> grace -> slump, recoverable)
+  // so the two worked-matter degrades read as ONE coherent law (greywater-breaker: "incoherent").
+  it('feedback/0022 #1 — iron gets a WARNING beat before it slumps (fail-safe first, like the core)', () => {
+    const s = freshSession('iron-grace');
+    for (const c of ['out', 'road', 'road', 'on', 'fork', 'water']) s.act(c); // ford, dusk approaching
+    const r1 = s.act('rest'); // first hungry beat: WARN (softening), NOT destroyed
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('softening'); // grace state, not ore
+    expect(r1.text.toLowerCase()).toMatch(/soft|begin|clear of the water|shed/); // it telegraphs + names the fix
+    s.act('rest'); // second hungry beat: now it slumps the rest of the way
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('ore');
+  });
+
+  it('feedback/0022 #1 — softening iron RECOVERS on leaving the water, like the core', () => {
+    const s = freshSession('iron-recover');
+    for (const c of ['out', 'road', 'road', 'on', 'fork', 'water']) s.act(c);
+    s.act('rest'); // softening
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('softening');
+    s.act('back'); // ford -> fork: out of the water, onto dry ground -> recover
+    expect(s.state.facts['loc.pc']).toBe('the_fork');
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBeUndefined(); // firmed back whole
+  });
+
   it('RECOVERABLE — leaving the water for dry ground also knits the core back whole', () => {
     const s = freshSession('recover-leave');
     // a predawn dive (safe — core taken intact), out to the fork, then a full day later RE-ENTER the
