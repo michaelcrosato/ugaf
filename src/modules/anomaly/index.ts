@@ -517,14 +517,17 @@ export function createAnomaly(pack: WorldPack): Module {
         });
       }
 
-      // Hollow Dark legibility (feedback/0016 #4): the law hunts STILLNESS in the OPEN deep (the fork,
-      // the deep mile, the antenna field). The drowned hamlet's walls break that open dark, so the
-      // Greywater bottoms are a sheltered pocket OUT of its scope — but a player who held still in the
-      // pump-house and felt nothing read the law as a bluff (p006). When the Hollow Dark is LIVE and
-      // you wait/rest at night in one of those sheltered greywater pockets, say so ONCE — so the safe
-      // pocket reads as a learned rule (shelter is safe; the open deep is the danger), not a toothless
-      // threat. It costs nothing and teaches the contrast; the convergence poll terminates on the
-      // `shelter_seen` high-water mark, like the core ladder's per-turn guard.
+      // Hollow Dark legibility (feedback/0016 #4 → 0025 #1): the law hunts STILLNESS in the OPEN deep
+      // (the fork, the deep mile, the antenna field). The drowned hamlet's walls break that open dark, so
+      // the Greywater bottoms read as a sheltered pocket — but the blind swarm found the shelter INFINITE
+      // (hollow-dark trips = 0 / 22): the optimal line is just to wait out the whole night in the lee for
+      // free, which defuses the timed crossing. Now the lee is a GENEROUS but FINITE grace: the first few
+      // held breaths are safe and TEACH the contrast (shelter vs open deep), but dwell past the grace and
+      // the cold finds the edges even here — the Hollow Dark's closer climbs through its own telegraphed
+      // warn→dread→final ladder (recoverable by moving up out of the bottoms). A single wait-until-the-
+      // window (the intended crossing prep, and the golden path) never reaches the grace; only real
+      // dawdling does. Per-turn guarded on `shelter_turn` so the convergence poll still terminates.
+      const SHELTER_GRACE = 3;
       const shelterEvents: WorldEvent[] = [];
       const lastIntent = facts.getString('flag.last_intent');
       const SHELTERED_DEEP = node === 'greywater_ford' || node === 'greywater_bottoms' || node === 'greywater_cache';
@@ -534,15 +537,41 @@ export function createAnomaly(pack: WorldPack): Module {
         facts.getBool('law.hollow_dark.live') === true &&
         facts.getNumber('flag.last_turn') === ctx.turn &&
         (lastIntent === 'wait' || lastIntent === 'rest') &&
-        !facts.getBool('known.hollow_dark.shelter_seen')
+        facts.getNumber('law.hollow_dark.shelter_turn') !== ctx.turn
       ) {
-        shelterEvents.push({
-          tag: 'hollow_shelter',
-          mutations: [{ op: 'set', key: 'known.hollow_dark.shelter_seen', value: true }],
-          summary:
-            'You hold still — and nothing leans in. Out in the open deep the Hush hunts the stillness; but here, in the lee of the drowned walls, the dark has no open reach. The hollow places keep to the bare ground above, and cannot get at you behind stone and standing water. A sheltered pocket — you could wait out the worst of the dark down here, were the water itself not the other danger.',
-          data: { law: 'hollow_dark' },
-        });
+        const dwell = (facts.getNumber('law.hollow_dark.shelter_dwell') ?? 0) + 1;
+        const stamp = [
+          { op: 'set' as const, key: 'law.hollow_dark.shelter_dwell', value: dwell },
+          { op: 'set' as const, key: 'law.hollow_dark.shelter_turn', value: ctx.turn },
+        ];
+        if (dwell <= SHELTER_GRACE) {
+          const firstTime = !facts.getBool('known.hollow_dark.shelter_seen');
+          shelterEvents.push({
+            tag: 'hollow_shelter',
+            mutations: firstTime
+              ? [...stamp, { op: 'set' as const, key: 'known.hollow_dark.shelter_seen', value: true }]
+              : stamp,
+            summary: firstTime
+              ? 'You hold still — and nothing leans in. Out in the open deep the Hush hunts the stillness; but here, in the lee of the drowned walls, the dark has no open reach — not yet. The hollow places keep to the bare ground above and cannot easily get at you behind stone and standing water. A sheltered pocket: you can wait out a stretch of the dark down here. But the lee is a loan, not a haven — stay too long and even this cold will start to find the edges.'
+              : 'You wait on in the lee of the drowned walls. The dark still keeps mostly to the open ground above — but you can feel it pressing at the stone now, testing the pocket. You have been still a while; do not make a whole night of it down here.',
+            data: { law: 'hollow_dark', dwell },
+          });
+        } else {
+          // past the grace: the lee fails by degrees — the same fair, telegraphed closer ladder, in here.
+          const closer = (facts.getNumber('law.hollow_dark.closer') ?? 0) + 1;
+          shelterEvents.push({
+            tag: 'law_condition',
+            mutations: [
+              ...stamp,
+              { op: 'adjust' as const, key: 'survival.pc.unsettled', by: 1, min: 0, max: 5 },
+              { op: 'adjust' as const, key: 'survival.pc.exposure', by: 1, min: 0, max: 10 },
+              { op: 'adjust' as const, key: 'law.hollow_dark.closer', by: 1, min: 0, max: 9 },
+            ],
+            summary: hollowDarkShelterTell(closer),
+            data: { law: 'hollow_dark', closer, inLee: true },
+            severity: 'reversible',
+          });
+        }
       }
 
       // law_trigger: fold all firing laws in canonical order (K6)
@@ -695,6 +724,18 @@ function hollowDarkTell(law: LawDefinition, closer: number): string {
   if (closer === 3)
     return 'A third time you stop, and the quiet presses flat against your ears, and your own pulse goes loud and wrong in the silence. Do not stop again. One more held breath in this dark and it will have closed the last of the distance.';
   return 'You go still one time too many.';
+}
+
+/** The lee of the drowned walls is a FINITE grace (feedback/0025 #1): once a dawdler outstays it, the
+ *  Hollow Dark creeps in even here, by the same warn→dread→final→close ladder — recoverable by moving up. */
+function hollowDarkShelterTell(closer: number): string {
+  if (closer <= 1)
+    return 'You have been still too long, even here. The lee of the drowned walls is no haven after all — the cold is finding the edges of the pocket, reaching in past the stone. Move soon, up out of the bottoms, or the dark will have this place too.';
+  if (closer === 2)
+    return 'Again you do not move, and the dark presses further into the lee — the standing water goes stiller than still, and something in it has begun to pay attention. Get up out of the bottoms. Walls or no walls, stillness is the thing it hunts.';
+  if (closer === 3)
+    return 'A third held breath in the failing shelter, and the pocket has gone as cold and close as the open deep. Do not stop again — one more, and the lee will not have saved you at all.';
+  return 'You stayed too long in the lee, and the dark came in past the drowned walls and found you still.';
 }
 
 /**

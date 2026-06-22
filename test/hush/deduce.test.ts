@@ -105,6 +105,10 @@ describe('deduce always resolves on full evidence — never "2 of 2 signs" yet "
 
   it('after a full drift→re-Settle cycle a re-deduce still resolves, and the codex shows it verified', () => {
     const s = sess('deduce-postdrift');
+    // isolate the DRIFT mechanic from the (unrelated, rotating) Hollow Dark: this test drifts by waiting
+    // ~60× at the Greywater, and the lee is now a finite grace (0025 #1) that would bite a dawdler there
+    // if the law happened to be live this seed. Force it off so the test measures drift, nothing else.
+    s.state = { ...s.state, facts: { ...s.state.facts, 'law.hollow_dark.live': false } };
     readBothGreySigns(s);
     s.act('deduce the greywater');
     expect(s.state.facts['known.law.greywater']).toBe('surveyed');
