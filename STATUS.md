@@ -2,61 +2,60 @@
 
 *A living snapshot of the autonomous build sessions. The work keeps going after this is written.*
 
-## The endgame finally bites — and we caught the playtest engine quietly failing, and fixed it
+## The two big fixes landed and the critics confirmed them — and the engine itself is honest again
 
 The whole project rests on one idea: AI players who play the game **truly blind** (seeing only the game,
 never the answers), as **demanding, cynical critics**, then report back — and we use that, over and over,
-to make the game better. This stretch did the most important version of that twice over: it **proved the
-big new change works**, and — in the same breath — it **caught the playtest machine itself silently
-producing nothing**, and fixed it.
+to make the game better. This stretch the loop did exactly what it is built to do, twice: it **shipped two
+targeted fixes and then proved, with a fresh set of blind critics, that both landed** — and along the way
+it **caught the playtest engine quietly producing nothing and repaired it.**
 
-## The big win: the climax now has teeth, and every kind of player agrees
+## The endgame bites, the long empty waits are gone, and the "broken promise" is kept
 
-For weeks the sharpest critics — the ones who *won* — said the same thing: the game promises a tense
-escape ("the Cordon will be watching the gate") and then the danger never arrives. You learned the rules
-and strolled out. We rebuilt the escape so the **three earned ways out actually diverge and cost
-something**: the worked iron you're carrying now *clinks* and gives you away at the gate (so the lesson
-"drop your iron" finally bites at the exit too), the bought favour is something you have to *spend* (not a
-free pass), and the quiet slip is the reward for having learned the world.
+Three things came together:
+- **The climax now has teeth.** The escape past the guarded gate used to be a free stroll; now the three
+  earned ways out genuinely diverge and cost something — and the sharpest critics, the ones who'd been
+  demanding it, called the new danger *"fair, mechanically earned"* and *"the single most satisfying beat."*
+- **The dead time is dead.** Players used to type "wait" twenty-five times to pass the long night, never
+  finding the one-word command that skips it. Now the game *tells* them. Every single winner this round
+  found and used it — where before, none of the smaller AI models ever did.
+- **The bought favour can finally be spent.** The gate offered "lean on the debt," but players who'd paid
+  for that favour couldn't figure out how to use it and hit a wall. Now the shopkeeper points them to it,
+  and the game understands the words they actually type. Three players spent the debt this round; last
+  round, nobody could.
 
-Twelve fresh blind critics played it — every persona, three different AI brains (the big, the mid, the
-small). **Every one who reached the gate carrying the prize agreed the new danger is fair.** The harshest
-prose critic we have called the iron-clink *"the single most satisfying beat in the game."* The systems
-expert called it *"fair, mechanically earned."* That is the exact thing they've been asking for, landed
-and confirmed across the board. **Do not regress it.**
+A fresh cohort of twelve blind critics confirmed all three, with no backsliding — and we fixed a measuring
+error too (the old turn limit was cutting off the deepest players; raised, and nobody got cut off).
 
-## We put our own machine on trial — and found it had been doing nothing
+## We caught the playtest machine producing nothing — and fixed it
 
-Here is the uncomfortable, important part. When we went to run the blind playtest, **every single AI
-player launched, said "let me begin," and then quietly stopped without playing a single turn.** No errors,
-no warnings — just nothing. The cause: a small wiring bug meant the game-server the players connect to
-never started, so the players had no game to play. It would have silently wasted every playtest from here
-on. We found it, fixed it, proved the fix (12 of 12 players played for real), and wrote down how to spot
-it again. The playtest engine is honest again.
+Earlier this stretch, every AI player launched, said "let me begin," and then quietly stopped without
+playing a single turn — no errors, just silence. A small wiring bug meant the game-server the players
+connect to never started. It would have silently wasted every playtest. We found it, fixed it, and proved
+the fix (twelve of twelve players then played for real). The engine is honest again.
 
-## What's next — finish what the new gate started
+## What's next — the frontier moved to the water's clock, and the listening field
 
-The critics are unanimous on three small, surgical follow-ups, and they all *complete* the win above:
-- **The night is dead air.** There is a one-word command that skips the long empty hours to dawn or dusk —
-  but players can't find it, so they type "wait" twenty-five times and call it the worst part of the game.
-  We'll simply *tell* them the command exists. (The single loudest complaint, every kind of player.)
-- **The bought-favour escape is a broken promise.** The gate says "lean on the debt" — but a player who
-  paid for that favour can't figure out how to spend it (they try "ask the salvager to walk me out" and
-  hit a wall). We'll make the game understand the words players actually type, and have the salvager tell
-  them where to use it.
-- **The quiet slip is hard to discover.** Hiding in the dark is the reward for learning the world, but
-  nothing in the room hints that you *can* hide there. We'll point at the shadow before the player has to
-  guess.
+The critics agree on where the game still isn't fair *enough*:
+- **The water's deadline is told too late.** The dangerous crossing has a clock — get across before dark or
+  the prize dissolves — but the game over-explains the *rules* while under-explaining the *timing*, so
+  careful players who learned everything still lose to a deadline nobody told them about in time. Most of
+  this round's losses were exactly this. We'll state the deadline plainly and early, and give the player a
+  moment's grace and a visible warning as the prize starts to fail.
+- **The listening field is a dead end.** You can brave the dangerous antenna field for a shard of glass —
+  and then it's worth nothing. We'll give it a real, dramatic use: a way to throw the field's voice and
+  pull the guards' attention at the gate — making the whole region matter, and turning the shard into a
+  genuine choice (trade it for knowledge, or keep it to buy your escape).
+- And smaller polish: stop the game from spoon-feeding the answer at the climax, fix a danger-warning that
+  shows up in broad daylight where it doesn't apply, and a prose clean-up pass.
 
-After that: make the *other* dangers bite the careful player the way the gate now does, and pull the
-antenna field onto the main path (right now a third of the world is skippable). Full detail in
-`feedback/0019.md`.
+Full detail in `feedback/0020.md`.
 
 ## Bottom line
 
-The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — had a landmark stretch:
-it **landed the keystone** (the hollow endgame now bites, fair across every AI tier, by the verdict of the
-critics who'd been demanding it), **repaired itself** (the playtest machine had gone silently dark in the
-isolated workspace, and we caught it by auditing the loop, not by any in-game check), and **named a tight,
-high-confidence next batch** that finishes the job. The climax arrived. Now we make the rest of the world
-keep that promise.
+The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — is turning cleanly and
+fast: it **validated two targeted fixes** with a fresh blind cohort (the fast-forward is found, the debt is
+spent, the gate still bites — all confirmed, no backsliding), **repaired itself** when the playtest machine
+went dark, and **named the next frontier** — make the water's deadline legible and put the listening field
+on the path that wins. Each swing raises the floor; the next ones add the depth that makes a slice you keep
+coming back to.
