@@ -2,79 +2,63 @@
 
 *A living snapshot of the autonomous build sessions. The work keeps going after this is written.*
 
-## The loop's tightest turn yet: it found the biggest problem, fixed it, and proved the fix on a clean run
+## The loop closed its named #1 problem, proved the fix on 25 blind critics, and named the next one honestly
 
 The whole project rests on one idea: AI players who play the game **truly blind** (seeing only the game,
-never the answers), as **demanding, cynical critics**, then report back — and we use that, over and over,
-to make the game better. This stretch did the complete cycle, cleanly: the blind critics **found the one
-thing losing the most players**, we **fixed it**, and a fresh, perfectly clean set of twelve critics
-**proved the fix works** — the exact players who lost to that problem before now win.
+never the answers), as **demanding, cynical critics**, then report back — and we use that, over and over, to
+make the game better. The last round's critics had converged on one verdict: the game has real teeth, but
+**the best line of play refunds every cost** — and the single worst offender was the ending. The "lean on a
+smuggler's debt to get walked out" escape was a **one-button "I win"** that deleted the tense climax everyone
+else had to earn. This round fixed exactly that, and proved the fix.
 
-## The biggest problem was a hidden deadline. Now it's the hook.
+## The debt is no longer a free button — and we proved it the hard way
 
-For a while, the most common way to lose was subtle and unfair: the dangerous water crossing has a clock —
-get across and out before dark, or the prize dissolves in your hands — but the game told you the *rules*
-loudly and the *timing* late, so careful players who'd learned everything still lost to a deadline nobody
-told them about in time. One critic called it *"learn before you go, then punished for having done so."*
+Leaning on the debt is now a **hands-on pass**: the smuggler walks you through the gate, but the guards
+search your bags on the way — a held-breath near-miss every time, and if you're still carrying good iron,
+they find it and keep it as the toll. It's still always a win (you're never trapped), and the game now warns
+you of the cost up front, so it's fair. We then ran **25 blind critics across two AI brain-tiers** (a normal
+mix and an all-strongest-brain batch): **22 won, 3 lost — and all three losses were players who deliberately
+broke a clearly-marked rule.** That's the exact same fairness score as the last validated build, so the
+change **added the cost without breaking anything.** Best of all: every single critic who used the debt this
+time **felt the cost** (a tool measured it firing on all nine of them, up from zero), and the cynical
+"systems" critic who last time called the debt "a coin-operated button that deletes the climax" this time
+**didn't even use it** — he reasoned out the harder, earned exit instead. The complaint is gone.
 
-We fixed it two ways: the warden now tells you the deadline plainly and early (cross before dusk, the prize
-dissolves too, not just iron), and we widened the grace window so a player heading for safety makes it out
-instead of losing the prize one step short.
+## We put our own work on trial before trusting it — and caught ourselves in a lie
 
-The result, measured on a clean run of twelve blind critics: **ten wins, two losses — and the two losses
-were players who deliberately broke a clearly-marked rule, not the timing trap.** Last time this was the
-problem, it was five wins to seven losses. **Seven players this run hit the danger and recovered the prize
-where they'd have lost it before** — including the two specific critics who lost to this exact trap last
-time and now win. Best of all, the deadline stopped being a trap and became the *hook*: one player said
-that the moment she realised she had a daylight clock racing nightfall, she was *"committed."*
+Before spending a cent on blind critics, we ran a small army of reviewers against our own change, each one
+trying to break it. They found a real flaw we'd have shipped: the game *told* the player "any iron you carry
+will be taken," but the code only took **one** piece — so a player carrying two would keep one, and the game
+would be quietly lying about its own cost. That's the precise kind of hidden unfairness this whole project
+exists to kill, and we'd nearly committed it ourselves. We fixed it (the search now takes every piece, like
+the iron-eating water does), and only then ran the validation. Tools checking the machine's own work, before
+the expensive part — exactly the discipline this is built on.
 
-## We caught the playtest engine going dark — twice — and handled both
+## The honest part: we fixed the symptom we aimed at, and the deeper disease is now in our sights
 
-Earlier this project, the playtest machine silently produced nothing in our isolated workspace (a wiring
-bug); we found and fixed it. Then, mid-run, the AI service itself got overloaded and started failing — the
-exact "server's too busy" error we keep hitting. Instead of hammering it, we let the bad run finish
-honestly (it flags its own failures), waited, ran a tiny two-player check to confirm the service had
-recovered, and only then ran the full clean validation above. The loop is honest about its own health.
+The critics were scrupulously fair about what we *didn't* fix. The debt is no longer the easy button — but a
+truly optimal player still glides past the gate, because by the time they reach it their iron is already
+spent, so losing it costs them nothing. The "free exit" complaint didn't vanish; it **moved** — from the
+paid debt to the *earned* sneak-out. And the biggest finding of all was somewhere else entirely: the
+"Hollow Dark," a danger the game threatens on every screen, **bit literally nobody** — 0 out of 22 — because
+waiting out the night is a free, instant time-machine. The world is telegraphed and fair *to a fault*: the
+dread lives in the story, not yet in the mechanics. The critics even handed us the surgical fix for the
+gate: the prize you're carrying is "the most anomalous thing on the whole Edge," so it should **hum at the
+checkpoint itself** — making every exit cost something, not just the careless one's. That's the next swing.
 
-## Then the deeper read caught a hidden unfairness — and we fixed that too
+## We also found a twin
 
-When we ran the *careful* analysis on that clean batch (one strong critic-of-critics, the way the design
-demands), it caught something the raw numbers had hidden: a player who *learned* the dangerous-water law the
-honest way — by studying it, or buying the knowledge from the cartographer — was then *refused* when they
-tried to buy the salvager's "I'll-walk-you-out" favour, because the game lumped the favour together with the
-knowledge they already had. So the most careful players were quietly locked out of one of the three ways
-home, and only saved by stumbling onto a free gap. That's the exact kind of hidden unfairness the whole
-project exists to catch. We separated the two — you can always buy the walk-out, even if you already know the
-water — and a fresh clean batch of twelve proved it: the favour-route was used *twice as often*, by the very
-players who'd been locked out. We also gave the dissolving *iron* its own warning beat, so it warns and can
-be saved just like the prize, instead of vanishing silently.
-
-## We proved it holds for the smartest players too — and the engine now verifies itself
-
-We re-ran the whole batch a second time forcing the *strongest* AI brain (to be sure the wins weren't an
-artifact of weaker players), added a dedicated explorer to test the one escape nobody had tried (throwing
-the guards' attention with the antenna shard — it works, it's fair, and a player won with it), and merged
-both batches: **twenty-two of twenty-five won, on every tier, with no unfair death and no dead-end.** We
-also built the engine a new pair of eyes: a *deterministic checker* that reads every transcript and proves,
-by tool not opinion, that every death was warned, every play was genuinely played (not faked), and nobody
-was walled in — run automatically before the AI critics ever weigh in. Trust, but verify.
-
-## What's next — one honest flaw, named clearly: the smart player pays for nothing
-
-The careful critics converged on a single, deep truth: the game has real teeth, but **the best line of play
-refunds every cost.** The bought "walk me out" favour is a single free button that deletes the tense escape
-the other routes make you earn; waiting until noon refunds the water's deadline; the "your knowledge is
-decaying" warnings never actually bite; and the listening field — the whole third of the map — is skippable.
-The dangers exist, but a clever player glides past all of them. The next swing (built carefully on a side
-branch and only kept if a fresh batch confirms it) starts at the highest-leverage spot: **make leaning on the
-favour cost something in the moment** — a guard's second glance, a price, a near-miss — so carrying the prize
-out is the hardest thing in the game for everyone, not an opt-out. Full detail in `feedback/0024.md`.
+Another autonomous session had quietly built its *own* version of this same fix on a side branch — a
+genuinely clever variant (the smuggler refuses to walk you out while the guards are riled up). It was never
+blind-tested, and its approach reached deeper into the engine than needed, so we shipped the proven one and
+**wrote its best idea down as part of the next swing** rather than throwing it away. Worth a guard so two
+sessions don't race the same task again.
 
 ## Bottom line
 
-The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — ran its cleanest full
-cycle: it **found** the dominant problem (a hidden deadline punishing careful players), **fixed** it (tell
-the deadline early, widen the grace window), and **proved** the fix on a flawless twelve-of-twelve run (the
-losses dropped from seven to two, seven players recovered the prize, and the deadline became the hook) — all
-while staying honest about its own health through a service outage. The thing that was quietly losing the
-most players is gone, and the next improvement is already on the board.
+The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — ran another complete clean
+cycle: it took the critics' **named #1 problem** (the one-button ending), **fixed it** (the walk-out now
+costs you a search, your iron, and a marked exit), **put the fix on trial twice** (a self-review that caught
+our own honesty bug, then 25 blind critics that confirmed it clean and fair), and **named the next problem
+precisely** (make the *optimal* path bite — the prize hums at the gate, the night grows the teeth it keeps
+promising). Full detail in `feedback/0025.md`.
