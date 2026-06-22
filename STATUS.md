@@ -2,63 +2,61 @@
 
 *A living snapshot of the autonomous build sessions. The work keeps going after this is written.*
 
-## The loop closed its named #1 problem, proved the fix on 25 blind critics, and named the next one honestly
+## The headline: the one-button ending is fixed and merged; two more improvements are built and waiting
 
-The whole project rests on one idea: AI players who play the game **truly blind** (seeing only the game,
-never the answers), as **demanding, cynical critics**, then report back — and we use that, over and over, to
-make the game better. The last round's critics had converged on one verdict: the game has real teeth, but
-**the best line of play refunds every cost** — and the single worst offender was the ending. The "lean on a
-smuggler's debt to get walked out" escape was a **one-button "I win"** that deleted the tense climax everyone
-else had to earn. This round fixed exactly that, and proved the fix.
+The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — closed its named #1
+problem and shipped it. The "lean on a smuggler's debt to walk out" escape used to be a **one-button "I
+win"** that deleted the tense climax. It is now a **hands-on pass**: the guards search your bags, and if
+you're carrying good iron they keep it as the toll. We proved it on **25 blind critics across two AI
+brain-tiers — 22 won, exactly matching the last validated build** (so the cost was added without breaking
+anything), and the tool measured the new cost firing on every single critic who used the debt. The cynical
+"systems" critic who last time called it "a coin-operated button" this time didn't even use it — he reasoned
+out the harder, earned exit instead. **That fix is merged to the trunk.**
 
-## The debt is no longer a free button — and we proved it the hard way
+## Trust, but verify — a tool caught the AI critics' own blind spot
 
-Leaning on the debt is now a **hands-on pass**: the smuggler walks you through the gate, but the guards
-search your bags on the way — a held-breath near-miss every time, and if you're still carrying good iron,
-they find it and keep it as the toll. It's still always a win (you're never trapped), and the game now warns
-you of the cost up front, so it's fair. We then ran **25 blind critics across two AI brain-tiers** (a normal
-mix and an all-strongest-brain batch): **22 won, 3 lost — and all three losses were players who deliberately
-broke a clearly-marked rule.** That's the exact same fairness score as the last validated build, so the
-change **added the cost without breaking anything.** Best of all: every single critic who used the debt this
-time **felt the cost** (a tool measured it firing on all nine of them, up from zero), and the cynical
-"systems" critic who last time called the debt "a coin-operated button that deletes the climax" this time
-**didn't even use it** — he reasoned out the harder, earned exit instead. The complaint is gone.
+While building the next fix (making the world's dangers actually bite a careful player), a deterministic
+tool check caught something important the AI critics had missed. Their loudest complaint was that the
+"Hollow Dark" — a danger the game threatens on every screen — **bit nobody (0 out of 22)**. But the tool
+investigation found the real reason: **the game only switches that danger ON in about half of runs** (the
+world "re-Settles" differently each playthrough, rotating which laws are live). So "0 out of 22" was mostly
+the danger being *switched off*, not *toothless*. Our feedback machine had been **counting how often a danger
+bit without checking whether it was even turned on** — a hidden flaw in how we read the playtests. That is
+exactly the kind of thing the operator asked us to hunt: a cheap, deterministic tool catching a confident AI
+judgment that was partly wrong. The fix to the *machine* (record which dangers were live, and measure "bit
+when it was on") is now the top loop-hardening item.
 
-## We put our own work on trial before trusting it — and caught ourselves in a lie
+We also found that where the Hollow Dark *was* on, it worked correctly out in the open — the real hole was
+that the drowned-hamlet "shelter" was **infinitely safe**, so a clever player just waits out the whole night
+there for free. We fixed that too: the shelter is now a **generous but finite grace** — wait a reasonable
+stretch and you're safe and taught the rule, but make a whole night of it and the cold creeps in even there,
+with the same fair, telegraphed warnings, escapable by simply moving. Both this and a small earlier
+legibility fix (the rust no longer contradicts itself in daylight) are **built, fully gate-green, and saved
+to the work branch — but NOT yet merged**, because changing a danger in the already-validated difficulty
+needs a blind cohort to confirm it's still fair. That cohort is the next step.
 
-Before spending a cent on blind critics, we ran a small army of reviewers against our own change, each one
-trying to break it. They found a real flaw we'd have shipped: the game *told* the player "any iron you carry
-will be taken," but the code only took **one** piece — so a player carrying two would keep one, and the game
-would be quietly lying about its own cost. That's the precise kind of hidden unfairness this whole project
-exists to kill, and we'd nearly committed it ourselves. We fixed it (the search now takes every piece, like
-the iron-eating water does), and only then ran the validation. Tools checking the machine's own work, before
-the expensive part — exactly the discipline this is built on.
+## A real hiccup, handled: the workspace got torn down mid-run — and nothing was lost
 
-## The honest part: we fixed the symptom we aimed at, and the deeper disease is now in our sights
+Partway through, the session's working folder was **wiped out from under us** — almost certainly the same
+"chat archiving" that's been interrupting these runs (archiving the chat also dismantles its private
+workspace, especially right after a merge). Because every finished piece of work had already been **saved up
+to the shared repository**, nothing was lost: we detected the wipe, pushed the in-progress fix to safety,
+rebuilt the workspace, and confirmed everything was intact and gate-green. **Recommended fix for the
+operator: turn off "Auto-archive after PR merge or close" in the Claude Code desktop settings** — because
+each finished cycle ends in a merge, that setting keeps pulling the rug right when a cycle completes.
 
-The critics were scrupulously fair about what we *didn't* fix. The debt is no longer the easy button — but a
-truly optimal player still glides past the gate, because by the time they reach it their iron is already
-spent, so losing it costs them nothing. The "free exit" complaint didn't vanish; it **moved** — from the
-paid debt to the *earned* sneak-out. And the biggest finding of all was somewhere else entirely: the
-"Hollow Dark," a danger the game threatens on every screen, **bit literally nobody** — 0 out of 22 — because
-waiting out the night is a free, instant time-machine. The world is telegraphed and fair *to a fault*: the
-dread lives in the story, not yet in the mechanics. The critics even handed us the surgical fix for the
-gate: the prize you're carrying is "the most anomalous thing on the whole Edge," so it should **hum at the
-checkpoint itself** — making every exit cost something, not just the careless one's. That's the next swing.
+## Where the work branch stands (ready for the operator)
 
-## We also found a twin
-
-Another autonomous session had quietly built its *own* version of this same fix on a side branch — a
-genuinely clever variant (the smuggler refuses to walk you out while the guards are riled up). It was never
-blind-tested, and its approach reached deeper into the engine than needed, so we shipped the proven one and
-**wrote its best idea down as part of the next swing** rather than throwing it away. Worth a guard so two
-sessions don't race the same task again.
+- **Merged to trunk:** the debt-keystone fix (the one-button ending, gone).
+- **Built, gate-green, pushed to the branch, awaiting a blind cohort:** (1) the Greywater rust daylight
+  legibility fix; (2) the finite-shelter fix that makes dawdling in the deep actually dangerous.
+- **Top of the backlog (in `feedback/0025.md`):** make the *optimal* player pay, not just the careless one
+  (the prize should "hum" at the final gate so even the stealthy exit costs); make the world's other
+  telegraphed dangers bite; and the loop-hardening above (measure dangers against whether they were live).
 
 ## Bottom line
 
-The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — ran another complete clean
-cycle: it took the critics' **named #1 problem** (the one-button ending), **fixed it** (the walk-out now
-costs you a search, your iron, and a marked exit), **put the fix on trial twice** (a self-review that caught
-our own honesty bug, then 25 blind critics that confirmed it clean and fair), and **named the next problem
-precisely** (make the *optimal* path bite — the prize hums at the gate, the night grows the teeth it keeps
-promising). Full detail in `feedback/0025.md`.
+One keystone fixed and merged; two more improvements built and safely parked on the branch pending their
+fairness cohort; a genuine workspace-teardown survived with zero lost work; and — most valuable of all — a
+cheap tool caught a real blind spot in how the AI critics' feedback was being read. The loop is working, and
+it is now also being turned on *itself*. Full detail in `feedback/0025.md` and the branch commit log.
