@@ -13,6 +13,8 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { HUSH_PACK } from '../content/hush/index.js';
+import { createGame } from '../src/game/assemble.js';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 
@@ -224,6 +226,31 @@ const corpus = gathered
   )
   .join('\n\n');
 
+// LIVENESS de-confound (feedback/0026 loop-hardening): the world re-Settles per seed — only a SUBSET of
+// laws is live each run (HUSH_PACK seedVariance.liveLaws). A ROTATING law that "never tripped" across the
+// cohort may simply have been OFF, not toothless. Re-derive each player's live-laws DETERMINISTICALLY from
+// their recorded seed and surface the count IN the synth's ground-truth, so §4.3 conditions "did it trip"
+// on "was it even on" instead of mis-ranking an absent law as a dead one (the verify-cohort floor reports
+// the same; this puts it in front of the LLM where the mis-ranking actually happens). Best-effort.
+let livenessLine = '';
+try {
+  const always = new Set(HUSH_PACK.seedVariance?.liveLaws?.always ?? []);
+  const rotating = HUSH_PACK.laws.map((l) => l.id).filter((id) => !always.has(id));
+  const seeded = (index.players as { seed?: string }[]).filter((p) => typeof p.seed === 'string');
+  if (rotating.length && seeded.length) {
+    const liveN: Record<string, number> = {};
+    for (const p of seeded) {
+      const f = createGame(HUSH_PACK, p.seed!).initialState().facts as Record<string, unknown>;
+      for (const id of rotating) if (f[`law.${id}.live`] === true) liveN[id] = (liveN[id] ?? 0) + 1;
+    }
+    livenessLine = `rotating-law LIVENESS (re-derived from seed — only live laws CAN trip; a 0-trip rotating law that was live in FEW seeds is ABSENT this cohort, NOT toothless — condition rotating-law "trips" above on this): ${rotating
+      .map((id) => `${id} live in ${liveN[id] ?? 0}/${seeded.length}`)
+      .join(', ')}`;
+  }
+} catch {
+  /* liveness is a best-effort note; a pack/seed hiccup must never break compilation */
+}
+
 // population-level behavioural ground truth — what actually happened across the cohort
 const tally = (re: RegExp) => gathered.filter((g) => re.test(g.digest)).length;
 const aggregate = [
@@ -236,6 +263,7 @@ const aggregate = [
   `night16/17 (0020 — antenna on the win path; the Greywater clock made fair): distract-gate=${tally(/DISTRACT-gate/)} · saw-grey-deadline=${tally(/saw-grey-deadline/)} · core-recovered=${tally(/core-recovered/)} · core-last-margin=${tally(/core-last-margin/)}`,
   `night20/21 (0022 — iron warns+recovers like the core; the debt P0 unlocked): iron-warned=${tally(/iron-warned/)} · iron-recovered=${tally(/iron-recovered/)} · mox-debt-unlocked=${tally(/mox-debt-unlocked/)} · leaned-on-debt=${tally(/leaned-on-debt/)}`,
   `traps tripped: mile-lookback=${tally(/mile-lookback/)} · greywater-iron=${tally(/greywater-ate-iron/)} · antenna-summon=${tally(/antenna-summoned/)} · hollow-dark=${tally(/hollow-dark-bit/)}`,
+  ...(livenessLine ? [livenessLine] : []),
 ].join('\n');
 
 // marker-rot sanity guard (the audit's fragility C): the behaviour digest is exact-substring matches
@@ -265,6 +293,8 @@ QUARANTINE FIRST (before any ranking):
 RANK BY CROSS-PERSONA BREADTH, NOT RAW COUNT: the swarm is personas × clones and persona↔model is largely fixed, so six clones of one persona inflate a raw N. Count ONE vote per PERSONA for consensus; raw N is intensity only. Require >=2 INDEPENDENT PERSONAS for "high confidence".
 
 CAPABILITY-DIFFERENTIAL FILTER (§4.3): a friction is real CONTENT signal only if it appears ACROSS THE MODEL-SIZE AXIS (both small/haiku AND large/opus players hit it). If a complaint correlates with model size/family (only the weak models stall), tag it "capability noise" and EXCLUDE from game fixes — EXCEPT learnability stalls: a genuinely hard-to-deduce law legitimately stalls weak players, so do NOT discard those as capability noise. Treat blanket cross-model agreement skeptically (shared pretraining bias inflates apparent consensus); down-weight a theme where all models agree but it smells like model bias rather than the game.
+
+LIVENESS DE-CONFOUND (§4.3, MANDATORY before ranking any "X never bites" theme): the world re-Settles per seed, so only a SUBSET of laws is live each run — the "rotating-law LIVENESS" line in the ground truth above gives, per rotating law, how many of this cohort's seeds had it ON. A rotating law's "trips=0" is ONLY evidence of toothlessness across the runs where it was LIVE. Before you rank a rotating law as a hollow/toothless threat, CHECK its liveness: if it was live in few seeds, label it "absent this cohort (rotating-slot off) — widen coverage or force it live, NOT a content flaw," not "toothless." Do NOT condition the ALWAYS-live laws (and exercised mechanics like decay, whose markers DID fire) on this — they were on; their hollowness is real signal.
 
 ENGAGEMENT IS NEVER A MAXIMAND (Goodhart): raw dwell/stalls/revisits are NEGATIVE friction unless paired with explicit satisfaction. Never recommend chasing an engagement metric.
 
