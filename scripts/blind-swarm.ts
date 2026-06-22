@@ -27,9 +27,27 @@ import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const TSX = resolve(ROOT, 'node_modules/tsx/dist/cli.mjs');
+// Resolve tsx's CLI entry the way Node would, NOT by a ROOT-relative guess. In a git WORKTREE the
+// local node_modules is partial/absent and tsx actually lives in the MAIN checkout's node_modules
+// (module resolution walks up). The old hardcoded `ROOT/node_modules/tsx/dist/cli.mjs` therefore did
+// not exist under a worktree → the MCP server never spawned → every blind player launched with no
+// `observe`/`act` tool and "narrated then stopped" (num_turns=1, no snapshot). require.resolve finds
+// tsx wherever it really is; the ROOT-relative path stays only as a last-ditch fallback.
+const require = createRequire(import.meta.url);
+function resolveTsxCli(): string {
+  for (const spec of ['tsx/cli', 'tsx/dist/cli.mjs', 'tsx']) {
+    try {
+      return require.resolve(spec);
+    } catch {
+      /* try the next spec */
+    }
+  }
+  return resolve(ROOT, 'node_modules/tsx/dist/cli.mjs');
+}
+const TSX = resolveTsxCli();
 const SERVER = resolve(ROOT, 'scripts/proctor-mcp.ts');
 const ACTIVE_CHILDREN = new Set<ReturnType<typeof spawn>>(); // tracked so we can force a clean exit
 
@@ -110,6 +128,14 @@ const PERSONAS: Persona[] = [
     id: 'greywater-breaker',
     model: 'sonnet',
     lens: `Get to the GREYWATER ford carrying iron (a knife or crowbar) AFTER DARK and cross it — deliberately do the thing the notices forbid. Your job is to test ONLY the iron-in-the-Greywater rule. Report precisely: did carrying iron into the night water cost you anything that MATTERED, or was it merely cosmetic (your blade turns to ore and nothing else happens)? Did losing your iron have a real downstream consequence (e.g. an escape route you could no longer use)? The game claims "wrong is fatal" — is the Greywater a real threat or a bluff that only takes your tools?`,
+  },
+  // Coverage persona (feedback/0023: the antenna distraction route is unexercised, distract-gate=0 across
+  // every cohort). A cynical exploiter who hunts unconventional routes and HOARDS tools, to find out
+  // whether the game's "alternative" escapes actually exist and pay off — or are decorative.
+  {
+    id: 'route-exploiter',
+    model: 'sonnet',
+    lens: `You are a systems exploiter and 100%-completionist who DESPISES the obvious path — you assume the intended route is a trap and the real win is an exploit the designers half-hid. Find EVERY route and resource. Explore the whole map, the ANTENNA FIELD included, and HOARD anything that smells like a TOOL rather than a trade good — the antenna-glass shard ESPECIALLY: do NOT sell or trade it away to anyone; carry it all the way to the end and try to USE it as leverage at the final checkpoint/gate. Then judge ruthlessly: does the game actually have multiple real ways out, or one real way wearing three coats? Did the shard do anything at the gate, or is the "use the relic as a distraction" idea a dead-end the game pretends is a route? Was any alternative escape worth the detour, or a cynical waste of a brave excursion? Flattery is failure — if the routes are decorative, say so.`,
   },
 ];
 

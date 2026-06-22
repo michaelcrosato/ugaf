@@ -24,8 +24,17 @@ people-pleasing playtester is worthless.
 
 ```bash
 npm run swarm -- --n 24 --concurrency 8 --turns 120     # 24 blind players, 8 at a time
+npm run verify-cohort                                    # TOOL-verify the play (fairness + health) before the LLM judges
 npm run feedback                                         # compile the latest run -> compiled-feedback.md
 ```
+
+**`verify-cohort` is the "trust but verify" step** (`scripts/verify-cohort.ts`): a deterministic, cheap
+check that runs BEFORE the expensive/fallible opus synth, so tools catch what they can first. It reads
+the realness-verified snapshots and HARD-FAILS (exit 1) on a fairness/realness violation — an
+**untelegraphed death** (a law's death line with no preceding warning-ladder line), a play counted clean
+but **not realness-verified** (a forged transcript), or a missing snapshot — and WARNS on a degraded
+cohort (mass API-failure) or a suspected soft-lock at the gate. Run it on any cohort before trusting it as
+a clean validation; a green `verify-cohort` + a green `npm run gate` is the tool floor under the synth.
 
 Output lands in `playtest-runs/swarm/<runId>/` (git-ignored): per-player `*.interview.json`
 (the player's exit interview) + `*.snapshot.json` (the realness-verified transcript), an
@@ -79,8 +88,15 @@ newest run by `index.json` mtime, which a merge can shuffle.
 
 ## Operational notes (win32)
 
-- Launch the MCP server with `node node_modules/tsx/dist/cli.mjs …`, **not** `npx tsx` — `npx` cold-start
-  exceeds Claude's MCP startup window and the tools never register.
+- Launch the MCP server with `node <tsx-cli> …`, **not** `npx tsx` — `npx` cold-start exceeds Claude's
+  MCP startup window and the tools never register. The launcher resolves `<tsx-cli>` via
+  `require.resolve('tsx/cli')`, **not** a hardcoded `node_modules/tsx/dist/cli.mjs` path.
+  **Why this matters (the worktree trap):** in a git **worktree** the local `node_modules` is
+  partial/absent and tsx really lives in the *main* checkout's `node_modules` (Node resolution walks
+  up). The old hardcoded ROOT-relative path did not exist under a worktree, so the MCP server never
+  spawned and **every blind player launched with no `observe`/`act` tool — it "narrated then stopped"
+  (`num_turns=1`, no snapshot, counted `failed`).** If a whole cohort fails that way, check that the
+  resolved tsx path exists before suspecting the game or the model.
 - Set `MCP_TIMEOUT=60000` so the server (which imports the whole engine) has time to boot.
 - Persona prompts are passed by **file** (`--append-system-prompt-file`) and the task prompt via **stdin**,
   so the win32 shell never mangles multi-line args.

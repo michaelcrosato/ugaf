@@ -192,21 +192,36 @@ export function createAnomaly(pack: WorldPack): Module {
         break;
       }
       case 'degrade_item_class': {
-        // the law slumps worked metal toward ore — a reversible material degrade. Fire the
-        // "iron goes soft" line ONCE, on the transition to ore; suppress it for metal that has
-        // already slumped, so the per-move repeat does not train the player to skip the status
-        // line (feedback/0013 #6).
+        // the law slumps worked metal toward ore — a reversible material degrade. feedback/0022 #1: the
+        // iron-degrade was the ONE place this law broke the game's "first contact WARNS, never destroys"
+        // principle — iron vanished to ore in one silent beat while the core has a fair warn-ladder. Now
+        // iron gets the SAME fail-safe-first grace: first hungry beat = WARN (`softening`), the next =
+        // slump to ore. Softening recovers on leaving the water (onBeat), so the two worked-matter
+        // degrades read as one coherent law. The line still fires only on a transition (no per-move repeat).
         for (const k of facts.keysUnder('possession.pc')) {
           if (k.endsWith('.class') && facts.getString(k) === effect.itemClass) {
             const itemKey = k.slice(0, -'.class'.length);
-            if (facts.getString(`${itemKey}.condition`) === effect.toCondition) continue; // already ore — no repeat
-            events.push({
-              tag: 'law_degrade',
-              mutations: [{ op: 'set', key: `${itemKey}.condition`, value: effect.toCondition }],
-              summary: 'The iron in your kit goes soft and rotten-red, slumping toward ore.',
-              data: { law: law.id, item: itemKey },
-              severity: 'reversible',
-            });
+            const cond = facts.getString(`${itemKey}.condition`);
+            if (cond === effect.toCondition) continue; // already ore — no repeat
+            if (cond !== 'softening') {
+              events.push({
+                tag: 'law_degrade_warn',
+                mutations: [{ op: 'set', key: `${itemKey}.condition`, value: 'softening' }],
+                summary:
+                  'The iron in your kit begins to go soft and red at the edges — the Greywater has caught it, the way it catches all worked metal after dark. Get it clear of the water, or shed it, before it slumps the rest of the way to ore.',
+                data: { law: law.id, item: itemKey },
+                severity: 'reversible',
+              });
+            } else {
+              events.push({
+                tag: 'law_degrade',
+                mutations: [{ op: 'set', key: `${itemKey}.condition`, value: effect.toCondition }],
+                summary:
+                  'The iron in your kit slumps the last of the way — soft and rotten-red, gone to dead ore in your hands.',
+                data: { law: law.id, item: itemKey },
+                severity: 'reversible',
+              });
+            }
           }
         }
         break;
@@ -411,17 +426,20 @@ export function createAnomaly(pack: WorldPack): Module {
               severity: 'reversible',
             });
             coreRender = { labels: ['law.greywater', 'core.hunger'], valence: 'cost' };
-          } else if (rung === 2) {
+          } else if (rung <= 3) {
+            // feedback/0020 #2 — the window is widened from 2 warned beats to 3 (loss on the 4th), so a
+            // player who BEELINES out of the water reaches dry ground before the slump completes (the
+            // night15a "2-move no-meter trap"). rung 2 escalates; rung 3 is the explicit last margin.
             coreEvents.push({
               tag: 'core_hunger',
               mutations: [actedMut, { op: 'set', key: 'law.greywater.core_warned', value: rung }],
-              summary: coreHungerTell(2),
+              summary: coreHungerTell(rung),
               data: { law: 'greywater', rung },
               severity: 'reversible',
             });
             coreRender = { labels: ['law.greywater', 'core.hunger'], valence: 'cost' };
           } else {
-            // rung 3: the Greywater remembers what worked matter was for. The core slumps to ore
+            // rung 4: the Greywater remembers what worked matter was for. The core slumps to ore
             // (the lost_core_to_greywater goal fires on this condition).
             coreEvents.push({
               tag: 'core_lost',
@@ -430,7 +448,7 @@ export function createAnomaly(pack: WorldPack): Module {
                 { op: 'set', key: 'law.greywater.core_warned', value: rung },
                 { op: 'set', key: 'possession.pc.salvage_core.condition', value: 'ore' },
               ],
-              summary: coreHungerTell(3),
+              summary: coreHungerTell(4),
               data: { law: 'greywater', rung },
               severity: 'irreversible',
             });
@@ -452,6 +470,36 @@ export function createAnomaly(pack: WorldPack): Module {
             severity: 'reversible',
           });
           coreRender = { labels: ['core.recovered'], valence: 'boon' };
+        }
+      }
+
+      // feedback/0022 #1 — softening iron RECOVERS like the core: out of the water (or the dark passed)
+      // before it slumps, and the metal firms back whole. Guarded once-per-turn (mirrors the core ladder)
+      // so the convergence poll terminates; only fires on an actual recovery (an unchanged value would not).
+      const metalRecoverEvents: WorldEvent[] = [];
+      if (facts.getNumber('law.greywater.metal_acted_turn') !== ctx.turn) {
+        const grey = laws.get('greywater');
+        const inGreyM = grey ? inScope(grey, node) : false;
+        const hungryM = grey ? greywaterHungry(grey, facts) : false;
+        if (!inGreyM || !hungryM) {
+          for (const k of facts.keysUnder('possession.pc')) {
+            if (k.endsWith('.class') && facts.getString(k) === 'metal') {
+              const itemKey = k.slice(0, -'.class'.length);
+              if (facts.getString(`${itemKey}.condition`) === 'softening') {
+                metalRecoverEvents.push({
+                  tag: 'metal_recovered',
+                  mutations: [
+                    { op: 'set', key: 'law.greywater.metal_acted_turn', value: ctx.turn },
+                    { op: 'delete', key: `${itemKey}.condition` },
+                  ],
+                  summary:
+                    'The iron you carried up out of the water firms back as the Greywater loses its hold — the red softness fading, the edge of it hard and honest again. You caught it in time.',
+                  data: { law: 'greywater', item: itemKey },
+                  severity: 'reversible',
+                });
+              }
+            }
+          }
         }
       }
 
@@ -503,16 +551,18 @@ export function createAnomaly(pack: WorldPack): Module {
         firing.length === 0 &&
         huntEvents.length === 0 &&
         coreEvents.length === 0 &&
+        metalRecoverEvents.length === 0 &&
         ffEvents.length === 0 &&
         shelterEvents.length === 0
       )
         return {};
 
-      const events: WorldEvent[] = [...huntEvents, ...coreEvents, ...ffEvents, ...shelterEvents];
+      const events: WorldEvent[] = [...huntEvents, ...coreEvents, ...metalRecoverEvents, ...ffEvents, ...shelterEvents];
       const scheduled: ScheduledEvent[] = [...huntScheduled];
       let render: BeatResult['render'] | undefined =
         coreRender ??
         huntRender ??
+        (metalRecoverEvents.length ? { labels: ['greywater.metal_recovered'], valence: 'boon' } : undefined) ??
         (shelterEvents.length ? { labels: ['hollow_dark.shelter'], valence: 'boon' } : undefined);
       for (const law of firing) {
         const contacts = (facts.getNumber(`law.${law.id}.contacts`) ?? 0) + 1;
@@ -658,9 +708,11 @@ function hollowDarkTell(law: LawDefinition, closer: number): string {
  */
 function coreHungerTell(rung: number): string {
   if (rung <= 1)
-    return 'The core goes soft in your hands — its wrong-heavy weight sloughing, the surface of it crawling like wet clay. The Greywater has caught the worked-matter scent of it and started to call it apart, the way it calls the iron. Get it out of the water NOW — up to the fork, to dry ground — before it is lost. There is no waiting the dark out while you carry it; the hungry water only takes it faster. (You should have crossed in the safe hour. The core is going to ore.)';
+    return 'The core goes soft in your hands — its wrong-heavy weight sloughing, the surface of it crawling like wet clay. The Greywater has caught the worked-matter scent of it and started to call it apart, the way it calls the iron. Get it out of the water — up to the fork, to dry ground — before it is lost. There is no waiting the dark out while you carry it; the hungry water only takes it faster. (You should have crossed in the safe hour. Make for dry ground now and you can still carry it out whole.)';
   if (rung === 2)
-    return 'The core sags further, a knot of not-quite-stone trying to remember it was ever worked at all. This is the last of your margin: one more beat of the hungry water and it slumps to dead red ore in your pack. OUT of the Greywater this instant — up to the fork, to dry ground — and do not carry it another step into the hum.';
+    return 'The core sags further in your pack, a knot of not-quite-stone trying to remember it was ever worked at all. The water has its scent and will not let go while you are in it. Keep moving — up out of the Greywater, to the fork and dry ground — and do not stop in the hum.';
+  if (rung === 3)
+    return 'The core is barely holding its shape now, the wrong weight running out of it like water through a fist. This is the last of your margin: one more beat in the hungry dark and it slumps to dead red ore in your pack. OUT of the Greywater this instant — one move more to the fork and dry ground — and do not carry it another step into the hum.';
   return 'You carried worked anomaly one step too far into the iron-hungry dark, and the Greywater took the last of it: the core slumps in your hands to a fist of red, rotten ore, its wrong weight gone, ordinary and ruined. The water remembered what it was for.';
 }
 

@@ -82,18 +82,20 @@ export const TELL_LIBRARY: TellProse[] = [
   {
     id: 'hollow_silence',
     channel: 'sound',
-    cue: 'The silence here is not empty — it has a weight, and it leans on you, and the longer you stand still the more it presses.',
-    note: 'The dark in the deep is patient and it does not like a thing that stops moving. To linger here after dark is to invite it closer.',
+    cue: 'The silence here is not empty — it has a weight to it, the kind you can tell would lean on you and press the longer you stood still in it, once the dark was down.',
+    note: 'The dark in the deep does not like a thing that stops moving. To linger here AFTER DARK is to invite it closer; in daylight the quiet is only quiet.',
     conclusion:
       'In the deep dark, to wait or rest is to let the Hush lean in — it costs you your nerve, and it takes a step closer each time.',
   },
   {
     id: 'hollow_heartbeat',
+    // feedback/0020 #4 — read as a conditional LAW, not an active NOW-threat, so examining it in daylight
+    // (when the deep is safe) teaches the rule instead of crying wolf: the danger is the deep AFTER DARK.
     channel: 'touch',
-    cue: 'Your own heartbeat has gone loud and slow in your ears, and you have the distinct, animal certainty that something is matching it, breath for breath, just out past the light.',
-    note: 'Stillness in the deep is what it hunts by. Keep moving, or the dark closes the distance.',
+    cue: 'You can imagine, standing here, how the deep would feel after dark — your own heartbeat gone loud and slow, and the animal certainty that something out past the light was matching it, breath for breath.',
+    note: 'Stillness in the deep is what it hunts by, once the dark is down. To stop moving out here at night is to let it close the distance; by day the deep is only deep.',
     conclusion:
-      'In the deep dark, to wait or rest is to let the Hush lean in — keep moving, or it takes a step closer.',
+      'In the deep AFTER DARK, to wait or rest is to let the Hush lean in — keep moving at night, or it takes a step closer. By day the deep is safe.',
   },
   {
     id: 'hollow_sitter',

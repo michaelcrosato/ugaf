@@ -2,62 +2,79 @@
 
 *A living snapshot of the autonomous build sessions. The work keeps going after this is written.*
 
-## The engine validated the big win across the board — then caught and fixed its own bugs
+## The loop's tightest turn yet: it found the biggest problem, fixed it, and proved the fix on a clean run
 
 The whole project rests on one idea: AI players who play the game **truly blind** (seeing only the game,
 never the answers), as **demanding, cynical critics**, then report back — and we use that, over and over,
-to make the game better. This stretch the loop did two complete things at once: it took the hard-won
-"earned win" and **proved it holds for every kind of player**, and then — in the same cycle — the blind
-critics **found three real bugs the automatic safety net could never catch**, and we **fixed them**.
+to make the game better. This stretch did the complete cycle, cleanly: the blind critics **found the one
+thing losing the most players**, we **fixed it**, and a fresh, perfectly clean set of twelve critics
+**proved the fix works** — the exact players who lost to that problem before now win.
 
-So far: **over 700 blind players across many play-sessions**, every change checked by the automatic
-safety net, a fresh second opinion, and merged clean. The repo is tidy.
+## The biggest problem was a hidden deadline. Now it's the hook.
 
-## The win is fair, earned, and learnable — confirmed by 16 fresh critics, every kind of player
+For a while, the most common way to lose was subtle and unfair: the dangerous water crossing has a clock —
+get across and out before dark, or the prize dissolves in your hands — but the game told you the *rules*
+loudly and the *timing* late, so careful players who'd learned everything still lost to a deadline nobody
+told them about in time. One critic called it *"learn before you go, then punished for having done so."*
 
-We ran two fresh cynical cohorts (16 players, every persona, three different AI brains). The result was
-as clean as it gets: **everyone who played carefully and learned the rules won; everyone who rushed or
-deliberately broke the rules lost — and lost fairly, warned first.** Eight wins, eight losses, split
-perfectly along *how they played*, not which AI they were. The harshest prose critic we have won the
-game and called it "a review of a game that works." That is the foundation working at its best.
+We fixed it two ways: the warden now tells you the deadline plainly and early (cross before dusk, the prize
+dissolves too, not just iron), and we widened the grace window so a player heading for safety makes it out
+instead of losing the prize one step short.
 
-## The frontier moved: the rules are fair, but they don't yet *bite* the player who learns them
+The result, measured on a clean run of twelve blind critics: **ten wins, two losses — and the two losses
+were players who deliberately broke a clearly-marked rule, not the timing trap.** Last time this was the
+problem, it was five wins to seven losses. **Seven players this run hit the danger and recovered the prize
+where they'd have lost it before** — including the two specific critics who lost to this exact trap last
+time and now win. Best of all, the deadline stopped being a trap and became the *hook*: one player said
+that the moment she realised she had a daylight clock racing nightfall, she was *"committed."*
 
-Here is the sharp new finding — and it comes from the critics who **won**. The cleverest "systems" player
-put it plainly: *"The rules never bit. Knowing the rules is sufficient to feel nothing."* Each danger
-punishes a *mistake* — look back, speak a name, carry iron at night — so once you've learned the rule,
-you simply never make the mistake, and you stroll through with no tension. The dangers are a *checklist*,
-not a *gauntlet*. That is exactly the thing we most want to fix next: **make the dangers force real
-choices and real pressure, not just "don't do the wrong thing."** That is the next big swing (night13).
+## We caught the playtest engine going dark — twice — and handled both
 
-## What we shipped this stretch (night12)
+Earlier this project, the playtest machine silently produced nothing in our isolated workspace (a wiring
+bug); we found and fixed it. Then, mid-run, the AI service itself got overloaded and started failing — the
+exact "server's too busy" error we keep hitting. Instead of hammering it, we let the bad run finish
+honestly (it flags its own failures), waited, ran a tiny two-player check to confirm the service had
+recovered, and only then ran the full clean validation above. The loop is honest about its own health.
 
-- **The shop is honest now:** the salvager Mox finally tells you the *actual* safe hour ("the bottoms
-  sleep at midday, wake at six") when you pay her — before, she sold "an hour" without ever saying which,
-  and a player lost a whole run because of it.
-- **The dark reads right:** when you wait out the night in a sheltered spot, the game now tells you *why*
-  you're safe there — turning a confusing non-event into a learned rule.
-- **The listening field is worth visiting:** the game now points you to a coin-free way to learn the
-  water's law by braving the antennas — so a whole third of the world stops being decorative.
-- **Three bugs the critics caught, fixed:** examining your own knife used to show a dead man's dissolved
-  blade from another place (in the first minute!); "wait until day" looked broken when it was quietly
-  protecting you (now it explains itself); and a reported "reading the walls breaks a trade" turned out
-  to be a false alarm (now guarded against).
-- **We put our own tools on trial:** the playtest swarm now survives the rate-limit errors that kept
-  interrupting us (it paces itself and retries), and it can no longer quietly lose a player's report.
+## Then the deeper read caught a hidden unfairness — and we fixed that too
 
-## What's next
+When we ran the *careful* analysis on that clean batch (one strong critic-of-critics, the way the design
+demands), it caught something the raw numbers had hidden: a player who *learned* the dangerous-water law the
+honest way — by studying it, or buying the knowledge from the cartographer — was then *refused* when they
+tried to buy the salvager's "I'll-walk-you-out" favour, because the game lumped the favour together with the
+knowledge they already had. So the most careful players were quietly locked out of one of the three ways
+home, and only saved by stumbling onto a free gap. That's the exact kind of hidden unfairness the whole
+project exists to catch. We separated the two — you can always buy the walk-out, even if you already know the
+water — and a fresh clean batch of twelve proved it: the favour-route was used *twice as often*, by the very
+players who'd been locked out. We also gave the dissolving *iron* its own warning beat, so it warns and can
+be saved just like the prize, instead of vanishing silently.
 
-The keystone above: **make the world's dangers bite the careful player too** — turn "don't do X" into
-real dilemmas with real pressure, the way a great showcase level keeps you on edge even when you know the
-rules. Plus a clear list of smaller fixes the critics named: the way *out* of the Zone needs to feel
-earned (right now it can resolve itself), and one confusing pair of place-names ("the fork" vs "the
-ford") cost a careful player their prize. Full detail in `feedback/0017.md`.
+## We proved it holds for the smartest players too — and the engine now verifies itself
+
+We re-ran the whole batch a second time forcing the *strongest* AI brain (to be sure the wins weren't an
+artifact of weaker players), added a dedicated explorer to test the one escape nobody had tried (throwing
+the guards' attention with the antenna shard — it works, it's fair, and a player won with it), and merged
+both batches: **twenty-two of twenty-five won, on every tier, with no unfair death and no dead-end.** We
+also built the engine a new pair of eyes: a *deterministic checker* that reads every transcript and proves,
+by tool not opinion, that every death was warned, every play was genuinely played (not faked), and nobody
+was walled in — run automatically before the AI critics ever weigh in. Trust, but verify.
+
+## What's next — one honest flaw, named clearly: the smart player pays for nothing
+
+The careful critics converged on a single, deep truth: the game has real teeth, but **the best line of play
+refunds every cost.** The bought "walk me out" favour is a single free button that deletes the tense escape
+the other routes make you earn; waiting until noon refunds the water's deadline; the "your knowledge is
+decaying" warnings never actually bite; and the listening field — the whole third of the map — is skippable.
+The dangers exist, but a clever player glides past all of them. The next swing (built carefully on a side
+branch and only kept if a fresh batch confirms it) starts at the highest-leverage spot: **make leaning on the
+favour cost something in the moment** — a guard's second glance, a price, a near-miss — so carrying the prize
+out is the hardest thing in the game for everyone, not an opt-out. Full detail in `feedback/0024.md`.
 
 ## Bottom line
 
-The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — had its strongest
-cycle yet: it **proved** the central promise (learn the world to survive it) holds for every kind of
-player and every AI tier, **caught and fixed its own bugs** in the same breath, **hardened itself**
-against the rate-limit pain that was slowing us down, and **named the next mountain** — making the
-dangers genuinely *bite*, not just gate. The foundation is sound; the next swing is the fun.
+The two-loop engine — AI builds, AI blind-plays, feedback drives the next build — ran its cleanest full
+cycle: it **found** the dominant problem (a hidden deadline punishing careful players), **fixed** it (tell
+the deadline early, widen the grace window), and **proved** the fix on a flawless twelve-of-twelve run (the
+losses dropped from seven to two, seven players recovered the prize, and the deadline became the hook) — all
+while staying honest about its own health through a service outage. The thing that was quietly losing the
+most players is gone, and the next improvement is already on the board.

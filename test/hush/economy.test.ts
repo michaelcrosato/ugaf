@@ -40,12 +40,88 @@ describe('the NPC information-economy', () => {
     expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1);
   });
 
+  // feedback/0019 #2 — the Mox debt was a BROKEN PROMISE: the gate offers "lean on the debt" but a
+  // player who paid for it goes back to Mox and asks how to spend it, hitting a wall. Mox must point
+  // to WHERE and HOW the debt is spent (at the wire), and the sale itself must name what it buys.
+  it('paying Mox names the debt it buys — a Strider walk-out at the wire (point-of-sale)', () => {
+    const s = sess('econ-mox-debt-sale');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    const r = s.act('pay mox');
+    expect(r.text.toLowerCase()).toMatch(/debt|owe|walk you (out|through)|at the wire|at the gate/);
+  });
+
+  it('asking Mox how to use the debt points you to the gate (the broken-promise repro)', () => {
+    const s = sess('econ-mox-debt-ask');
+    for (const c of ['out', 'road', 'salvage']) s.act(c);
+    s.act('pay mox'); // earn the debt
+    // the exact phrasings the qa-breaker tried and hit a wall on:
+    const a = s.act('ask mox about the debt');
+    expect(a.text.toLowerCase()).toMatch(/lean on .*debt|at the wire|at the gate|checkpoint/);
+    const b = s.act('ask mox to walk me out');
+    expect(b.text.toLowerCase()).toMatch(/lean on .*debt|at the wire|at the gate|checkpoint/);
+  });
+
+  // feedback/0020 #5 — the relic is the SURVEY's trade good (and the gate distraction), not generic scrip:
+  // Mox must NOT consume it as payment for her safe-hour map (the fungibility bug that lost the relic to the
+  // wrong vendor). She refuses and points to Eun / the gate.
+  it('the antenna relic is not generic scrip — Mox refuses it and points to the Survey', () => {
+    const s = sess('relic-mox');
+    // prime the scene at Mox's camp with the relic in hand (set BEFORE any turn, so the event-log
+    // chain stays intact — `give` reads loc.pc + travel's native node)
+    s.state = {
+      ...s.state,
+      native: {
+        ...s.state.native,
+        'travel.graph': { ...(s.state.native['travel.graph'] as object), node: 'salvager_camp' },
+      },
+      facts: {
+        ...s.state.facts,
+        'loc.pc': 'salvager_camp',
+        'possession.pc.antenna_relic': true,
+        'possession.pc.antenna_relic.class': 'salvage',
+      },
+    };
+    const r = s.act('give relic to mox');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBe(true); // NOT consumed — she won't take it
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // and it bought nothing
+    expect(r.text.toLowerCase()).toMatch(/survey|eun|not.*(mine|my trade|for me)/); // points elsewhere
+  });
+
+  // feedback/0022 (synth P0) — the untelegraphed wall at the gate: buying Eun's Greywater law (or
+  // deducing it) set `known.purchased.greywater`, which made `pay mox` REFUSE ("you already carry that
+  // map") — but Mox's sale is also where you buy the walk-out DEBT (the gate exit). So a player who
+  // LEARNED the law was silently locked out of the paid exit. Mox sells the ROUTE/DEBT, not just the law:
+  // knowing the law must not block buying the walk-out.
+  it('knowing the Greywater law does NOT lock out Mox’s paid walk-out debt (the gate-exit P0)', () => {
+    const s = sess('mox-debt-unlock');
+    for (const c of ['out', 'road', 'survey']) s.act(c); // -> Eun at the Survey
+    s.act('give coins to eun'); // buy the Greywater law-table from Eun
+    expect(s.state.facts['known.purchased.greywater']).toBe(true);
+    for (const c of ['out', 'salvage']) s.act(c); // -> Mox at the Striders' camp
+    const r = s.act('pay mox'); // must STILL succeed — you are buying the route + the walk-out debt, not the law
+    expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1); // the debt is bought
+    expect(s.state.facts['objective.cache_route']).toBe('known'); // and the route
+    expect(r.text.toLowerCase()).not.toMatch(/already carry that map|already know that one/); // not the false refusal
+  });
+
   it('giving a coin to a non-merchant still dead-ends honestly (no false trade)', () => {
     const s = sess('econ-holt');
     s.act('out'); // Warden Holt is at the checkpoint and sells nothing
     const r = s.act('give coins to holt');
     expect(r.text.toLowerCase()).toContain('no use for that');
     expect(s.state.facts['possession.pc.coin_roll']).toBe(true); // coin NOT consumed
+  });
+
+  // feedback/0020 #1 — the dominant loss mode: the crossing DEADLINE is under-told. Holt (a FREE source
+  // the player asks for intel) must state the concrete hour AND that the CORE, not just iron, dissolves
+  // after dark — so a careful player who learns the rules isn't trapped by a timing nobody told them.
+  it('Holt states the Greywater crossing deadline AND that the core dissolves after dark (free, early)', () => {
+    const s = sess('holt-deadline');
+    s.act('out'); // Warden Holt at the checkpoint
+    const r = s.act('ask holt about the greywater');
+    const t = r.text.toLowerCase();
+    expect(t).toMatch(/dusk|six|sundown|nightfall|before dark|daylight/); // the concrete crossing deadline
+    expect(t).toMatch(/core|prize/); // and that it is not just iron — the core goes too
   });
 
   it('asking an NPC about an unhandled topic says so, instead of silently replaying the greeting', () => {
@@ -118,16 +194,17 @@ describe('the NPC information-economy', () => {
     expect(r.text.toLowerCase()).toContain('pay'); // it points you at buying instead
   });
 
-  it('a law bought from one merchant is not falsely claimed as bought from the OTHER (trade-state bleed)', () => {
+  it('buying Eun’s law does not lock out Mox’s route/debt — she sells the WALK-OUT, not the law (feedback/0022 P0)', () => {
     const s = sess('trade-bleed');
     for (const c of ['out', 'road', 'survey']) s.act(c);
     s.act('give coin to eun'); // buy the Greywater table from EUN
     expect(s.state.facts['known.purchased.greywater']).toBe(true);
     for (const c of ['out', 'salvage']) s.act(c); // Lyle's Rest -> the Striders' camp (Mox)
     const r = s.act('pay mox');
-    expect(r.text).not.toContain('from me already'); // Mox must NOT claim she sold it to you
-    expect(r.text.toLowerCase()).toContain('already carry'); // honest: you already have that law
-    expect(s.state.facts['meta.coins']).toBe(2); // and you are NOT charged again
+    expect(r.text).not.toContain('from me already'); // Mox must NOT falsely claim SHE sold you the law
+    expect(r.text.toLowerCase()).toMatch(/know the water already|not charge you for what you've read/); // honest about the law
+    expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1); // but the WALK-OUT debt IS sold
+    expect(s.state.facts['meta.coins']).toBe(1); // charged for the route/debt (the service), not double-charged for the law
   });
 
   // ---- feedback/0012 #6: knowledge-economy depth -------------------------------------------

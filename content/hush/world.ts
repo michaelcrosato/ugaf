@@ -128,7 +128,7 @@ export const ITEMS: ItemDef[] = [
     itemClass: 'salvage',
     portable: true,
     look: {
-      base: 'A shard of antenna-glass the Settling fused into something that still faintly sings, on a channel just below hearing. The Survey would trade real knowledge for a piece like this — if you can carry it out of the field without giving the field your voice.',
+      base: 'A shard of antenna-glass the Settling fused into something that still faintly sings, on a channel just below hearing. The Survey would trade real knowledge for a piece like this — if you can carry it out of the field without giving the field your voice. And it is not only the Survey’s to want: the shard still answers the field it came from. Loosed where dead antennas can hear it, it throws a voice across the dark and they sing it back — a din to pull every watching eye the wrong way. Two uses live in it, and you can spend it only once: the Survey’s price for a law, or your own way past a watched gate.',
     },
   },
 ];
@@ -198,7 +198,7 @@ export const NODES: NodeDef[] = [
               { not: { fact: 'flag.hidden', eq: true } }, // once you HAVE hidden, the way-open variant takes over (#4)
             ],
           },
-          text: 'You know this gate now, the way Holt told it: the wedge of dark by the north post where the floodlight throws crooked. The dark is on your side for it. Go low and quiet there (HIDE) while the troopers are not roused, and you can be through it before they think to look.',
+          text: 'You know this gate now, the way Holt told it: the wedge of dark by the north post where the floodlight throws crooked. The dark is on your side for it. Go low and quiet there — hide in that wedge while the troopers are not roused, and you can be through it before they think to look.',
         },
         {
           when: {
@@ -244,11 +244,28 @@ export const NODES: NodeDef[] = [
           },
           text: 'A Strider owes you a way through, and Mox keeps her debts. Lean on it, and you will be walked out past the wire like baggage.',
         },
+        // feedback/0020 #5 — the antenna onto the win path: carrying the shard out of the field, the gate
+        // offers a FOURTH way — throw the troopers' attention with the relic's song. Telegraphed here so
+        // the brave-the-field investment has a legible, climactic payoff.
+        {
+          when: {
+            all: [
+              { fact: 'possession.pc.salvage_core', eq: true },
+              { fact: 'possession.pc.antenna_relic', eq: true },
+              { not: { fact: 'flag.intercept_clear', eq: true } },
+            ],
+          },
+          text: 'The antenna-shard at your hip is humming, louder here where the gate’s own dead floodlight wiring feeds it. You could loose its song and let the masts out past the wire sing it back — and throw every watching eye toward the noise while you slip the core through. One way past, and the shard would be spent on it.',
+        },
         // feedback/0013 #4 — once a route out is EARNED, stop re-offering the spent escape and the
         // road no longer "silently un-blocks": say plainly the way is open and that BACK to the
         // waystation is the finish. A `replace:true` variant supplants the stale route instructions
         // for this beat (so a player who just HID isn't told to HIDE again).
         {
+          // route-agnostic finish cue: whether you levered the gap with iron or leaned on a debt, the
+          // ACT itself narrated the flavour (spine: pry / debt_called) — here the room just confirms the
+          // gate is behind you. (feedback/0018 night14: the passive "a Strider steps up" replace variant
+          // that opened the gate with no act is gone; the debt now fires only through the lean-on act.)
           when: {
             all: [
               { fact: 'possession.pc.salvage_core', eq: true },
@@ -256,18 +273,7 @@ export const NODES: NodeDef[] = [
             ],
           },
           replace: true,
-          text: 'The wire-gap is levered wide and the core is already through it, into the dark beyond the fence. Nothing holds you at this gate now. The way is open — go BACK to the waystation, and you carry the core clear of the Hush.',
-        },
-        {
-          when: {
-            all: [
-              { fact: 'possession.pc.salvage_core', eq: true },
-              { fact: 'reputation.pc.striders', gte: 1 },
-              { not: { fact: 'flag.intercept_clear', eq: true } },
-            ],
-          },
-          replace: true,
-          text: 'The Strider who owes you steps up to the boom gate and waves you through like baggage — Mox keeps her debts. The way is open. Go BACK to the waystation and you are out past the wire with the core.',
+          text: 'The core is through the wire and into the dark beyond the fence, and nothing holds you at this gate now. The way is open — go BACK to the waystation, and you carry it clear of the Hush.',
         },
         {
           when: {
@@ -295,14 +301,15 @@ export const NODES: NodeDef[] = [
         to: 'waystation',
         label: 'back to the waystation',
         via: 'e_way_check',
-        // carrying the core, the watched gate is an EARNED branch (feedback/0013 #1): a free HIDE is
-        // not enough — slipping out needs the gate's blind spot (ask Holt about the gap), the cover of
-        // DARK, and a calm patrol; or working iron to lever the gap; or a Strider's debt.
+        // carrying the core, the watched gate is an EARNED branch, and every route now demands an ACT
+        // (feedback/0018 night14 — the hollow endgame made to bite): the silent SLIP needs the gate's
+        // blind spot (ask Holt) + the cover of DARK + a calm patrol AND you metal-free (working iron
+        // CLINKS — handled in stealth); or working iron to PRY the gap; or LEAN ON a Strider's debt
+        // (an act, no longer a passive fact). The debt and the pry both set `flag.intercept_clear`.
         when: {
           any: [
             { not: { fact: 'flag.intercepted', eq: true } },
             { fact: 'flag.intercept_clear', eq: true },
-            { fact: 'reputation.pc.striders', gte: 1 },
             {
               all: [
                 { fact: 'objective.knows_gap', eq: true },
@@ -314,7 +321,7 @@ export const NODES: NodeDef[] = [
           ],
         },
         blockedText:
-          'The boom gate is down and the troopers are at the wire, watching for exactly what rides in your pack. You will not simply walk the core out under their noses. To slip past you must know where the floodlight falls short — ask Warden Holt about the gap — then go low and quiet (HIDE) under cover of dark, while they are not roused (by daylight the open ground is open ground). Or lever the wire-gap wide with good iron (USE your bar or knife — if the Greywater has not eaten its temper). Or lean on a debt, if the Striders owe you one.',
+          'The boom gate is down and the troopers are at the wire, watching for exactly what rides in your pack. You will not simply walk the core out under their noses. There are ways past, for one who has earned a way: slip the gate where the floodlight falls short — ask Warden Holt about the gap, shed any worked iron so it cannot ring, and hide low in the dark while they are not roused (by daylight the open ground is just open ground). Or lever the wire-gap wide with good iron, if the Greywater has not eaten its temper. Or lean on a Strider’s debt, if one is owed you. Or throw their eyes the wrong way — if you carried a singing shard of antenna-glass out of that field, loose it here and let the dead masts answer.',
       },
       { dir: 'road', to: 'lyles_rest', label: "the maintained road, down to Lyle's Rest", via: 'e_check_lyle' },
       {

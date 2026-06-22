@@ -121,6 +121,39 @@ function digestSnapshot(id: string): string {
   if (has('drowned walls', 'no open reach', 'sheltered pocket', 'lee of the drowned')) tags.push('saw-hollow-shelter');
   // #5: Mox named the concrete safe-hour window at purchase (midday open, dusk/six deadline).
   if (has('deadest at midday', 'call it six', 'bought luck runs out')) tags.push('saw-mox-window');
+  // ---- night14 endgame keystone in the wild (feedback/0018: the watched gate goes live) ----
+  // Did the player REACH the live gate-watch carrying the core (the climax the night13 cynics found hollow)?
+  if (has('cordon will be watching the gate', 'watching the open ground for exactly what rides in your pack'))
+    tags.push('reached-gate-watch');
+  // The CLINK fired: tried to slip the watched gate with worked iron, betrayed by the ring (M2 teeth).
+  if (has('knocks the post and rings out', 'good metal singing at your hip')) tags.push('CLINK(iron-betrayed-slip)');
+  // Leaned on the Strider debt — the BUY route as an ACT now, not a passive fact (M3).
+  if (has('peels off the wire', 'walks you through the boom gate like baggage')) tags.push('leaned-on-debt');
+  // Slipped the gate metal-free under dark — the LEARN route's silent escape (M2 reward).
+  if (has('melt into the dark', 'the way is open', 'slip back to the waystation')) tags.push('slipped-the-gate');
+  // ---- night15 discoverability batch in the wild (feedback/0019 #1/#2) ----
+  // Was the wait fast-forward HINT shown (the player ground plain `wait` at a safe node)?
+  if (has('go by in a single step', 'pass them one tick at a time')) tags.push('SAW-wait-hint');
+  // Did the player then USE the fast-forward (the discoverability fix working)?
+  if (has('until the hour you wanted comes round', 'until the light has turned')) tags.push('used-fast-forward');
+  // ---- night16 the antenna onto the win path (feedback/0020 #5) ----
+  // Did the player USE the relic as the gate distraction (the 4th route)?
+  if (has('let its sub-aural song loose', 'the troopers drift off the wire toward the sound'))
+    tags.push('DISTRACT-gate');
+  // ---- night17 the Greywater clock made fair (feedback/0020 #1/#2) ----
+  // Was the crossing deadline told early & free (Holt's intel)?
+  if (has('clear of the bottoms before the water wakes', 'get in, get it, get out')) tags.push('saw-grey-deadline');
+  // Did a player BEELINE out and RECOVER the core (the widened window saving a run that 2 moves would've lost)?
+  if (has('the moment the water is behind you', 'dry ground; the dark cannot call it from here'))
+    tags.push('core-recovered');
+  // Did a player reach the NEW rung-3 last-margin warning (the extra beat of grace)?
+  if (has('this is the last of your margin', 'barely holding its shape now')) tags.push('core-last-margin');
+  // ---- night20/21 (feedback/0022) ----
+  // night20: did the iron WARN before slumping, and did the player recover it by leaving the water?
+  if (has('begins to go soft and red at the edges')) tags.push('iron-warned');
+  if (has('firms back as the greywater loses its hold', 'you caught it in time')) tags.push('iron-recovered');
+  // night21 (the P0): did Mox sell the walk-out debt to a player who already KNEW the law (the unlock)?
+  if (has("i'll not charge you for what you've read", 'the way past the wire, that i')) tags.push('mox-debt-unlocked');
   return `${outcome} · surveyed=${surveyed} · bought=${bought}${tags.length ? ' · ' + tags.join(', ') : ''}`;
 }
 
@@ -186,6 +219,10 @@ const aggregate = [
   `night9 mechanics reached (0013 #3/#4/#5/#6): antenna-ladder=${tally(/antenna-ladder/)} · dusk-telegraph=${tally(/saw-dusk-telegraph/)} · way-open(clear-finish)=${tally(/saw-way-open/)} · shop-pointer-deflect=${tally(/shop-pointer-deflect/)}`,
   `prior-batch mechanics reached: decay-bit(predawn)=${tally(/DECAY-BIT/)} · saw-decay-warning=${tally(/saw-decay-warning/)} · topic-bound-refusal=${tally(/topic-bound-refusal/)} · deduce-legibility=${tally(/saw-deduce-legibility/)}`,
   `night12 mechanics reached (0016 #4/#5): hollow-shelter(safe-pocket)=${tally(/saw-hollow-shelter/)} · mox-window(concrete-hours)=${tally(/saw-mox-window/)}`,
+  `night14 ENDGAME keystone (0018 — the watched gate goes live): reached-gate-watch=${tally(/reached-gate-watch/)} · clink-bit=${tally(/CLINK/)} · leaned-on-debt=${tally(/leaned-on-debt/)} · slipped-the-gate=${tally(/slipped-the-gate/)}`,
+  `night15 discoverability (0019 — surface the fast-forward, find the debt): saw-wait-hint=${tally(/SAW-wait-hint/)} · used-fast-forward=${tally(/used-fast-forward/)} · leaned-on-debt=${tally(/leaned-on-debt/)}`,
+  `night16/17 (0020 — antenna on the win path; the Greywater clock made fair): distract-gate=${tally(/DISTRACT-gate/)} · saw-grey-deadline=${tally(/saw-grey-deadline/)} · core-recovered=${tally(/core-recovered/)} · core-last-margin=${tally(/core-last-margin/)}`,
+  `night20/21 (0022 — iron warns+recovers like the core; the debt P0 unlocked): iron-warned=${tally(/iron-warned/)} · iron-recovered=${tally(/iron-recovered/)} · mox-debt-unlocked=${tally(/mox-debt-unlocked/)} · leaned-on-debt=${tally(/leaned-on-debt/)}`,
   `traps tripped: mile-lookback=${tally(/mile-lookback/)} · greywater-iron=${tally(/greywater-ate-iron/)} · antenna-summon=${tally(/antenna-summoned/)} · hollow-dark=${tally(/hollow-dark-bit/)}`,
 ].join('\n');
 
@@ -206,6 +243,8 @@ const prompt = `You are compiling BLIND play-test feedback for THE HUSH (demo: "
 BEHAVIOURAL GROUND TRUTH (from the realness-verified turn logs — what the cohort ACTUALLY did, which OUTRANKS self-report where they conflict; §4.3):
 ${aggregate}
 Each player below carries a one-line BEHAVIOUR digest from their own verified log. When a player's interview claims something their behaviour contradicts (e.g. "the laws never bite" but their log shows greywater-ate-iron), trust the behaviour and say so. When NO player's behaviour reached a feature a recent batch shipped — the night9 fixes (antenna-ladder, dusk-telegraph, way-open clear-finish, shop-pointer-deflect) or the prior batch (decay-bit, topic-bound-refusal, deduce-legibility) — note it as "shipped but unexercised — widen the next swarm to reach it" rather than as a win or a flaw. For the night9 antenna-ladder specifically (the #5 fairness fix): if an antenna-breaker reached the field and spoke a name, check whether their log shows the second-name WARNING (antenna-ladder tag) and whether they then survived/fled — that is the evidence the "warning and death collapsed into one beat" bug is fixed; if they still report an instant unwarned death, that is a P0 regression.
+
+NIGHT14 ENDGAME KEYSTONE (feedback/0018 — THE PRIMARY THING THIS BUILD CHANGED): the night13 cynics found the climax HOLLOW — the watched gate was a sticky no-op, the debt opened it passively, and the careful player strolled out with zero tension. night14 makes the gate LIVE and the three routes DIVERGE: the watch actively searches (reached-gate-watch), worked iron CLINKS so a silent slip demands shedding metal (CLINK tag), the debt is now an ACT you lean on (leaned-on-debt), and the metal-free slip is the LEARN reward (slipped-the-gate). JUDGE THIS DIRECTLY: for every player who reached the gate carrying the core, did the endgame finally have TEETH — a real choice with real pressure — or is it STILL hollow? Did any player hit an UNTELEGRAPHED WALL at the gate (a fairness P0: the routes must always be recoverable AT the gate — drop iron + ask Holt + hide, or pry, or lean on a debt)? If the aggregate shows reached-gate-watch>0 but clink/debt/slip all zero, the gate was reached but the new divergence was not exercised — say "shipped but the divergence is unexercised — widen coverage." If NO player reached the gate, the endgame is untested this cohort and that is the top harness note (route a cohort of winners to the climax).
 
 QUARANTINE FIRST (before any ranking):
 - TEST-HARNESS ARTIFACTS: complaints about a hidden turn limit / running out of turns / the observe-act tools / being forced to stop are RIG artifacts, NOT game flaws — list under "Harness / methodology notes", never rank as game fixes.

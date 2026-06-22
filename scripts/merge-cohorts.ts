@@ -35,7 +35,10 @@ const summary = { ok: 0, realnessVerified: 0, won: 0, lost: 0, active: 0 };
 
 for (const spec of specs) {
   const [tag, dir] = spec.split('=');
-  const runDir = resolve(SWARM, dir!);
+  // accept EITHER a bare cohort name (`a=cohort-x`) OR a full path (`a=playtest-runs/swarm/cohort-x`) —
+  // strip a leading playtest-runs/swarm/ so the two forms can't silently double-prefix into ENOENT.
+  const name = dir!.replace(/^.*playtest-runs[/\\]swarm[/\\]/, '');
+  const runDir = resolve(SWARM, name);
   const idx = JSON.parse(readFileSync(resolve(runDir, 'index.json'), 'utf8'));
   for (const pl of idx.players as Record<string, unknown>[]) {
     const oldId = pl.id as string;

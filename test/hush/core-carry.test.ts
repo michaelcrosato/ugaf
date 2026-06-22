@@ -35,11 +35,11 @@ function freshSession(seed = 'core-seed') {
 }
 
 describe('The Hush — the core across the dark Greywater (feedback/0014 #1)', () => {
-  it('a naive after-dark carry-out LOSES the core — the deduced law is now ON the win path', () => {
+  it('LINGERING in the dark water with the core LOSES it — the slump ladder runs to ore on the 4th beat (feedback/0020 #2)', () => {
     const s = freshSession('naive-carry');
-    // straight march in (no timing): the core is taken and carried out across the dark ford, and
-    // slumps to ore mid-carry. The lost_core_to_greywater goal fires BEFORE any win goal.
-    const path = ['out', 'road', 'road', 'on', 'fork', 'water', 'in', 'cache', 'take core', 'out', 'back'];
+    // take the core in the hungry dark and LOITER in the water (cache<->bottoms) instead of beelining
+    // out: the widened ladder runs warn -> warn -> last-warn -> ore over four in-scope beats.
+    const path = ['out', 'road', 'road', 'on', 'fork', 'water', 'in', 'cache', 'take core', 'out', 'in', 'out'];
     let last = { status: 'active' as string, text: '' };
     for (const cmd of path) {
       last = s.act(cmd);
@@ -51,12 +51,31 @@ describe('The Hush — the core across the dark Greywater (feedback/0014 #1)', (
     expect(last.text.toLowerCase()).toMatch(/red, rotten ore|slumps in your hands/);
   });
 
+  it('feedback/0020 #2 — a player who BEELINES out with the core now RECOVERS (the widened 4-move window)', () => {
+    const s = freshSession('beeline-out');
+    // take the core in the dark and head straight for the exit (cache->bottoms->ford->fork): with the
+    // longer window, reaching dry ground at the fork (out of the water) on the 4th beat recovers the
+    // core whole, instead of losing it one step short of safety (the night15a "2-move no-meter" trap).
+    for (const cmd of ['out', 'road', 'road', 'on', 'fork', 'water', 'in', 'cache', 'take core']) s.act(cmd);
+    expect(s.state.facts['possession.pc.salvage_core.condition']).toBe('unstable'); // rung 1
+    s.act('out'); // bottoms (rung 2)
+    s.act('back'); // ford (rung 3 — the last warning, still in scope)
+    expect(s.state.facts['law.greywater.core_warned']).toBe(3);
+    expect(s.state.facts['possession.pc.salvage_core.condition']).not.toBe('ore'); // not lost yet — margin remains
+    const r = s.act('back'); // ford -> fork: OUT of the water, onto dry ground -> recovery
+    expect(s.state.facts['loc.pc']).toBe('the_fork');
+    expect(s.state.facts['possession.pc.salvage_core.condition']).toBeUndefined(); // knit whole — you made it out
+    expect(r.status).toBe('active');
+  });
+
   it('FIX 1 (feedback/0015 #2): an UNCERTAIN intent at the core-loss beat asks the player diegetically — it never dumps an engine debug string', () => {
     const s = freshSession('uncertain-climax');
-    // reach rung 2 carrying the core in the dark, hungry bottoms (the next acting beat is the loss)
-    for (const cmd of ['out', 'road', 'road', 'on', 'fork', 'water', 'in', 'cache', 'take core', 'out']) s.act(cmd);
+    // reach rung 3 (the last warning) carrying the core in the dark, hungry water — the next acting
+    // beat is the loss (the window is now four beats; rung 3 = last margin).
+    for (const cmd of ['out', 'road', 'road', 'on', 'fork', 'water', 'in', 'cache', 'take core', 'out', 'in'])
+      s.act(cmd);
     expect(s.state.facts['possession.pc.salvage_core.condition']).toBe('unstable');
-    expect(s.state.facts['law.greywater.core_warned']).toBe(2); // rung 2 — one more beat is the loss
+    expect(s.state.facts['law.greywater.core_warned']).toBe(3); // rung 3 — one more beat is the loss
 
     // a HEDGED, low-confidence acting intent (a fuzzy synonym, the way blind players phrased it) —
     // the kind K8 must not let spend the irreversible loss on the strength of a guess.
@@ -109,6 +128,30 @@ describe('The Hush — the core across the dark Greywater (feedback/0014 #1)', (
     expect(s.state.facts['law.greywater.core_warned']).toBe(0); // the ladder cleared
     expect(s.state.facts['survival.pc']).toBe('alive');
     expect(rec.text.toLowerCase()).toMatch(/firms back|whole|let go|gone back to sleep/);
+  });
+
+  // feedback/0022 #1 — the iron-degrade was the one place the Greywater law broke the game's "first
+  // contact warns, never destroys" principle: iron slumped silent+instant to ore while the core has a
+  // fair warn-ladder. Give iron the SAME fail-safe-first treatment (warn -> grace -> slump, recoverable)
+  // so the two worked-matter degrades read as ONE coherent law (greywater-breaker: "incoherent").
+  it('feedback/0022 #1 — iron gets a WARNING beat before it slumps (fail-safe first, like the core)', () => {
+    const s = freshSession('iron-grace');
+    for (const c of ['out', 'road', 'road', 'on', 'fork', 'water']) s.act(c); // ford, dusk approaching
+    const r1 = s.act('rest'); // first hungry beat: WARN (softening), NOT destroyed
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('softening'); // grace state, not ore
+    expect(r1.text.toLowerCase()).toMatch(/soft|begin|clear of the water|shed/); // it telegraphs + names the fix
+    s.act('rest'); // second hungry beat: now it slumps the rest of the way
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('ore');
+  });
+
+  it('feedback/0022 #1 — softening iron RECOVERS on leaving the water, like the core', () => {
+    const s = freshSession('iron-recover');
+    for (const c of ['out', 'road', 'road', 'on', 'fork', 'water']) s.act(c);
+    s.act('rest'); // softening
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBe('softening');
+    s.act('back'); // ford -> fork: out of the water, onto dry ground -> recover
+    expect(s.state.facts['loc.pc']).toBe('the_fork');
+    expect(s.state.facts['possession.pc.iron_knife.condition']).toBeUndefined(); // firmed back whole
   });
 
   it('RECOVERABLE — leaving the water for dry ground also knits the core back whole', () => {
@@ -197,11 +240,13 @@ describe('The Hush — the core across the dark Greywater (feedback/0014 #1)', (
       'back',
       'back',
       'wire',
-      'back', // the Strider debt walks the core out past the wire at any hour
+      'lean on the debt', // feedback/0018 night14: the debt is an ACT now — lean on it to be walked out
+      'back', // the Strider walks the core out past the wire at any hour
     ];
     let last = { status: 'active' as string, text: '' };
     for (const cmd of path) last = s.act(cmd);
     expect((s.state.facts['reputation.pc.striders'] as number) ?? 0).toBeGreaterThanOrEqual(1);
+    expect(s.state.facts['flag.intercept_clear']).toBe(true); // the lean-on-debt act cleared the gate
     expect(s.state.facts['possession.pc.salvage_core.condition']).toBeUndefined(); // intact
     expect(last.status).toBe('won');
   });

@@ -293,6 +293,19 @@ export function createSocial(pack: WorldPack): Module {
     native: JsonObject,
   ): ModuleResult {
     const asked = requestedLaw(intent);
+    // feedback/0020 #5 — the antenna relic is the SURVEY's trade good (and the gate distraction), never
+    // generic scrip. A non-Survey merchant refuses it and points to Eun, instead of silently consuming it
+    // for a coin-equivalent map (the fungibility bug that lost the relic to the wrong vendor, and would
+    // rob the player of the gate distraction it now powers).
+    const givingRelic =
+      c === 'give' && intent.target?.id === 'antenna_relic' && facts.getBool('possession.pc.antenna_relic');
+    if (givingRelic && npc.faction !== 'survey') {
+      return beat(
+        native,
+        `${npc.name}: “Antenna-glass? That’s the Survey’s coin, not mine — Eun at the lean-to trades knowing for a shard like that. I deal in coin and cache-routes. Keep it; you may have a use for it yet, and it won’t be with me.”`,
+        ['social.relic_wrong_merchant'],
+      );
+    }
     const sellable = new Map<string, DialogueLine>();
     for (const l of lawLines) {
       const id = purchasedLawOf(l);
@@ -330,23 +343,28 @@ export function createSocial(pack: WorldPack): Module {
         ['social.relic_already'],
       );
     }
-    // You already HAVE this law's knowledge — from ANY merchant, or your own eyes. Eun and Mox
-    // sell the SAME Greywater law, so the knowledge is shared: never double-charge, and never claim
-    // YOU sold it when another merchant (or first-hand observation) is where it actually came from.
-    if (
-      lawId &&
-      stageRank((facts.getString(`known.law.${lawId}`) ?? 'unknown') as KnowledgeStage) >= stageRank('surveyed')
-    ) {
+    // feedback/0022 (synth P0 — the untelegraphed wall at the gate): a merchant may sell MORE than the
+    // law. Mox's sale is bundled with the cache ROUTE and a Strider's walk-out DEBT (the gate exit). So
+    // "you already know the law" must NOT refuse the whole sale when this merchant still has a SERVICE
+    // (route/debt) you have not bought — or a player who LEARNED the law (from Eun, or by deducing it)
+    // is silently locked out of the paid exit and stranded at the gate. A merchant with ONLY the law to
+    // give (Eun) still refuses honestly.
+    const serviceEntries = Object.entries(lawLine.setsFacts ?? {}).filter(
+      ([k]) => !/^known\.(law|tell|purchased)\./.test(k),
+    );
+    const lacksService =
+      serviceEntries.some(([k, v]) => facts.get(k) !== (v as import('../../sdk/json.js').JsonValue)) ||
+      (npc.faction === 'striders' && (facts.getNumber('reputation.pc.striders') ?? 0) < 1);
+    const lawAlreadyHeld = lawKnown || lawBought;
+    // You already HAVE this law's knowledge — from ANY merchant, or your own eyes. Eun and Mox sell the
+    // SAME Greywater law, so the knowledge is shared: never double-charge for the LAW. But only refuse
+    // the whole sale when there is nothing else (a route/debt) to give.
+    if (lawAlreadyHeld && !lacksService) {
       return beat(
         native,
-        `${npc.name}: “You already know that one cold — I can see it on you. Keep your coin; I'll not sell you what you've read with your own eyes.”`,
-        ['social.already_known'],
-      );
-    }
-    if (lawId && facts.getBool(`known.purchased.${lawId}`)) {
-      return beat(
-        native,
-        `${npc.name}: “You already carry that map — buy it twice and you'll just have the same thing twice. Keep your coin; go put what you have to use.”`,
+        lawBought
+          ? `${npc.name}: “You already carry that map — buy it twice and you'll just have the same thing twice. Keep your coin; go put what you have to use.”`
+          : `${npc.name}: “You already know that one cold — I can see it on you. Keep your coin; I'll not sell you what you've read with your own eyes.”`,
         ['social.already'],
       );
     }
@@ -356,7 +374,9 @@ export function createSocial(pack: WorldPack): Module {
     let payKind: 'relic' | 'coin' | undefined;
     if (c === 'give') {
       const gid = intent.target?.id;
-      if (gid === 'antenna_relic' && facts.getBool('possession.pc.antenna_relic')) payKind = 'relic';
+      // the relic pays ONLY at the Survey (feedback/0020 #5) — elsewhere the early guard already refused it.
+      if (gid === 'antenna_relic' && facts.getBool('possession.pc.antenna_relic') && npc.faction === 'survey')
+        payKind = 'relic';
       else if (gid && facts.getString(`possession.pc.${gid}.class`) === 'coin' && coinsLeft(facts) > 0)
         payKind = 'coin';
     } else if (coinsLeft(facts) > 0) {
@@ -390,13 +410,20 @@ export function createSocial(pack: WorldPack): Module {
         );
       receipt = left > 0 ? `a coin — ${left} left` : 'your last coin';
     }
+    // feedback/0022 (synth P0): when you already KNOW the law and are buying Mox only for the route/debt,
+    // say so honestly — sell the WALK-OUT, not the law you already hold — instead of reciting the timed
+    // line a second time. (Mox is the only merchant whose sale carries a separate service, so this is hers.)
+    const tradeSummary =
+      lawAlreadyHeld && npc.faction === 'striders'
+        ? `${npc.name}: “You know the water already — I'll not charge you for what you've read. But the way past the wire, that's a separate thing, and that I'll sell you. There's a Strider of mine owes you a walk-out now; lean on the debt at the gate when you come through with the core, and he'll see you past the troopers.”\n(You hand over ${receipt}.)`
+        : `${npc.name}: “${lawLine.text}”\n(You hand over ${receipt}.)`;
     return {
       nativeNext: native,
       events: [
         {
           tag: 'trade',
           mutations: muts,
-          summary: `${npc.name}: “${lawLine.text}”\n(You hand over ${receipt}.)`,
+          summary: tradeSummary,
           data: { npc: npc.id, trade: lawId ?? 'lawmap', paid: payKind },
         },
       ],

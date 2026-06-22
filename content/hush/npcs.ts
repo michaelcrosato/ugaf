@@ -73,8 +73,11 @@ export const NPCS: NpcDef[] = [
       },
       {
         id: 'holt_grey',
+        // feedback/0020 #1 — the DOMINANT loss mode is mistiming the crossing, because the deadline was
+        // told late. Holt is the free intel source the player asks; he names the concrete hour AND that
+        // the CORE, not just iron, dissolves after dark — so a careful player can plan the crossing.
         topic: 'greywater',
-        text: "The Greywater? Don't carry iron in after dark. I've zipped up three this month who learned that the slow way — knives gone to rust-mud in their hands when they needed them.",
+        text: "The Greywater? Don't carry iron in after dark — I've zipped up three this month who learned that the slow way, knives gone to rust-mud in their hands when they needed them. And here's the part that gets the clever ones killed: it's not only iron. Anything worked goes the same way in that water once the dark wakes it — the core you're after most of all. So if you mean to bring the prize out: cross in daylight and be clear of the bottoms before the water wakes at dusk, call it six. Miss that window and you'll reach my gate holding a fistful of red mud where your core was. Get in, get it, get out — all of it before dark.",
         grantsRumor: 'r_grey_true',
       },
       {
@@ -279,7 +282,7 @@ export const NPCS: NpcDef[] = [
         // at dusk (18:00 / "six"). Framed as luck BOUGHT, not water learned (the win-screen's theme,
         // moved to point-of-sale) — and the drift caveat names its direction (creeps past dusk toward
         // the grey before dawn, matching the law's widensTo: ['predawn']).
-        text: "Here's the safe hour, then, and the dry line through the bottoms. The water sleeps through the daylight and lies deadest at midday — and it wakes hungry the moment the light goes, call it six o'clock, and stays starving till dawn. So you cross with the sun up: midday's your safest, dusk's your hard deadline, and a step past that the bottoms have your iron and your prize both. Carry no metal and you'll not even need the hour. And mind — this is luck you're buying off me, not water you've learned to read yourself: an hour I sell is true today and no longer. The Hush re-Settles, the hungry stretch runs longer some weeks than others, and a line timed to the minute can creep — past dusk, into the grey before dawn that used to be safe. Sit on it too long and you'll want it read again. Bought luck runs out; that's the whole of what I'm selling you — and don't forget who sold it to you.",
+        text: "Here's the safe hour, then, and the dry line through the bottoms. The water sleeps through the daylight and lies deadest at midday — and it wakes hungry the moment the light goes, call it six o'clock, and stays starving till dawn. So you cross with the sun up: midday's your safest, dusk's your hard deadline, and a step past that the bottoms have your iron and your prize both. Carry no metal and you'll not even need the hour. And mind — this is luck you're buying off me, not water you've learned to read yourself: an hour I sell is true today and no longer. The Hush re-Settles, the hungry stretch runs longer some weeks than others, and a line timed to the minute can creep — past dusk, into the grey before dawn that used to be safe. Sit on it too long and you'll want it read again. Bought luck runs out; that's the whole of what I'm selling you — and don't forget who sold it to you. One more thing, since your coin's good: buying the hour buys you a face at the wire. A Strider of mine watches that checkpoint, and now he owes you a walk-out. When you come back through with the core, don't try to spend that favour on me here at my fire — LEAN ON THE DEBT at the gate, say it plain, and he'll walk you past the troopers like baggage.",
         grantsLeadTell: 'grey_low_hum',
         setsFacts: {
           'known.tell.grey_low_hum': true,
@@ -288,6 +291,31 @@ export const NPCS: NpcDef[] = [
           'objective.cache_route': 'known',
           'known.law.greywater': 'approximate',
         },
+      },
+      // feedback/0019 #2 — the debt was a BROKEN PROMISE: a player who paid for it came back to Mox and
+      // asked how to spend it (ask about the debt / the wire / getting past the checkpoint / to walk me
+      // out) and hit a flat deflect, because the favour is spent at the GATE, not at her fire. These
+      // pointer topics catch the exact phrasings that bounced and route the player to where it works.
+      // (Multiple topics, one message — `ask` matches a topic as a substring of what the player typed.)
+      {
+        id: 'mox_debt',
+        topic: 'debt',
+        text: "The debt? Aye — that's the walk-out a Strider of mine owes you for buying the hour. You don't lean on it here at my fire, mind; it's no good to you at this camp. It's spent at the WIRE. Get back to the checkpoint with the core, and there'll be a Strider watching who owes you — lean on the debt right there at the gate, say it plain, and he walks you out past the troopers. Try to call it in anywhere else and you'll just be talking to me.",
+      },
+      {
+        id: 'mox_wire',
+        topic: 'wire',
+        text: "The wire? That's where the favour's good, not here. Buy the hour off me and a Strider of mine at the checkpoint owes you a walk-out — when you come back through with the core, lean on the debt at the gate and he'll see you past the troopers. Don't try to spend it on me at the camp; spend it at the wire.",
+      },
+      {
+        id: 'mox_walkout',
+        topic: 'walk',
+        text: "Walk you out? Not me, not from here — but a Strider of mine will, at the wire. That's the favour the hour buys you. Get to the checkpoint with the core and lean on the debt at the gate; he owes you, and he'll walk you past the troopers like baggage. It's the gate you lean on it at, not my fire.",
+      },
+      {
+        id: 'mox_checkpoint',
+        topic: 'checkpoint',
+        text: "Getting past the checkpoint? That's what the debt is for, friend. Buy the safe hour and a Strider of mine owes you a walk-out at the wire — come back through with the core and lean on the debt right there at the gate, and he'll walk you past the troopers. You spend it at the checkpoint, not back here at the camp.",
       },
     ],
   },

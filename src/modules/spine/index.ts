@@ -38,6 +38,12 @@ function floorLine(intent: string, utterance?: string): string | undefined {
   }
 }
 
+/** feedback/0019 #1 — taught when a player grinds plain `wait` at a safe node; surfaces the existing
+ *  single-turn fast-forward they kept missing. Names the syntax and a few real targets. */
+function waitHintLine(): string {
+  return '(The hours here run long and empty — you need not pass them one tick at a time. Try `wait until dawn`, or `until dusk`, or `until midday`, to let them go by in a single step.)';
+}
+
 export function createSpine(): Module {
   const manifest = makeManifest({
     id: 'spine.fu-pbta',
@@ -53,8 +59,8 @@ export function createSpine(): Module {
     domain: 'narrative',
     priority: 0, // the floor — lowest priority, can never be armed away
     intents: ['wait', 'rest', 'look', 'recall', 'use', 'open', 'close', 'speak_aloud', 'call_out', 'unclassified'],
-    writesFacts: ['flag', 'world', 'survival'],
-    readsFacts: ['flag', 'world', 'phase', 'survival', 'possession', 'loc', 'law'],
+    writesFacts: ['flag', 'world', 'survival', 'possession'],
+    readsFacts: ['flag', 'world', 'phase', 'survival', 'possession', 'loc', 'law', 'reputation'],
   });
 
   const CLAIMED = ['wait', 'rest', 'look', 'recall', 'use', 'open', 'close', 'speak_aloud', 'call_out', 'unclassified'];
@@ -69,14 +75,78 @@ export function createSpine(): Module {
       const c = intent.class;
       const facts = args.facts;
 
-      // USE iron to lever the watched wire-gap on the way out (reads the .condition
-      // the Greywater wrote — a slumped-to-ore tool fails). One of three escapes.
+      // The watched gate: an intercepted carry-out is cleared by an ACT. Two acts live here — LEAN ON
+      // THE DEBT (a Strider who owes you walks you out) and PRY (good iron levers the wire-gap). The
+      // third route, the silent SLIP, is earned in stealth (HIDE, metal-free, under dark).
       if (
         c === 'use' &&
         facts.getString('loc.pc') === 'cordon_checkpoint' &&
         facts.getBool('flag.intercepted') &&
         !facts.getBool('flag.intercept_clear')
       ) {
+        // DEBT — feedback/0018 night14: the Strider debt no longer opens the gate by merely existing.
+        // You must LEAN ON IT (an act). A debt you do not hold is a fair near-miss, never a wall.
+        const rawTarget = (intent.target?.raw ?? '').toLowerCase();
+        const invokesDebt = intent.topic === 'debt' || /\b(debt|favou?r|strider|mox|owe)\b/.test(rawTarget);
+        if (invokesDebt) {
+          const owed = (facts.getNumber('reputation.pc.striders') ?? 0) >= 1;
+          if (owed) {
+            return {
+              nativeNext: native,
+              events: [
+                {
+                  tag: 'debt_called',
+                  mutations: [{ op: 'set', key: 'flag.intercept_clear', value: true }],
+                  summary:
+                    'You lean on the debt. The Strider who owes you peels off the wire, says a low word to Warden Holt that you do not catch, and walks you through the boom gate like baggage — Mox keeps her debts, and collects them. You are past the wire, the core still warm at your spine.',
+                  severity: 'reversible',
+                },
+              ],
+              control: { kind: 'continue' },
+              render: { labels: ['intercept.debt'], valence: 'boon' },
+            };
+          }
+          return {
+            nativeNext: native,
+            events: [
+              {
+                tag: 'debt_none',
+                mutations: [],
+                summary:
+                  'You look for a Strider to lean on — but no one here owes you a thing, and a debt you never earned will not be honoured. Another way, then: slip the gate unseen (ask Holt about the gap, shed your iron, and go low in the dark), or lever the wire-gap wide with good iron.',
+              },
+            ],
+            control: { kind: 'continue' },
+            render: { labels: ['intercept.debt_none'], valence: 'cost' },
+          };
+        }
+        // DISTRACT — feedback/0020 #5 (the antenna onto the win path): the antenna-shard still answers the
+        // field it came from. Loose its sub-aural song at the gate and the dead masts sing it back across
+        // the dark; the troopers break toward the disturbance, and for that beat the watch is off you — a
+        // FOURTH route, earned by braving the field for the relic. The shard is spent (its one song fades).
+        const usesRelic =
+          (intent.target?.id === 'antenna_relic' || /\b(relic|shard|antenna.?glass)\b/.test(rawTarget)) &&
+          facts.getBool('possession.pc.antenna_relic');
+        if (usesRelic) {
+          return {
+            nativeNext: native,
+            events: [
+              {
+                tag: 'distract_gate',
+                mutations: [
+                  { op: 'set', key: 'flag.intercept_clear', value: true },
+                  { op: 'delete', key: 'possession.pc.antenna_relic' },
+                  { op: 'delete', key: 'possession.pc.antenna_relic.class' },
+                ],
+                summary:
+                  'You raise the antenna-shard and let its sub-aural song loose into the dark. A breath later the dead masts out past the wire catch it and sing it back — a voice thrown across the night, wrong and wandering and far too loud. Every head at the gate turns toward it; the troopers drift off the wire toward the sound, the way men move toward a thing that should not be making it. The watch is off you. You slip the core through the gap while they are looking the wrong way — and the shard, its one song spent, goes quiet and cold and is gone.',
+                severity: 'reversible',
+              },
+            ],
+            control: { kind: 'continue' },
+            render: { labels: ['intercept.distract'], valence: 'boon' },
+          };
+        }
         const metalKeys = facts
           .keysUnder('possession.pc')
           .filter((k) => k.endsWith('.class') && facts.getString(k) === 'metal');
@@ -143,7 +213,32 @@ export function createSpine(): Module {
       // resting recovers your nerve (unless the deep dark is taking it faster — that fires on a later beat)
       const restRecovery =
         c === 'rest' ? [{ op: 'adjust' as const, key: 'survival.pc.unsettled', by: -1, min: 0, max: 5 }] : [];
-      if (summary) events.push({ tag: `spine_${c}`, mutations: restRecovery, summary, visibility: 'public' });
+      // feedback/0019 #1 — the loudest, all-tier complaint: `wait until <phase>` EXISTS but is
+      // undiscoverable, so players grind plain `wait` 15–25× and never find it. When a PLAIN wait
+      // repeats at a SAFE node (a fast-forward there would only skip dead time, never a hazard), teach
+      // the command. Streak is turn-stamped (a wait on the immediately-previous turn) so any other
+      // action breaks it; the hint fires from the 2nd consecutive grind on, only where it would help.
+      const plainWait = (c === 'wait' || c === 'rest') && typeof intent.topic !== 'string';
+      const streak = !plainWait
+        ? 0
+        : facts.getNumber('flag.wait_streak_turn') === args.ctx.turn - 1
+          ? (facts.getNumber('flag.wait_streak') ?? 0) + 1
+          : 1;
+      const waitMuts = plainWait
+        ? ([
+            { op: 'set', key: 'flag.wait_streak', value: streak },
+            { op: 'set', key: 'flag.wait_streak_turn', value: args.ctx.turn },
+          ] as const)
+        : [];
+      const hint =
+        plainWait && streak >= 2 && facts.getBool('law.wait_ff_unsafe') !== true ? waitHintLine() : undefined;
+      if (summary !== undefined || waitMuts.length)
+        events.push({
+          tag: `spine_${c}`,
+          mutations: [...restRecovery, ...waitMuts],
+          ...(summary !== undefined ? { summary: hint ? `${summary}\n${hint}` : summary } : {}),
+          visibility: 'public',
+        });
       return {
         nativeNext: { lastBand: band, beats: native.beats + 1 },
         events,

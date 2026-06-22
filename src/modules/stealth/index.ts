@@ -32,13 +32,28 @@ export function createStealth(): Module {
     priority: 28,
     intents: ['hide', 'sneak'],
     writesFacts: ['awareness', 'flag'],
-    readsFacts: ['awareness', 'flag', 'loc', 'world'],
+    readsFacts: ['awareness', 'flag', 'loc', 'world', 'possession'],
   });
 
   function patrolAt(facts: FactView): string | undefined {
     const node = facts.getString('loc.pc');
     if (!node) return undefined;
     return facts.getString(`world.patrol.${node}`);
+  }
+
+  // feedback/0018 night14 — the Greywater's lesson is the gate's lesson: WORKED iron on you when you
+  // try to slip the watched gate CLINKS and rouses the troopers. A player who carries good iron must
+  // pry the gate with it instead; the silent slip is for those who shed the metal (or let the water
+  // take it). This is what makes the LEARN route diverge from the STRIP/PRY route at the climax.
+  function carriesWorkingMetal(facts: FactView): boolean {
+    return facts
+      .keysUnder('possession.pc')
+      .some(
+        (k) =>
+          k.endsWith('.class') &&
+          facts.getString(k) === 'metal' &&
+          facts.getString(`${k.slice(0, -'.class'.length)}.condition`) !== 'ore',
+      );
   }
 
   return {
@@ -64,6 +79,28 @@ export function createStealth(): Module {
           ],
           control: { kind: 'continue' },
           render: { labels: [`stealth.${c}`] },
+        };
+      }
+      // carrying the core out past the LIVE watch, worked iron on you betrays the slip (the clink):
+      // the patrol rouses and you earn NO concealment. Telegraphed, recoverable — shed the metal and
+      // try again, or pry the gate with that same iron, or lean on a debt.
+      const carryingCoreOut =
+        args.facts.getBool('flag.intercepted') && args.facts.getBool('possession.pc.salvage_core');
+      if (carryingCoreOut && carriesWorkingMetal(args.facts)) {
+        const cur = (args.facts.getString(`awareness.${patrol}`) as Aware) ?? 'unaware';
+        const next = clampState(idx(cur) + 1);
+        return {
+          nativeNext: args.native,
+          events: [
+            {
+              tag: 'stealth_clink',
+              mutations: [{ op: 'set', key: `awareness.${patrol}`, value: next }],
+              summary: `You drop low for the wedge of dark — and the worked iron on you knocks the post and rings out, flat and bright in the quiet. Heads turn toward the sound: they have not placed you, but they are looking now, and the wedge of dark is no use while they are. You gave yourself away, not caught — just seen to move. You will not slip a watched gate with good metal singing at your hip; the Greywater's lesson is the gate's lesson too. Shed the iron and go quiet (then HIDE again), or lever the wire-gap with it, or lean on a Strider's debt.`,
+              data: { patrol, awareness: next, clink: true },
+            },
+          ],
+          control: { kind: 'continue' },
+          render: { labels: ['stealth.clink'], valence: 'cost', hints: { patrol, awareness: next } },
         };
       }
       const cur = (args.facts.getString(`awareness.${patrol}`) as Aware) ?? 'unaware';
