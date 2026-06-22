@@ -293,6 +293,19 @@ export function createSocial(pack: WorldPack): Module {
     native: JsonObject,
   ): ModuleResult {
     const asked = requestedLaw(intent);
+    // feedback/0020 #5 — the antenna relic is the SURVEY's trade good (and the gate distraction), never
+    // generic scrip. A non-Survey merchant refuses it and points to Eun, instead of silently consuming it
+    // for a coin-equivalent map (the fungibility bug that lost the relic to the wrong vendor, and would
+    // rob the player of the gate distraction it now powers).
+    const givingRelic =
+      c === 'give' && intent.target?.id === 'antenna_relic' && facts.getBool('possession.pc.antenna_relic');
+    if (givingRelic && npc.faction !== 'survey') {
+      return beat(
+        native,
+        `${npc.name}: “Antenna-glass? That’s the Survey’s coin, not mine — Eun at the lean-to trades knowing for a shard like that. I deal in coin and cache-routes. Keep it; you may have a use for it yet, and it won’t be with me.”`,
+        ['social.relic_wrong_merchant'],
+      );
+    }
     const sellable = new Map<string, DialogueLine>();
     for (const l of lawLines) {
       const id = purchasedLawOf(l);
@@ -356,7 +369,9 @@ export function createSocial(pack: WorldPack): Module {
     let payKind: 'relic' | 'coin' | undefined;
     if (c === 'give') {
       const gid = intent.target?.id;
-      if (gid === 'antenna_relic' && facts.getBool('possession.pc.antenna_relic')) payKind = 'relic';
+      // the relic pays ONLY at the Survey (feedback/0020 #5) — elsewhere the early guard already refused it.
+      if (gid === 'antenna_relic' && facts.getBool('possession.pc.antenna_relic') && npc.faction === 'survey')
+        payKind = 'relic';
       else if (gid && facts.getString(`possession.pc.${gid}.class`) === 'coin' && coinsLeft(facts) > 0)
         payKind = 'coin';
     } else if (coinsLeft(facts) > 0) {

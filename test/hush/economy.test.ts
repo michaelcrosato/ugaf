@@ -61,6 +61,32 @@ describe('the NPC information-economy', () => {
     expect(b.text.toLowerCase()).toMatch(/lean on .*debt|at the wire|at the gate|checkpoint/);
   });
 
+  // feedback/0020 #5 — the relic is the SURVEY's trade good (and the gate distraction), not generic scrip:
+  // Mox must NOT consume it as payment for her safe-hour map (the fungibility bug that lost the relic to the
+  // wrong vendor). She refuses and points to Eun / the gate.
+  it('the antenna relic is not generic scrip — Mox refuses it and points to the Survey', () => {
+    const s = sess('relic-mox');
+    // prime the scene at Mox's camp with the relic in hand (set BEFORE any turn, so the event-log
+    // chain stays intact — `give` reads loc.pc + travel's native node)
+    s.state = {
+      ...s.state,
+      native: {
+        ...s.state.native,
+        'travel.graph': { ...(s.state.native['travel.graph'] as object), node: 'salvager_camp' },
+      },
+      facts: {
+        ...s.state.facts,
+        'loc.pc': 'salvager_camp',
+        'possession.pc.antenna_relic': true,
+        'possession.pc.antenna_relic.class': 'salvage',
+      },
+    };
+    const r = s.act('give relic to mox');
+    expect(s.state.facts['possession.pc.antenna_relic']).toBe(true); // NOT consumed — she won't take it
+    expect(s.state.facts['known.purchased.greywater']).toBeFalsy(); // and it bought nothing
+    expect(r.text.toLowerCase()).toMatch(/survey|eun|not.*(mine|my trade|for me)/); // points elsewhere
+  });
+
   it('giving a coin to a non-merchant still dead-ends honestly (no false trade)', () => {
     const s = sess('econ-holt');
     s.act('out'); // Warden Holt is at the checkpoint and sells nothing

@@ -232,4 +232,35 @@ describe('the climax has TEETH — the live watch makes the routes diverge', () 
     expect(s.state.facts['flag.intercept_clear']).toBe(true); // the natural phrasing spends the debt
     expect(canLeave(s)).toBe(true);
   });
+
+  // feedback/0020 #5 (operator priority #2) — the antenna field onto the WIN PATH: the relic you brave
+  // the field for is now the engineered DISTRACTION at the gate, a FOURTH route. (Fixes the relic
+  // dead-end the winners hammered, and gives it a strategic dual-use: trade for knowledge, or keep to escape.)
+  it('night16: USE the antenna relic at the gate engineers a distraction — a 4th route that clears it', () => {
+    const s = atGate('climax-distract', {
+      'possession.pc.iron_knife.condition': 'ore', // no working iron to pry, no debt, no gap-knowledge
+      'possession.pc.antenna_relic': true,
+      'possession.pc.antenna_relic.class': 'salvage',
+    });
+    expect(canLeave(s)).toBe(false);
+    const r = s.act('use the relic');
+    expect(s.state.facts['flag.intercept_clear']).toBe(true); // the thrown voice pulls the watch — gate clear
+    expect(s.state.facts['possession.pc.antenna_relic']).toBeUndefined(); // the song is spent — relic consumed
+    expect(canLeave(s)).toBe(true);
+    expect(r.text.toLowerCase()).toMatch(/antenna|field|sing|voice|hum/);
+  });
+
+  // feedback/0020 #3a — delete the gamey "(HIDE)" caps stage-direction (the narrative-critic: "that single
+  // stage direction gutted the entire ending"), WITHOUT losing discoverability for weaker players: the verb
+  // "hide" stays in the diegetic prose, just not as a parenthetical hint.
+  it('night16: the gate de-coaches — no "(HIDE)" stage-direction, but "hide" stays discoverable in prose', () => {
+    const ready = atGate('climax-decoach', {
+      'possession.pc.iron_knife.condition': 'ore',
+      'objective.knows_gap': true,
+    });
+    const look = ready.act('look').text;
+    expect(look).not.toContain('(HIDE)'); // the gamey caps-parenthetical is gone
+    expect(look.toLowerCase()).toContain('go low and quiet'); // the diegetic telegraph stays
+    expect(look.toLowerCase()).toContain('hide'); // the verb is still there to echo — just woven in, not barked
+  });
 });

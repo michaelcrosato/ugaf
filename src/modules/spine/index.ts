@@ -59,7 +59,7 @@ export function createSpine(): Module {
     domain: 'narrative',
     priority: 0, // the floor — lowest priority, can never be armed away
     intents: ['wait', 'rest', 'look', 'recall', 'use', 'open', 'close', 'speak_aloud', 'call_out', 'unclassified'],
-    writesFacts: ['flag', 'world', 'survival'],
+    writesFacts: ['flag', 'world', 'survival', 'possession'],
     readsFacts: ['flag', 'world', 'phase', 'survival', 'possession', 'loc', 'law', 'reputation'],
   });
 
@@ -113,11 +113,38 @@ export function createSpine(): Module {
                 tag: 'debt_none',
                 mutations: [],
                 summary:
-                  'You look for a Strider to lean on — but no one here owes you a thing, and a debt you never earned will not be honoured. Another way, then: slip the gate unseen (ask Holt about the gap, shed your iron, and HIDE under cover of dark), or lever the wire-gap wide with good iron.',
+                  'You look for a Strider to lean on — but no one here owes you a thing, and a debt you never earned will not be honoured. Another way, then: slip the gate unseen (ask Holt about the gap, shed your iron, and go low in the dark), or lever the wire-gap wide with good iron.',
               },
             ],
             control: { kind: 'continue' },
             render: { labels: ['intercept.debt_none'], valence: 'cost' },
+          };
+        }
+        // DISTRACT — feedback/0020 #5 (the antenna onto the win path): the antenna-shard still answers the
+        // field it came from. Loose its sub-aural song at the gate and the dead masts sing it back across
+        // the dark; the troopers break toward the disturbance, and for that beat the watch is off you — a
+        // FOURTH route, earned by braving the field for the relic. The shard is spent (its one song fades).
+        const usesRelic =
+          (intent.target?.id === 'antenna_relic' || /\b(relic|shard|antenna.?glass)\b/.test(rawTarget)) &&
+          facts.getBool('possession.pc.antenna_relic');
+        if (usesRelic) {
+          return {
+            nativeNext: native,
+            events: [
+              {
+                tag: 'distract_gate',
+                mutations: [
+                  { op: 'set', key: 'flag.intercept_clear', value: true },
+                  { op: 'delete', key: 'possession.pc.antenna_relic' },
+                  { op: 'delete', key: 'possession.pc.antenna_relic.class' },
+                ],
+                summary:
+                  'You raise the antenna-shard and let its sub-aural song loose into the dark. A breath later the dead masts out past the wire catch it and sing it back — a voice thrown across the night, wrong and wandering and far too loud. Every head at the gate turns toward it; the troopers drift off the wire toward the sound, the way men move toward a thing that should not be making it. The watch is off you. You slip the core through the gap while they are looking the wrong way — and the shard, its one song spent, goes quiet and cold and is gone.',
+                severity: 'reversible',
+              },
+            ],
+            control: { kind: 'continue' },
+            render: { labels: ['intercept.distract'], valence: 'boon' },
           };
         }
         const metalKeys = facts
