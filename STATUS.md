@@ -49,12 +49,26 @@ water — and a fresh clean batch of twelve proved it: the favour-route was used
 players who'd been locked out. We also gave the dissolving *iron* its own warning beat, so it warns and can
 be saved just like the prize, instead of vanishing silently.
 
-## What's next
+## We proved it holds for the smartest players too — and the engine now verifies itself
 
-Smaller, lower-priority refinements remain, all on the board: make the "learned the world" ending feel
-visibly better than the "bought your luck" ending (right now they read about the same), a lore-hint that
-asks you to stand still in a place that punishes standing still, and confirming the new "throw the guards'
-attention with the antenna shard" escape gets used in the wild. Full detail in `feedback/0023.md`.
+We re-ran the whole batch a second time forcing the *strongest* AI brain (to be sure the wins weren't an
+artifact of weaker players), added a dedicated explorer to test the one escape nobody had tried (throwing
+the guards' attention with the antenna shard — it works, it's fair, and a player won with it), and merged
+both batches: **twenty-two of twenty-five won, on every tier, with no unfair death and no dead-end.** We
+also built the engine a new pair of eyes: a *deterministic checker* that reads every transcript and proves,
+by tool not opinion, that every death was warned, every play was genuinely played (not faked), and nobody
+was walled in — run automatically before the AI critics ever weigh in. Trust, but verify.
+
+## What's next — one honest flaw, named clearly: the smart player pays for nothing
+
+The careful critics converged on a single, deep truth: the game has real teeth, but **the best line of play
+refunds every cost.** The bought "walk me out" favour is a single free button that deletes the tense escape
+the other routes make you earn; waiting until noon refunds the water's deadline; the "your knowledge is
+decaying" warnings never actually bite; and the listening field — the whole third of the map — is skippable.
+The dangers exist, but a clever player glides past all of them. The next swing (built carefully on a side
+branch and only kept if a fresh batch confirms it) starts at the highest-leverage spot: **make leaning on the
+favour cost something in the moment** — a guard's second glance, a price, a near-miss — so carrying the prize
+out is the hardest thing in the game for everyone, not an opt-out. Full detail in `feedback/0024.md`.
 
 ## Bottom line
 
