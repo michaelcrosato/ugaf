@@ -10,6 +10,7 @@
  */
 import { makeManifest } from '../../sdk/define.js';
 import type { Band, Module, ModuleResult, WorldEvent } from '../../sdk/types.js';
+import type { FactMutation } from '../../sdk/facts.js';
 
 const LADDER: Record<number, Band> = { 6: 'yes-and', 5: 'no-but', 4: 'yes', 3: 'no', 2: 'yes-but', 1: 'no-and' };
 
@@ -101,11 +102,22 @@ export function createSpine(): Module {
             const metalKeys = facts
               .keysUnder('possession.pc')
               .filter((k) => k.endsWith('.class') && facts.getString(k) === 'metal');
-            const ironClassKey = metalKeys.find(
+            // The search takes EVERY piece of working (non-ore) iron, not just one — the toll mirrors the
+            // Greywater law (which slumps every worked thing), so Mox's telegraph ("any worked iron ...
+            // kept as the toll") stays honest however many pieces you carry. Ore-slumped iron is already
+            // worthless; the search leaves it.
+            const workingKeys = metalKeys.filter(
               (k) => facts.getString(`${k.slice(0, -'.class'.length)}.condition`) !== 'ore',
             );
-            if (ironClassKey) {
-              const itemKey = ironClassKey.slice(0, -'.class'.length); // e.g. possession.pc.iron_knife
+            if (workingKeys.length) {
+              const confiscations: FactMutation[] = workingKeys.flatMap((ck) => {
+                const itemKey = ck.slice(0, -'.class'.length); // e.g. possession.pc.iron_knife
+                return [
+                  { op: 'delete', key: itemKey },
+                  { op: 'delete', key: ck },
+                  { op: 'delete', key: `${itemKey}.condition` },
+                ];
+              });
               return {
                 nativeNext: native,
                 events: [
@@ -113,13 +125,11 @@ export function createSpine(): Module {
                     tag: 'debt_walkout',
                     mutations: [
                       { op: 'set', key: 'flag.intercept_clear', value: true },
-                      { op: 'delete', key: itemKey }, // the iron the search found — given up as the toll
-                      { op: 'delete', key: ironClassKey },
-                      { op: 'delete', key: `${itemKey}.condition` },
+                      ...confiscations,
                       { op: 'adjust', key: 'survival.pc.unsettled', by: 2, min: 0, max: 5 },
                     ],
                     summary:
-                      'You lean on the debt. The Strider who owes you peels off the wire — but when Holt’s man steps in to paw at the baggage the way they are paid to, his hand closes on the worked iron on you, and the whole gate goes still. A blade in the pack of a salvager being walked out under a Strider’s word is exactly the kind of thing that gets a man searched to the skin, core and all. The Strider moves fast: takes the iron off you, presses it into the trooper’s palm like it was always the toll, and talks low and quick until the man pockets it and waves you through. You are past the wire, the core still hidden and warm at your spine — but the iron is gone, given up to buy the silence, and your heart is going like a trip-hammer. Baggage gets handled; she told you to carry none.',
+                      'You lean on the debt. The Strider who owes you peels off the wire — but when Holt’s man steps in to paw at the baggage the way they are paid to, his hand closes on the worked iron on you, and the whole gate goes still. Metal in the pack of a salvager being walked out under a Strider’s word is exactly the kind of thing that gets a man searched to the skin, core and all. The Strider moves fast: takes every piece of iron off you, presses it into the trooper’s palm like it was always the toll, and talks low and quick until the man pockets it and waves you through. You are past the wire, the core still hidden and warm at your spine — but the iron is gone, given up to buy the silence, and your pulse is loud in your own ears. Baggage gets handled — and the iron was baggage.',
                     severity: 'reversible',
                   },
                 ],
@@ -137,7 +147,7 @@ export function createSpine(): Module {
                     { op: 'adjust', key: 'survival.pc.unsettled', by: 1, min: 0, max: 5 },
                   ],
                   summary:
-                    'You lean on the debt. The Strider who owes you peels off the wire, says a low word to Warden Holt that you do not catch — and then Holt’s man steps in to paw at the baggage anyway, the way they are paid to. For one long breath his hand is a foot from the core and you do not breathe; then the Strider says the word again, harder, and the trooper steps back. You are walked through the boom gate like freight — past Holt, not around him — and he marks your face the way a man marks a debt he means to collect. The core is through the wire and warm at your spine, and now you know what "walked out like baggage" costs a body’s nerve to learn.',
+                    'You lean on the debt. The Strider who owes you peels off the wire, says a low word to Warden Holt that you do not catch — and then Holt’s man steps in to paw at the baggage anyway, the way they are paid to. For one long breath his hand is a foot from the core and you do not breathe; then the Strider says the word again, harder, and the trooper steps back. You are walked through the boom gate like freight — past Holt, not around him. He does not trouble to mark your face again; he marked it the moment you came up carrying, and a man like Holt collects on a face like that in his own time. The core is through the wire and warm at your spine, and now you know what a walk-out “like baggage” costs a body’s nerve.',
                   severity: 'reversible',
                 },
               ],

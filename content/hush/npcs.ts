@@ -310,12 +310,12 @@ export const NPCS: NpcDef[] = [
       {
         id: 'mox_walkout',
         topic: 'walk',
-        text: "Walk you out? Not me, not from here — but a Strider of mine will, at the wire. That's the favour the hour buys you. Get to the checkpoint with the core and lean on the debt at the gate; he owes you, and he'll walk you past the troopers like baggage. It's the gate you lean on it at, not my fire.",
+        text: "Walk you out? Not me, not from here — but a Strider of mine will, at the wire. That's the favour the hour buys you. Get to the checkpoint with the core and lean on the debt at the gate; he owes you, and he'll walk you past the troopers like baggage — and baggage gets searched on the way, so go stripped of iron or go poorer. It's the gate you lean on it at, not my fire.",
       },
       {
         id: 'mox_checkpoint',
         topic: 'checkpoint',
-        text: "Getting past the checkpoint? That's what the debt is for, friend. Buy the safe hour and a Strider of mine owes you a walk-out at the wire — come back through with the core and lean on the debt right there at the gate, and he'll walk you past the troopers. You spend it at the checkpoint, not back here at the camp.",
+        text: "Getting past the checkpoint? That's what the debt is for, friend. Buy the safe hour and a Strider of mine owes you a walk-out at the wire — come back through with the core and lean on the debt right there at the gate, and he'll walk you past the troopers like baggage. Mind, baggage gets pawed at on the way: any worked iron on you, his man turns up and keeps as the toll, so lean on it stripped of metal or lean on it poorer. You spend it at the checkpoint, not back here at the camp.",
       },
     ],
   },

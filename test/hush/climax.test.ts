@@ -316,6 +316,35 @@ describe('the climax has TEETH — leaning on the debt costs something AT THE MO
     expect(canLeave(s)).toBe(true);
   });
 
+  it('the search takes EVERY piece of working iron, not just one — the telegraph ("any worked iron") is honest', () => {
+    // carry BOTH a working knife (broke kit) AND a working crowbar — a hands-on search forfeits the lot
+    const s = atGate('debt-cost-multimetal', {
+      'reputation.pc.striders': 1,
+      'possession.pc.crowbar': true,
+      'possession.pc.crowbar.class': 'metal',
+    });
+    expect(s.state.facts['possession.pc.iron_knife']).toBe(true);
+    expect(s.state.facts['possession.pc.crowbar']).toBe(true);
+    s.act('lean on the debt');
+    expect(s.state.facts['possession.pc.iron_knife']).toBeUndefined(); // both pieces gone — not one
+    expect(s.state.facts['possession.pc.crowbar']).toBeUndefined();
+    expect(s.state.facts['possession.pc.crowbar.class']).toBeUndefined();
+    expect(canLeave(s)).toBe(true); // still a win
+  });
+
+  it('ore-slumped iron is NOT confiscated (already worthless) — the metal-free clean pass, no item loss', () => {
+    // iron already eaten by the Greywater: the search has nothing worth taking, so the walk-out is the clean beat
+    const s = atGate('debt-cost-ore', {
+      'reputation.pc.striders': 1,
+      'possession.pc.iron_knife.condition': 'ore',
+    });
+    const before = (s.state.facts['survival.pc.unsettled'] as number) ?? 0;
+    s.act('lean on the debt');
+    expect(s.state.facts['possession.pc.iron_knife']).toBe(true); // the ruined ore stays in your kit, untaken
+    expect((s.state.facts['survival.pc.unsettled'] as number) ?? 0).toBe(before + 1); // only the clean-pass nerve beat
+    expect(canLeave(s)).toBe(true);
+  });
+
   it('Mox telegraphs the cost up front — the walk-out is a hands-on pass, not a free glide (fairness: known before use)', () => {
     const mox = NPCS.find((n) => n.id === 'strider_mox')!;
     // the lines that PROMISE the walk-out must also WARN, in the same breath, that it is a hands-on pass

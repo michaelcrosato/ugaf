@@ -133,9 +133,7 @@ function digestSnapshot(id: string): string {
   // "baggage" search). Record the tension beat the AC demands: a held-breath near-miss, and a working-iron
   // carrier forfeits the iron as the Strider's toll. This is the tool-side proof the climax is no longer a
   // one-button opt-out (the next swarm must show ≥1 of these on the debt route, not the old zero).
-  if (
-    has('paw at the baggage', 'a foot from the core', 'searched to the skin', 'given up to buy the silence', 'kept as')
-  )
+  if (has('paw at the baggage', 'a foot from the core', 'searched to the skin', 'given up to buy the silence'))
     tags.push('DEBT-COST(walkout-searched)');
   // Slipped the gate metal-free under dark — the LEARN route's silent escape (M2 reward).
   if (has('melt into the dark', 'the way is open', 'slip back to the waystation')) tags.push('slipped-the-gate');
