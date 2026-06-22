@@ -31,9 +31,14 @@ that the drowned-hamlet "shelter" was **infinitely safe**, so a clever player ju
 there for free. We fixed that too: the shelter is now a **generous but finite grace** — wait a reasonable
 stretch and you're safe and taught the rule, but make a whole night of it and the cold creeps in even there,
 with the same fair, telegraphed warnings, escapable by simply moving. Both this and a small earlier
-legibility fix (the rust no longer contradicts itself in daylight) are **built, fully gate-green, and saved
-to the work branch — but NOT yet merged**, because changing a danger in the already-validated difficulty
-needs a blind cohort to confirm it's still fair. That cohort is the next step.
+legibility fix (the rust no longer contradicts itself in daylight) were then **blind-validated by a fresh
+15-critic cohort — clean, no fairness regression — and merged** (`feedback/0026.md`). But that cohort also
+taught us something sharper, by tool not opinion: the "shelter" fix is *correct but low-impact*, because the
+real reason that danger rarely bites is two structural things our fix didn't touch — the danger is **only
+switched on in ~43% of runs**, and it **only acts at night**, so even a critic who deliberately sat still
+~30 times got charged exactly once. The honest next target is to make that danger *reliably* present and
+*reliably* bite a lingerer — and to teach our feedback machine to stop counting "did it bite" without first
+checking "was it even on."
 
 ## A real hiccup, handled: the workspace got torn down mid-run — and nothing was lost
 
