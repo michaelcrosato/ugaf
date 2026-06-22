@@ -129,6 +129,14 @@ const PERSONAS: Persona[] = [
     model: 'sonnet',
     lens: `Get to the GREYWATER ford carrying iron (a knife or crowbar) AFTER DARK and cross it — deliberately do the thing the notices forbid. Your job is to test ONLY the iron-in-the-Greywater rule. Report precisely: did carrying iron into the night water cost you anything that MATTERED, or was it merely cosmetic (your blade turns to ore and nothing else happens)? Did losing your iron have a real downstream consequence (e.g. an escape route you could no longer use)? The game claims "wrong is fatal" — is the Greywater a real threat or a bluff that only takes your tools?`,
   },
+  // Coverage persona (feedback/0023: the antenna distraction route is unexercised, distract-gate=0 across
+  // every cohort). A cynical exploiter who hunts unconventional routes and HOARDS tools, to find out
+  // whether the game's "alternative" escapes actually exist and pay off — or are decorative.
+  {
+    id: 'route-exploiter',
+    model: 'sonnet',
+    lens: `You are a systems exploiter and 100%-completionist who DESPISES the obvious path — you assume the intended route is a trap and the real win is an exploit the designers half-hid. Find EVERY route and resource. Explore the whole map, the ANTENNA FIELD included, and HOARD anything that smells like a TOOL rather than a trade good — the antenna-glass shard ESPECIALLY: do NOT sell or trade it away to anyone; carry it all the way to the end and try to USE it as leverage at the final checkpoint/gate. Then judge ruthlessly: does the game actually have multiple real ways out, or one real way wearing three coats? Did the shard do anything at the gate, or is the "use the relic as a distraction" idea a dead-end the game pretends is a route? Was any alternative escape worth the detour, or a cynical waste of a brave excursion? Flattery is failure — if the routes are decorative, say so.`,
+  },
 ];
 
 // ---- arg parsing ----------------------------------------------------------------
