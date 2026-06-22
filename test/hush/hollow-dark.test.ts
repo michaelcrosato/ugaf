@@ -67,3 +67,67 @@ describe('the Hollow Dark has teeth', () => {
     expect(r.text.toLowerCase()).toMatch(/drowned walls|behind stone|open deep|no open reach|lee of/);
   });
 });
+
+// feedback/0025 #1: the swarm found the Hollow Dark never bit (0/22) — but tool investigation showed the
+// shelter was INFINITE: the optimal line just waits out the whole night in the lee for free, defusing the
+// timed crossing. The lee is now a GENEROUS but FINITE grace — the first held breaths teach the contrast,
+// but a real dawdler outstays it and the cold creeps in by the same fair, telegraphed ladder (recoverable
+// by moving up out of the bottoms). The golden single wait-until-the-window never reaches the grace.
+describe('the lee of the drowned walls is a FINITE grace — dwelling past it BITES (feedback/0025 #1)', () => {
+  // prime the player AT the sheltered ford, deep night, Hollow Dark forced LIVE (it is the rotating slot),
+  // metal-free (so the Greywater iron-hazard doesn't confound). Turn-0 setup avoids an event-log chain break.
+  const atLee = (seed: string) => {
+    const s = new Session(createGame(HUSH_PACK, seed, { startMinutes: 22 * 60 }));
+    s.state = {
+      ...s.state,
+      native: {
+        ...s.state.native,
+        'time.cycle': { minutes: 1320 },
+        'travel.graph': { ...(s.state.native['travel.graph'] as object), node: 'greywater_ford' },
+      },
+      facts: {
+        ...s.state.facts,
+        'loc.pc': 'greywater_ford',
+        'phase.now': 'night',
+        'clock.minutes': 1320,
+        'law.hollow_dark.live': true,
+        'possession.pc.iron_knife.condition': 'ore', // metal-free: no Greywater iron noise
+      },
+    };
+    return s;
+  };
+
+  it('the first held breaths in the lee are SAFE — the shelter teaches; the golden single wait never bites', () => {
+    const s = atLee('lee-safe');
+    const r = s.act('wait');
+    expect((s.state.facts['law.hollow_dark.closer'] as number) ?? 0).toBe(0); // no close on the first wait
+    expect(r.text.toLowerCase()).toMatch(/lee of the drowned walls|no open reach|a loan, not a haven/);
+    expect(r.status).toBe('active');
+  });
+
+  it('dwelling PAST the grace makes the cold creep in — telegraphed first, then it closes (a fair death)', () => {
+    const s = atLee('lee-bite');
+    const texts: string[] = [];
+    let status = 'active';
+    for (let i = 0; i < 9; i++) {
+      const r = s.act('wait');
+      texts.push(r.text.toLowerCase());
+      status = r.status;
+      if (status !== 'active') break;
+    }
+    expect(status).toBe('lost'); // a serious dawdler eventually dies in the lee...
+    // ...but ONLY after the telegraphed creep ladder warned (no untelegraphed death)
+    expect(
+      texts.some((t) => /no haven after all|finding the edges|failing shelter|stillness is the thing/.test(t)),
+    ).toBe(true);
+  });
+
+  it('leaving the bottoms before the close RECOVERS — resistance, never a wall', () => {
+    const s = atLee('lee-recover');
+    for (let i = 0; i < 5; i++) s.act('wait'); // dwell past grace — the cold is creeping (warned)
+    expect(s.state.status).toBe('active'); // warned, not dead
+    expect((s.state.facts['law.hollow_dark.closer'] as number) ?? 0).toBeGreaterThan(0); // it WAS climbing
+    s.act('back'); // up out of the bottoms, toward the fork
+    expect(s.state.status).toBe('active'); // leaving stops the close — recoverable
+  });
+});

@@ -75,3 +75,38 @@ describe('examine fixes', () => {
     }
   });
 });
+
+// feedback/0025 #6 (qa-breaker, HIGH): the rust-bloom examinable claimed to be "spreading… in the time it
+// takes to breathe" even at midday, while the room says the daylight metal "is just metal" — a self-
+// contradiction that makes a careful player second-guess the very iron-at-night law they deduced. The
+// examinable must read true to the phase (dormant by day, blooming after dark) WITHOUT losing the tell.
+describe('the Greywater rust-bloom reads true to the phase (no daylight contradiction)', () => {
+  // prime the player AT the ford with a chosen clock, at turn 0 (mutating state mid-session would break
+  // the event-log hash chain). The time module re-derives phase.now from the clock, so set the clock too.
+  const atFord = (seed: string, minutes: number, phase: string) => {
+    const s = new Session(createGame(HUSH_PACK, seed));
+    s.state = {
+      ...s.state,
+      native: {
+        ...s.state.native,
+        'time.cycle': { minutes },
+        'travel.graph': { ...(s.state.native['travel.graph'] as object), node: 'greywater_ford' },
+      },
+      facts: { ...s.state.facts, 'loc.pc': 'greywater_ford', 'phase.now': phase, 'clock.minutes': minutes },
+    };
+    return s;
+  };
+
+  it('by DAYLIGHT the rust is dormant — it does not claim to be spreading as you watch (matches "just metal")', () => {
+    const t = atFord('rust-day', 720, 'day').act('examine the rust').text.toLowerCase(); // 12:00 midday
+    expect(t).toContain('it will not sleep past dusk'); // the dormant, evidence-teaching daylight base rendered
+    expect(t).toMatch(/dormant|just rust|only metal/); // reads as inert by day, agreeing with the room
+    expect(t).toMatch(/dark|dusk|wake/); // but STILL teaches what the dark does — the law stays legible
+  });
+
+  it('after DARK the rust actively blooms — the live tell is fully present', () => {
+    const t = atFord('rust-night', 1320, 'night').act('examine the rust').text.toLowerCase(); // 22:00 night
+    expect(t).toContain('spreading across worked iron'); // the live bloom
+    expect(t).toContain('the water has woken'); // and names the active danger
+  });
+});

@@ -87,6 +87,12 @@ function digestSnapshot(id: string): string {
   if (has('rotten-red', 'slumping toward ore', 'goes soft', 'going soft')) tags.push('greywater-ate-iron');
   if (has('something has heard you', 'the changed', 'turns toward the sound')) tags.push('antenna-summoned');
   if (has('the dark leans in', 'go still one time too many', 'dark is one step closer')) tags.push('hollow-dark-bit');
+  // feedback/0025 #1 — the finite-shelter grace: did a dawdler outstay the lee and feel the cold creep in,
+  // and was the new "the lee is not forever" telegraph shown? (Note: only fires when the rotating Hollow
+  // Dark was LIVE this seed — see the liveness-confound finding; trips/LIVE-run is the open loop-hardening.)
+  if (has('no haven after all', 'finding the edges of the pocket', 'failing shelter', 'stayed too long in the lee'))
+    tags.push('LEE-GRACE(dwelling-bit)');
+  if (has('a loan, not a haven', 'do not make a whole night of it')) tags.push('saw-lee-finite');
   if (has('certainty is decaying')) tags.push('saw-decay-warning');
   if (has('crept wider', 'grey hour before dawn', 'hungry hours')) tags.push('DECAY-BIT(predawn)'); // the new #5 mechanic in the wild
   if (has('not on my confirmed shelf', 'not my patch to sell')) tags.push('hit-topic-bound-refusal'); // 0012 #6
