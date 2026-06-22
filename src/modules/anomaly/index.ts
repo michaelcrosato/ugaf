@@ -411,17 +411,20 @@ export function createAnomaly(pack: WorldPack): Module {
               severity: 'reversible',
             });
             coreRender = { labels: ['law.greywater', 'core.hunger'], valence: 'cost' };
-          } else if (rung === 2) {
+          } else if (rung <= 3) {
+            // feedback/0020 #2 — the window is widened from 2 warned beats to 3 (loss on the 4th), so a
+            // player who BEELINES out of the water reaches dry ground before the slump completes (the
+            // night15a "2-move no-meter trap"). rung 2 escalates; rung 3 is the explicit last margin.
             coreEvents.push({
               tag: 'core_hunger',
               mutations: [actedMut, { op: 'set', key: 'law.greywater.core_warned', value: rung }],
-              summary: coreHungerTell(2),
+              summary: coreHungerTell(rung),
               data: { law: 'greywater', rung },
               severity: 'reversible',
             });
             coreRender = { labels: ['law.greywater', 'core.hunger'], valence: 'cost' };
           } else {
-            // rung 3: the Greywater remembers what worked matter was for. The core slumps to ore
+            // rung 4: the Greywater remembers what worked matter was for. The core slumps to ore
             // (the lost_core_to_greywater goal fires on this condition).
             coreEvents.push({
               tag: 'core_lost',
@@ -430,7 +433,7 @@ export function createAnomaly(pack: WorldPack): Module {
                 { op: 'set', key: 'law.greywater.core_warned', value: rung },
                 { op: 'set', key: 'possession.pc.salvage_core.condition', value: 'ore' },
               ],
-              summary: coreHungerTell(3),
+              summary: coreHungerTell(4),
               data: { law: 'greywater', rung },
               severity: 'irreversible',
             });
@@ -658,9 +661,11 @@ function hollowDarkTell(law: LawDefinition, closer: number): string {
  */
 function coreHungerTell(rung: number): string {
   if (rung <= 1)
-    return 'The core goes soft in your hands — its wrong-heavy weight sloughing, the surface of it crawling like wet clay. The Greywater has caught the worked-matter scent of it and started to call it apart, the way it calls the iron. Get it out of the water NOW — up to the fork, to dry ground — before it is lost. There is no waiting the dark out while you carry it; the hungry water only takes it faster. (You should have crossed in the safe hour. The core is going to ore.)';
+    return 'The core goes soft in your hands — its wrong-heavy weight sloughing, the surface of it crawling like wet clay. The Greywater has caught the worked-matter scent of it and started to call it apart, the way it calls the iron. Get it out of the water — up to the fork, to dry ground — before it is lost. There is no waiting the dark out while you carry it; the hungry water only takes it faster. (You should have crossed in the safe hour. Make for dry ground now and you can still carry it out whole.)';
   if (rung === 2)
-    return 'The core sags further, a knot of not-quite-stone trying to remember it was ever worked at all. This is the last of your margin: one more beat of the hungry water and it slumps to dead red ore in your pack. OUT of the Greywater this instant — up to the fork, to dry ground — and do not carry it another step into the hum.';
+    return 'The core sags further in your pack, a knot of not-quite-stone trying to remember it was ever worked at all. The water has its scent and will not let go while you are in it. Keep moving — up out of the Greywater, to the fork and dry ground — and do not stop in the hum.';
+  if (rung === 3)
+    return 'The core is barely holding its shape now, the wrong weight running out of it like water through a fist. This is the last of your margin: one more beat in the hungry dark and it slumps to dead red ore in your pack. OUT of the Greywater this instant — one move more to the fork and dry ground — and do not carry it another step into the hum.';
   return 'You carried worked anomaly one step too far into the iron-hungry dark, and the Greywater took the last of it: the core slumps in your hands to a fist of red, rotten ore, its wrong weight gone, ordinary and ruined. The water remembered what it was for.';
 }
 

@@ -95,6 +95,18 @@ describe('the NPC information-economy', () => {
     expect(s.state.facts['possession.pc.coin_roll']).toBe(true); // coin NOT consumed
   });
 
+  // feedback/0020 #1 — the dominant loss mode: the crossing DEADLINE is under-told. Holt (a FREE source
+  // the player asks for intel) must state the concrete hour AND that the CORE, not just iron, dissolves
+  // after dark — so a careful player who learns the rules isn't trapped by a timing nobody told them.
+  it('Holt states the Greywater crossing deadline AND that the core dissolves after dark (free, early)', () => {
+    const s = sess('holt-deadline');
+    s.act('out'); // Warden Holt at the checkpoint
+    const r = s.act('ask holt about the greywater');
+    const t = r.text.toLowerCase();
+    expect(t).toMatch(/dusk|six|sundown|nightfall|before dark|daylight/); // the concrete crossing deadline
+    expect(t).toMatch(/core|prize/); // and that it is not just iron — the core goes too
+  });
+
   it('asking an NPC about an unhandled topic says so, instead of silently replaying the greeting', () => {
     const s = sess('econ-topic');
     s.act('out');

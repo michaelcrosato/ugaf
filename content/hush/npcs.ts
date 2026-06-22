@@ -73,8 +73,11 @@ export const NPCS: NpcDef[] = [
       },
       {
         id: 'holt_grey',
+        // feedback/0020 #1 — the DOMINANT loss mode is mistiming the crossing, because the deadline was
+        // told late. Holt is the free intel source the player asks; he names the concrete hour AND that
+        // the CORE, not just iron, dissolves after dark — so a careful player can plan the crossing.
         topic: 'greywater',
-        text: "The Greywater? Don't carry iron in after dark. I've zipped up three this month who learned that the slow way — knives gone to rust-mud in their hands when they needed them.",
+        text: "The Greywater? Don't carry iron in after dark — I've zipped up three this month who learned that the slow way, knives gone to rust-mud in their hands when they needed them. And here's the part that gets the clever ones killed: it's not only iron. Anything worked goes the same way in that water once the dark wakes it — the core you're after most of all. So if you mean to bring the prize out: cross in daylight and be clear of the bottoms before the water wakes at dusk, call it six. Miss that window and you'll reach my gate holding a fistful of red mud where your core was. Get in, get it, get out — all of it before dark.",
         grantsRumor: 'r_grey_true',
       },
       {
