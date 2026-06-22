@@ -16,6 +16,8 @@
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { HUSH_PACK } from '../content/hush/index.js';
+import { createGame } from '../src/game/assemble.js';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 
@@ -81,6 +83,7 @@ interface PlayerRow {
   finalStatus: string;
   ok: boolean;
   real: boolean;
+  seed?: string;
 }
 interface Snap {
   finalStatus?: string;
@@ -104,6 +107,37 @@ const real = s.realnessVerified ?? 0;
 notes.push(
   `health: ok=${okN} failed=${failed} retried=${s.retried ?? 0} realness-verified=${real} cost=$${s.costUsd ?? '?'}`,
 );
+
+// ---- LIVENESS de-confound (feedback/0026 loop-hardening) -----------------------------------------
+// The world re-Settles per seed — only a SUBSET of laws is live each run (HUSH_PACK seedVariance.liveLaws),
+// so a ROTATING law that "never tripped" across a cohort may simply have been OFF, not toothless. The blind
+// digest counts trips but never checks liveness, which mis-ranks absent laws as dead (the night23 cohort
+// found the Hollow Dark "0/15" — but it was live in well under half the seeds). Re-derive each player's
+// live-laws DETERMINISTICALLY from their recorded seed and report liveness, so the synth conditions "did it
+// trip" on "was it even on" (§4.3). Best-effort: never block the verifier if the pack/seed can't resolve.
+try {
+  const always = new Set(HUSH_PACK.seedVariance?.liveLaws?.always ?? []);
+  const rotating = HUSH_PACK.laws.map((l) => l.id).filter((id) => !always.has(id));
+  const seeded = players.filter((p) => typeof p.seed === 'string');
+  if (rotating.length && seeded.length) {
+    const liveN: Record<string, number> = {};
+    for (const p of seeded) {
+      const f = createGame(HUSH_PACK, p.seed!).initialState().facts as Record<string, unknown>;
+      for (const id of rotating) if (f[`law.${id}.live`] === true) liveN[id] = (liveN[id] ?? 0) + 1;
+    }
+    const parts = rotating
+      .map(
+        (id) => `${id} ${liveN[id] ?? 0}/${seeded.length} (${Math.round((100 * (liveN[id] ?? 0)) / seeded.length)}%)`,
+      )
+      .join(', ');
+    notes.push(
+      `rotating-law liveness (re-derived from seed): ${parts} — a 0-trip rotating law may be OFF, not toothless`,
+    );
+  }
+} catch {
+  /* liveness is a best-effort report; a pack/seed hiccup must never gate the fairness verifier */
+}
+
 if (players.length === 0) hard.push('cohort has ZERO players (a broken run)');
 if (okN > 0 && failed >= okN)
   warn.push(
