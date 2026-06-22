@@ -36,14 +36,25 @@ exact "server's too busy" error we keep hitting. Instead of hammering it, we let
 honestly (it flags its own failures), waited, ran a tiny two-player check to confirm the service had
 recovered, and only then ran the full clean validation above. The loop is honest about its own health.
 
-## What's next — the critics already named it
+## Then the deeper read caught a hidden unfairness — and we fixed that too
 
-The same clean run that proved the fix also named the next thing: an inconsistency. Your *iron* dissolves
-in the dark water silently and instantly, with no warning — but the *prize* dissolves with three escalating
-warnings and a grace period. A critic flagged the asymmetry as incoherent ("both are worked matter"). We'll
-give the iron its own warning beat so the two read as one coherent law. Plus smaller items: a lore-hint that
+When we ran the *careful* analysis on that clean batch (one strong critic-of-critics, the way the design
+demands), it caught something the raw numbers had hidden: a player who *learned* the dangerous-water law the
+honest way — by studying it, or buying the knowledge from the cartographer — was then *refused* when they
+tried to buy the salvager's "I'll-walk-you-out" favour, because the game lumped the favour together with the
+knowledge they already had. So the most careful players were quietly locked out of one of the three ways
+home, and only saved by stumbling onto a free gap. That's the exact kind of hidden unfairness the whole
+project exists to catch. We separated the two — you can always buy the walk-out, even if you already know the
+water — and a fresh clean batch of twelve proved it: the favour-route was used *twice as often*, by the very
+players who'd been locked out. We also gave the dissolving *iron* its own warning beat, so it warns and can
+be saved just like the prize, instead of vanishing silently.
+
+## What's next
+
+Smaller, lower-priority refinements remain, all on the board: make the "learned the world" ending feel
+visibly better than the "bought your luck" ending (right now they read about the same), a lore-hint that
 asks you to stand still in a place that punishes standing still, and confirming the new "throw the guards'
-attention with the antenna shard" escape gets used in the wild. Full detail in `feedback/0022.md`.
+attention with the antenna shard" escape gets used in the wild. Full detail in `feedback/0023.md`.
 
 ## Bottom line
 
