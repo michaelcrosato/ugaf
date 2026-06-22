@@ -60,6 +60,20 @@ const DEATH_LADDERS: { name: string; death: string[]; telegraph: string[] }[] = 
   },
 ];
 
+// §4.5 PARSE-CONFOUND: a turn whose rendered text is a parser MISS (the player's phrasing did not resolve
+// to an action) is friction from the parser, not the content — and the blueprint requires quarantining it
+// BEFORE the capability filter. Counting it deterministically means the synth does not have to GUESS which
+// "this was confusing" complaints are really phrasing. (Authored parser-miss strings; the free nudge does
+// not burn a turn, but a high rate still signals a player who fought the parser.)
+const PARSE_MISS = [
+  "you're not sure how to",
+  '[not_understood]',
+  'nothing like that here',
+  'there is nothing like that',
+  'no one here to talk to',
+  'is not here',
+];
+
 interface PlayerRow {
   id: string;
   persona: string;
@@ -99,6 +113,8 @@ if (okN > 0 && failed >= okN)
 // ---- per-player snapshot checks -----------------------------------------------------------------
 let decisiveOutcomes = 0; // wins/losses with a recognizable end (for marker-rot sanity)
 let deathsChecked = 0;
+let parseMissTotal = 0;
+let turnsTotal = 0;
 for (const p of players) {
   if (!p.ok) continue; // failed players have no clean transcript to verify (already counted)
   const spath = resolve(RUN, 'players', `${p.id}.snapshot.json`);
@@ -116,6 +132,19 @@ for (const p of players) {
   const turns = snap.turns ?? [];
   const blob = turns.map((t) => (t.text ?? '').toLowerCase()).join('\n');
   const fin = snap.finalStatus ?? 'active';
+
+  // §4.5 parse-confound rate: a player who fought the parser a lot has phrasing friction the synth must
+  // NOT read as content. Flag a high rate so it is quarantined before the capability filter.
+  const misses = turns.filter((t) => {
+    const tx = (t.text ?? '').toLowerCase();
+    return PARSE_MISS.some((m) => tx.includes(m));
+  }).length;
+  parseMissTotal += misses;
+  turnsTotal += turns.length;
+  if (turns.length >= 10 && misses / turns.length > 0.18)
+    warn.push(
+      `${p.id} (${p.persona}): high parser-miss rate ${misses}/${turns.length} (${Math.round((100 * misses) / turns.length)}%) — quarantine this player's "confusing" complaints as PARSE-CONFOUND (§4.5) before ranking as content`,
+    );
 
   // 2. REALNESS — an ok player whose play was NOT realness-verified is a fabricated/forged transcript.
   if (snap.verdict?.real !== true) {
@@ -172,6 +201,10 @@ if (decisiveOutcomes >= 3 && players.some((p) => p.ok && p.finalStatus === 'lost
     'MARKER-ROT SUSPECTED: losses occurred but none matched a known death ladder — re-check DEATH_LADDERS against the current content prose.',
   );
 }
+
+notes.push(
+  `parse-confound: ${parseMissTotal} parser-miss turns / ${turnsTotal} (${turnsTotal ? Math.round((100 * parseMissTotal) / turnsTotal) : 0}% cohort-wide) — friction here is phrasing, not content (§4.5)`,
+);
 
 // ---- report -------------------------------------------------------------------------------------
 console.log(`\n▸ verify-cohort: ${players.length} players · ${RUN.split(/[\\/]/).slice(-1)[0]}`);
