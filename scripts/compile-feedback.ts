@@ -148,6 +148,12 @@ function digestSnapshot(id: string): string {
     tags.push('core-recovered');
   // Did a player reach the NEW rung-3 last-margin warning (the extra beat of grace)?
   if (has('this is the last of your margin', 'barely holding its shape now')) tags.push('core-last-margin');
+  // ---- night20/21 (feedback/0022) ----
+  // night20: did the iron WARN before slumping, and did the player recover it by leaving the water?
+  if (has('begins to go soft and red at the edges')) tags.push('iron-warned');
+  if (has('firms back as the greywater loses its hold', 'you caught it in time')) tags.push('iron-recovered');
+  // night21 (the P0): did Mox sell the walk-out debt to a player who already KNEW the law (the unlock)?
+  if (has("i'll not charge you for what you've read", 'the way past the wire, that i')) tags.push('mox-debt-unlocked');
   return `${outcome} · surveyed=${surveyed} · bought=${bought}${tags.length ? ' · ' + tags.join(', ') : ''}`;
 }
 
@@ -216,6 +222,7 @@ const aggregate = [
   `night14 ENDGAME keystone (0018 — the watched gate goes live): reached-gate-watch=${tally(/reached-gate-watch/)} · clink-bit=${tally(/CLINK/)} · leaned-on-debt=${tally(/leaned-on-debt/)} · slipped-the-gate=${tally(/slipped-the-gate/)}`,
   `night15 discoverability (0019 — surface the fast-forward, find the debt): saw-wait-hint=${tally(/SAW-wait-hint/)} · used-fast-forward=${tally(/used-fast-forward/)} · leaned-on-debt=${tally(/leaned-on-debt/)}`,
   `night16/17 (0020 — antenna on the win path; the Greywater clock made fair): distract-gate=${tally(/DISTRACT-gate/)} · saw-grey-deadline=${tally(/saw-grey-deadline/)} · core-recovered=${tally(/core-recovered/)} · core-last-margin=${tally(/core-last-margin/)}`,
+  `night20/21 (0022 — iron warns+recovers like the core; the debt P0 unlocked): iron-warned=${tally(/iron-warned/)} · iron-recovered=${tally(/iron-recovered/)} · mox-debt-unlocked=${tally(/mox-debt-unlocked/)} · leaned-on-debt=${tally(/leaned-on-debt/)}`,
   `traps tripped: mile-lookback=${tally(/mile-lookback/)} · greywater-iron=${tally(/greywater-ate-iron/)} · antenna-summon=${tally(/antenna-summoned/)} · hollow-dark=${tally(/hollow-dark-bit/)}`,
 ].join('\n');
 
