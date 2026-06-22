@@ -24,8 +24,17 @@ people-pleasing playtester is worthless.
 
 ```bash
 npm run swarm -- --n 24 --concurrency 8 --turns 120     # 24 blind players, 8 at a time
+npm run verify-cohort                                    # TOOL-verify the play (fairness + health) before the LLM judges
 npm run feedback                                         # compile the latest run -> compiled-feedback.md
 ```
+
+**`verify-cohort` is the "trust but verify" step** (`scripts/verify-cohort.ts`): a deterministic, cheap
+check that runs BEFORE the expensive/fallible opus synth, so tools catch what they can first. It reads
+the realness-verified snapshots and HARD-FAILS (exit 1) on a fairness/realness violation — an
+**untelegraphed death** (a law's death line with no preceding warning-ladder line), a play counted clean
+but **not realness-verified** (a forged transcript), or a missing snapshot — and WARNS on a degraded
+cohort (mass API-failure) or a suspected soft-lock at the gate. Run it on any cohort before trusting it as
+a clean validation; a green `verify-cohort` + a green `npm run gate` is the tool floor under the synth.
 
 Output lands in `playtest-runs/swarm/<runId>/` (git-ignored): per-player `*.interview.json`
 (the player's exit interview) + `*.snapshot.json` (the realness-verified transcript), an

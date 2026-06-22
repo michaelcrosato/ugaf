@@ -24,6 +24,7 @@
     "coherence": "tsx scripts/coherence-pass.ts",
     "playtest": "tsx scripts/playtest.ts",
     "swarm": "tsx scripts/blind-swarm.ts",
+    "verify-cohort": "tsx scripts/verify-cohort.ts",
     "feedback": "tsx scripts/compile-feedback.ts",
     "flywheel": "tsx scripts/flywheel.ts",
     "gate": "tsx scripts/gate.ts"
