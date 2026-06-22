@@ -39,7 +39,7 @@ export const HUSH_PACK: WorldPack = {
       'meta.coins': 3,
     },
     opening:
-      "You came in on the last cordon truck with three coins, what iron you could borrow, and a rumour: that something the Survey calls only 'the core' lies out in the drowned bottoms, and that everyone who matters on this Edge wants it. The waystation door bangs shut behind you. The Hush is waiting, and it is very, very quiet.",
+      "You came in on the last cordon truck with three coins, what iron you could borrow, and a rumour: that something the Survey calls only 'the core' lies out in the drowned bottoms, and that everyone who matters on this Edge wants it. The waystation door bangs shut behind you, and the quiet on the far side of it is the listening kind. The Hush is waiting.",
   },
   goals: [
     {
@@ -99,7 +99,7 @@ export const HUSH_PACK: WorldPack = {
       outcome: 'won',
       title: 'The Core, Carried Out',
       epilogue:
-        "You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. Outside the wire, the Hush goes on keeping its lawful, patient strangeness — the Mile Road measuring dishonestly, the Greywater calling iron home, the antennas listening for a name. You came through it more by nerve than by knowing, and you can feel how thin that margin was. That is the Hush's lesson, offered free to anyone who survives it: it is lawful, and the laws can be learned — and next time, you might learn them before they teach you.",
+        'You set the core on the waystation bench under the buzzing light, and only then let yourself breathe. It is warm, and wrongly heavy, and entirely real. Outside the wire, the Hush goes on as it always has — the Mile Road measuring dishonestly, the Greywater calling iron home, the antennas listening for a name. You came through it more by nerve than by knowing, and you can feel, in the ache of your hands where they will not quite stop shaking, how thin that margin was.',
     },
     {
       // The Mile Road bites: look back four times (after three escalating warnings) and the

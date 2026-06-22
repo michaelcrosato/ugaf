@@ -213,7 +213,7 @@ const PHASE_LINES: Record<Phase, string[]> = {
   ],
   night: [
     'The last of the light fails. It is night now, and the Zone wakes — you can feel the difference, the way you feel a held breath let go.',
-    'Full dark, and no honest dark at all. The Hush comes awake around you, lawful and patient and hungry.',
+    'Full dark, and no honest dark at all. The Hush comes awake around you, unhurried and starving.',
     'Night closes over the cordon like water over a stone. The laws are all in force now, every one of them.',
   ],
   predawn: [
