@@ -663,7 +663,12 @@ function applyDrift(laws: Map<string, LawDefinition>, facts: FactView, turn: num
           { op: 'set', key: `law.${law.id}.drift_check_turn`, value: turn },
         ],
         summary: widens
-          ? `Something about ${law.title} feels subtly wrong, as if the rule had shifted a hair while you weren't looking. (Your certainty is decaying.)`
+          ? // feedback/0025 #2 / 0026: the decay's teeth ARE wired (greywaterHungry respects the drifted
+            // window — a stale predawn crossing DOES slump the core), but the old "something feels wrong"
+            // warning was cry-wolf: it named no consequence and no action, so players read it as flavour.
+            // Make the on-route widening drift CONCRETE and ACTIONABLE — the safe margin is closing toward
+            // dawn; cross soon or re-read — so the warning is a real decision, not a nag.
+            `The ${law.title}'s rhythm is creeping under you: the safe hours you learned are not quite the safe hours any longer — its hunger is reaching later now, toward the grey before dawn, and the predawn margin you were counting on is closing. If you mean to trust the old window, cross soon; otherwise read it again before the margin shuts for good. (Your certainty is decaying.)`
           : `Your reading of ${law.title} has aged a little — the fine detail going soft at the edges, the way an old memory does. The shape of it you still hold; only the particulars are worth confirming again, when you can.`,
         data: { law: law.id, widened: widens },
       });
