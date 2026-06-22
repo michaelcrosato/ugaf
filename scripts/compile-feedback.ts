@@ -136,6 +136,18 @@ function digestSnapshot(id: string): string {
   if (has('go by in a single step', 'pass them one tick at a time')) tags.push('SAW-wait-hint');
   // Did the player then USE the fast-forward (the discoverability fix working)?
   if (has('until the hour you wanted comes round', 'until the light has turned')) tags.push('used-fast-forward');
+  // ---- night16 the antenna onto the win path (feedback/0020 #5) ----
+  // Did the player USE the relic as the gate distraction (the 4th route)?
+  if (has('let its sub-aural song loose', 'the troopers drift off the wire toward the sound'))
+    tags.push('DISTRACT-gate');
+  // ---- night17 the Greywater clock made fair (feedback/0020 #1/#2) ----
+  // Was the crossing deadline told early & free (Holt's intel)?
+  if (has('clear of the bottoms before the water wakes', 'get in, get it, get out')) tags.push('saw-grey-deadline');
+  // Did a player BEELINE out and RECOVER the core (the widened window saving a run that 2 moves would've lost)?
+  if (has('the moment the water is behind you', 'dry ground; the dark cannot call it from here'))
+    tags.push('core-recovered');
+  // Did a player reach the NEW rung-3 last-margin warning (the extra beat of grace)?
+  if (has('this is the last of your margin', 'barely holding its shape now')) tags.push('core-last-margin');
   return `${outcome} · surveyed=${surveyed} · bought=${bought}${tags.length ? ' · ' + tags.join(', ') : ''}`;
 }
 
@@ -203,6 +215,7 @@ const aggregate = [
   `night12 mechanics reached (0016 #4/#5): hollow-shelter(safe-pocket)=${tally(/saw-hollow-shelter/)} · mox-window(concrete-hours)=${tally(/saw-mox-window/)}`,
   `night14 ENDGAME keystone (0018 — the watched gate goes live): reached-gate-watch=${tally(/reached-gate-watch/)} · clink-bit=${tally(/CLINK/)} · leaned-on-debt=${tally(/leaned-on-debt/)} · slipped-the-gate=${tally(/slipped-the-gate/)}`,
   `night15 discoverability (0019 — surface the fast-forward, find the debt): saw-wait-hint=${tally(/SAW-wait-hint/)} · used-fast-forward=${tally(/used-fast-forward/)} · leaned-on-debt=${tally(/leaned-on-debt/)}`,
+  `night16/17 (0020 — antenna on the win path; the Greywater clock made fair): distract-gate=${tally(/DISTRACT-gate/)} · saw-grey-deadline=${tally(/saw-grey-deadline/)} · core-recovered=${tally(/core-recovered/)} · core-last-margin=${tally(/core-last-margin/)}`,
   `traps tripped: mile-lookback=${tally(/mile-lookback/)} · greywater-iron=${tally(/greywater-ate-iron/)} · antenna-summon=${tally(/antenna-summoned/)} · hollow-dark=${tally(/hollow-dark-bit/)}`,
 ].join('\n');
 
